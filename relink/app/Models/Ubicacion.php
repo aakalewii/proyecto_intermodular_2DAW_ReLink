@@ -3,8 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Ubicacion extends Model
 {
-    //
+    protected $table = 'ubicaciones';
+
+    protected $fillable = [
+        'ciudad',
+        'provincia',
+        'pais',
+    ];
+
+    public function anuncios(): hasMany 
+    {
+        return $this->hasMany(Anuncio::class, 'ubicacion_id');
+    }
 }

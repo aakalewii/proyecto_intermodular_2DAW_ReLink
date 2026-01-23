@@ -53,4 +53,28 @@ class User extends Authenticatable
     public function anuncios() {
         return $this->hasMany(Anuncio::class);
     }
+
+    /**
+     * Conversaciones donde el usuario es el que quiere comprar
+     */
+    public function compras()
+    {
+        return $this->hasMany(Conversacion::class, 'comprador_id');
+    }
+
+    /**
+     * Conversaciones donde el usuario es el que vende el producto
+     */
+    public function ventas()
+    {
+        return $this->hasMany(Conversacion::class, 'vendedor_id');
+    }
+
+    /**
+     * Los anuncios que el usuario ha publicado
+     */
+    public function misAnuncios()
+    {
+        return $this->hasMany(Anuncio::class, 'user_id');
+    }
 }
