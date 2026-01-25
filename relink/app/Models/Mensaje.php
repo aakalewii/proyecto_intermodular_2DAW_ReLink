@@ -14,7 +14,6 @@ class Mensaje extends Model
         'contenido',
         'fecha_envio',
         'remitente_id',
-        'fecha_envio',
     ];
 
     /**
