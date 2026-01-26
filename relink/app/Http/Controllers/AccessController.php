@@ -12,7 +12,7 @@ class AccessController extends Controller
 {
     public function Register(Request $request)
     {
-        
+
 
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -40,8 +40,35 @@ class AccessController extends Controller
 
     public function Login(Request $request)
     {
+        $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+        ]);
 
-    // ÁLVARO MIRA A VER LO DE QUE TE GENERE UN TOKEN AL LOGEARSE
+        $user = User::where('email', $request->email)->first();
+
+        if (! $user || ! Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'message' => 'Credenciales inválidas'
+            ], 401);
+        }
+
+        // Si existe el campo 'activo' y el usuario está inactivo, denegar
+        if (isset($user->activo) && $user->activo === 0) {
+            return response()->json([
+                'message' => 'Usuario no activo'
+            ], 403);
+        }
+
+        // Crear token personal de acceso (Sanctum)
+        $token = $user->createToken('access-token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Inicio de sesión correcto',
+            'user' => $user,
+            'token' => $token,
+            'token_type' => 'Bearer'
+        ], 200);
 
     }
 }
