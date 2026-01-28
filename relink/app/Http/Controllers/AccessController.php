@@ -71,4 +71,21 @@ class AccessController extends Controller
         ], 200);
 
     }
+
+    public function Logout(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user == null) {
+            return response()->json([
+                'message' => 'Usuario no encontrado'
+            ], 404);
+        }
+
+        $user->currentAccessToken()->delete();
+        return response()->json([
+            'message' => 'Sesión cerrada con éxito'
+        ], 200);
+    } 
+    
 }
