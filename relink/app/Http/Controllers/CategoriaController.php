@@ -24,7 +24,7 @@ class CategoriaController extends Controller
         $categoria = Categoria::create($validated);
         
         return response()->json([
-            'message' => 'Anuncio creado con éxito',
+            'message' => 'Categoría creado con éxito',
             'data' => $categoria], 201);
     }
 
@@ -34,7 +34,7 @@ class CategoriaController extends Controller
 
         if ($categoria == null) {
             return response()->json([
-                'message' => 'Anuncio no encontrado'
+                'message' => 'Categoría no encontrada'
             ], 404);
         }
 
