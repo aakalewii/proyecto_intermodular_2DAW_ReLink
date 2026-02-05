@@ -60,6 +60,8 @@ class AccessController extends Controller
             ], 403);
         }
 
+        $user->update(['online'=>1]);
+
         // Crear token personal de acceso (Sanctum)
         $token = $user->createToken('access-token')->plainTextToken;
 
@@ -82,6 +84,7 @@ class AccessController extends Controller
             ], 404);
         }
 
+        $user->update(['online'=>0]);
         $user->currentAccessToken()->delete();
         return response()->json([
             'message' => 'Sesión cerrada con éxito'
