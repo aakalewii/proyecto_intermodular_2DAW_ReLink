@@ -12,7 +12,7 @@ class Anuncio extends Model
         'titulo',
         'descripcion',
         'precio',
-        'ubicacion_id',
+        'localidad_id',
         'fecha_publi',
         'user_id',
         'subcategoria_id',
@@ -28,10 +28,15 @@ class Anuncio extends Model
     }
 
     public function ubicacion() {
-        return $this->belongsTo(Ubicacion::class, 'ubicacion_id');
+        return $this->belongsTo(Localidad::class, 'localidad_id');
     }
 
     public function imagenes(){
         return $this->hasMany(ImagenAnuncio::class);
+    }
+
+    public function favorito_usuarios()
+    {
+        return $this->belongsToMany(User::class, 'favoritos');
     }
 }

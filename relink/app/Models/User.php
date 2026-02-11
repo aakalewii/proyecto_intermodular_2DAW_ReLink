@@ -30,7 +30,8 @@ class User extends Authenticatable
         'telefono',
         'rol',
         'activo',
-        'online'
+        'online',
+        'localidad_id',
     ];
 
     /**
@@ -84,4 +85,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(Anuncio::class, 'user_id');
     }
+
+    public function localidad(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Localidad::class);
+    }
+
+    public function favoritos()
+    {
+        return $this->belongsToMany(Anuncio::class, 'favoritos');
+    }
+
 }  

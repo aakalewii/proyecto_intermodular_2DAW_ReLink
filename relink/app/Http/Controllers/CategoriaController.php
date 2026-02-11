@@ -8,7 +8,7 @@ use App\Models\Categoria;
 
 class CategoriaController extends Controller
 {
-    public function idnex()
+    public function index()
     {
         $categorias = Categoria::all();
         return response()->json($categorias);

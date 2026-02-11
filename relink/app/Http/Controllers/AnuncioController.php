@@ -20,11 +20,12 @@ class AnuncioController extends Controller
             'titulo' => ['required', 'string', 'max:255'],
             'descripcion' => ['required', 'string', 'max:255'],
             'precio' => ['required', 'decimal'],
-            'ubicacion_id' => ['required', 'integer'],
-            'fecha_publi' => ['required', 'date'],
-            'user_id' => ['required', 'integer'],
-            'subcategoria_id' => ['required', 'integer'],
+            'localidad_id' => ['required', 'integer'],
         ]);
+
+        $validated['user_id'] = $request->user()->id; 
+    
+        $validated['fecha_publi'] = now();
 
         $anuncio = Anuncio::create($validated);
         return response()->json([
@@ -42,13 +43,17 @@ class AnuncioController extends Controller
             ], 404);
         }
 
+        if ($anuncio->user_id !== $request->user()->id) {
+            return response()->json([
+                'message' => 'No tienes permiso para editar este anuncio'
+            ], 403);
+        }
+
         $validated = $request->validate([
             'titulo' => ['required', 'string', 'max:255'],
             'descripcion' => ['required', 'string', 'max:255'],
             'precio' => ['required', 'decimal'],
-            'ubicacion_id' => ['required', 'integer'],
-            'fecha_publi' => ['required', 'date'],
-            'user_id' => ['required', 'integer'],
+            'localidad_id' => ['required', 'integer'],
             'subcategoria_id' => ['required', 'integer'],
         ]);
 
@@ -68,6 +73,12 @@ class AnuncioController extends Controller
             return response()->json([
                 'message' => 'Anuncio no encontrado'
             ], 404);
+        }
+
+        if ($anuncio->user_id !== $request->user()->id) {
+            return response()->json([
+                'message' => 'No tienes permiso para eliminar este anuncio'
+            ], 403);
         }
 
         $anuncio->delete();

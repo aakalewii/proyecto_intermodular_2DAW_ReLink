@@ -21,6 +21,7 @@ class AccessController extends Controller
             'password_confirmation' => ['required', 'string', 'same:password'],
             'apellidos' => ['nullable', 'string', 'max:255'],
             'telefono' => ['nullable', 'string', 'max:255'],
+            'localidad_id' => ['nullable', 'exists:localidades,id'],
         ]);
 
         $user = User::create([
@@ -29,6 +30,7 @@ class AccessController extends Controller
             'password'  => Hash::make($request->password),
             'apellidos' => $request->apellidos,
             'telefono'  => $request->telefono,
+            'localidad_id' => $request->localidad_id,
             'rol'       => UserRole::CLIENTE,
         ]);
 
