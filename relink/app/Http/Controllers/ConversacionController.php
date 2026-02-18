@@ -102,4 +102,42 @@ class ConversacionController extends Controller
         ], 200);
     }
 
+    public function store(Request $request) {
+
+        $request->validate([
+            'anuncio_id' => 'required|exists:anuncios,id',
+        ]);
+
+        $comprador = $request->user();
+        $anuncio = Anuncio::findOrFail($request->anuncio_id);
+        $vendedor_id = $anuncio->user_id;
+
+
+        if ($comprador->id === $vendedor_id) {
+            return response()->json(['message' => 'No puedes iniciar un chat contigo mismo'], 400);
+        }
+
+        $conversacionExistente = Conversacion::where('anuncio_id', $anuncio->id)
+            ->where('comprador_id', $comprador->id)
+            ->first();
+
+        if ($conversacionExistente) {
+            return response()->json([
+                'message' => 'La conversación ya existe',
+                'data' => $conversacionExistente
+            ], 200);
+        }
+
+        $nuevaConversacion = Conversacion::create([
+            'anuncio_id' => $anuncio->id,
+            'vendedor_id' => $vendedor_id,
+            'comprador_id' => $comprador->id,
+            'estado' => ConversacionEstado::ACTIVO
+        ]);
+
+        return response()->json([
+            'message' => 'Conversación iniciada',
+            'data' => $nuevaConversacion
+        ], 201);
+    }
 }
