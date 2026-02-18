@@ -25,18 +25,5 @@ class Categoria extends Model
     {
         return $this->hasMany(Subcategoria::class, 'categoria_id');
     }
-
-    // Relación: una categoría tiene muchos anuncios (a través de subcategorías)
-    public function anuncios()
-    {
-        return $this->hasManyThrough(
-            Anuncio::class,          // Modelo final
-            Subcategoria::class,     // Modelo intermedio
-            'categoria_id',          // FK en subcategorias
-            'subcategoria_id',       // FK en anuncios
-            'id',                    // PK en categorias
-            'id'                     // PK en subcategorias
-        );
-    }
 }
 

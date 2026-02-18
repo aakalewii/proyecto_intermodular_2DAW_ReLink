@@ -8,8 +8,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AnuncioController;
 use App\Http\Controllers\FavoritoController;
 
-
-
 // Rutas públicas para el acceso
 Route::post('/register', [AccessController::class, 'Register']);
 Route::post('/login', [AccessController::class, 'login']);
@@ -23,7 +21,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AccessController::class, 'Logout']);
     Route::get('/perfil',  [ProfileController::class, 'mostrarPerfil']);
     Route::post('/editarperfil',  [ProfileController::class, 'editarPerfil']);
-    
+
+    Route::get('/conversaciones', [ConversacionController::class, 'index']);
+    Route::get('/conversaciones/{id}', [ConversacionController::class, 'verConversacion']);
+    Route::delete('/conversaciones/{id}', [ConversacionController::class, 'eliminarConversacion']);
+    Route::put('/conversaciones/{id}/archivar', [ConversacionController::class, 'archivarConversacion']);
 
     Route::post('/favoritos/{anuncioId}', [FavoritoController::class, 'handleFavorito']);
     Route::get('/favoritos', [FavoritoController::class, 'index']);
@@ -34,7 +36,6 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-    
     Route::post('/categorias', [CategoriaController::class, 'store']);
     Route::put('/categorias/{id}', [CategoriaController::class, 'update']);
     Route::delete('/categorias/{id}', [CategoriaController::class, 'destroy']);
