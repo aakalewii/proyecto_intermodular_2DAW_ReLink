@@ -37,7 +37,7 @@ class ConversacionController extends Controller
             ->where('id', $id)
             ->where(function($query) use ($user) {
                 $query->where('comprador_id', $user->id) 
-                    ->orWhere('vendedor_id', $user->id)
+                    ->orWhere('vendedor_id', $user->id);
             })
             ->first();
 
@@ -59,7 +59,7 @@ class ConversacionController extends Controller
         $conversacion = Conversacion::where('id', $id)
             ->where(function($query) use ($user) {
                 $query->where('comprador_id', $user->id) 
-                    ->orWhere('vendedor_id', $user->id)
+                    ->orWhere('vendedor_id', $user->id);
             })
             ->first();
 
@@ -84,7 +84,7 @@ class ConversacionController extends Controller
         $conversacion = Conversacion::where('id', $id)
             ->where(function($query) use ($user) {
                 $query->where('comprador_id', $user->id) 
-                    ->orWhere('vendedor_id', $user->id)
+                    ->orWhere('vendedor_id', $user->id);
             })
             ->first();
 
