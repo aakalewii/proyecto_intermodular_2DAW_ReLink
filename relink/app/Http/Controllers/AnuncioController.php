@@ -59,9 +59,9 @@ class AnuncioController extends Controller
 
         $anuncio->update($validated);
         return response()->json([
-        'message' => 'Actualizado con éxito',
-        'data' => $anuncio
-    ], 200);
+            'message' => 'Actualizado con éxito',
+            'data' => $anuncio
+            ], 200);
 
     }
 
