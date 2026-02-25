@@ -3,13 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Anuncio;
+use App\DAOs\AnuncioDAO;
+use App\Enums\AnuncioEstado;
 
 class AnuncioController extends Controller
 {
+
+    private $anuncioDAO;
+
+    public function __construct(AnuncioDAO $anuncioDAO)
+    {
+        $this->anuncioDAO = $anuncioDAO;
+    }
+
     public function index()
     {
-        $anuncios = Anuncio::all();
+        $anuncios = $this->anuncioDAO->obtenerPublicados();
         return response()->json($anuncios);
     }
 
@@ -19,15 +28,13 @@ class AnuncioController extends Controller
         $validated = $request->validate([
             'titulo' => ['required', 'string', 'max:255'],
             'descripcion' => ['required', 'string', 'max:255'],
-            'precio' => ['required', 'decimal'],
+            'precio' => ['required', 'numeric'],
             'localidad_id' => ['required', 'integer'],
+            'subcategoria_id' => ['required', 'integer']
         ]);
 
-        $validated['user_id'] = $request->user()->id; 
-    
-        $validated['fecha_publi'] = now();
+        $anuncio = $this->anuncioDAO->crearAnuncio($validated, $request->user()->id, now());
 
-        $anuncio = Anuncio::create($validated);
         return response()->json([
             'message' => 'Anuncio creado con éxito',
             'data' => $anuncio], 201);
@@ -35,9 +42,10 @@ class AnuncioController extends Controller
 
     public function update(Request $request, int $id)
     {
-        $anuncio = Anuncio::find($id);
 
-        if ($anuncio == null) {
+        $anuncio = $this->anuncioDAO->obtenerAnuncioPorId($id);
+
+        if ($anuncio == null || $anuncio->estado === AnuncioEstado::ELIMINADO->value) {
             return response()->json([
                 'message' => 'Anuncio no encontrado'
             ], 404);
@@ -52,24 +60,26 @@ class AnuncioController extends Controller
         $validated = $request->validate([
             'titulo' => ['required', 'string', 'max:255'],
             'descripcion' => ['required', 'string', 'max:255'],
-            'precio' => ['required', 'decimal'],
+            'precio' => ['required', 'numeric'],
             'localidad_id' => ['required', 'integer'],
             'subcategoria_id' => ['required', 'integer'],
         ]);
 
-        $anuncio->update($validated);
+        $anuncioActualizado = $this->anuncioDAO->actualizarAnuncio($id, $validated);
+
         return response()->json([
             'message' => 'Actualizado con éxito',
-            'data' => $anuncio
+            'data' => $anuncioActualizado
             ], 200);
 
     }
 
     public function destroy(Request $request, int $id)
     {
-        $anuncio = Anuncio::find($id);
 
-        if ($anuncio == null) {
+        $anuncio = $this->anuncioDAO->obtenerAnuncioPorId($id);
+
+        if ($anuncio == null || $anuncio->estado === AnuncioEstado::ELIMINADO->value) {
             return response()->json([
                 'message' => 'Anuncio no encontrado'
             ], 404);
@@ -81,9 +91,10 @@ class AnuncioController extends Controller
             ], 403);
         }
 
-        $anuncio->delete();
+        $this->anuncioDAO->eliminarAnuncioLogico($id);
+
         return response()->json([
-            'message' => 'Eliminado con éxito'
+            'message' => 'Anuncio eliminado con éxito'
         ], 200);
 
     }
