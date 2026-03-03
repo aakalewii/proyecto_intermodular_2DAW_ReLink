@@ -99,4 +99,38 @@ class AnuncioController extends Controller
 
     }
 
+    public function subirImagenes(Request $request, $anuncioId)
+    {
+    // 1. Validar que sea un array de imágenes
+    $request->validate([
+        'imagenes' => 'required|array',
+        'imagenes.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // Máximo 2MB por foto
+    ]);
+
+    $anuncio = Anuncio::findOrFail($anuncioId);
+    $rutasGuardadas = [];
+
+    // 2. Procesar cada imagen
+    if ($request->hasFile('imagenes')) {
+        foreach ($request->file('imagenes') as $foto) {
+            
+            // Guardar en la carpeta 'public/anuncios'
+            $ruta = $foto->store('anuncios', 'public');
+
+            // 3. Guardar en la base de datos
+            $nuevaImagen = ImagenAnuncio::create([
+                'ruta' => $ruta,
+                'anuncio_id' => $anuncio->id
+            ]);
+
+            $rutasGuardadas[] = $nuevaImagen;
+        }
+    }
+
+    return response()->json([
+        'message' => 'Imágenes subidas correctamente',
+        'imagenes' => $rutasGuardadas
+    ], 201);
+    }
+
 }

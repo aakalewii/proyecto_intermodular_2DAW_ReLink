@@ -58,13 +58,13 @@ class CategoriaController extends Controller
 
         if ($categoria == null) {
             return response()->json([
-                'message' => 'Anuncio no encontrado'
+                'message' => 'Categoria no encontrada'
             ], 404);
         }
 
         $categoria->delete();
         return response()->json([
-            'message' => 'Eliminado con éxito'
+            'message' => 'Eliminada con éxito'
         ], 200);
 
     }

@@ -7,6 +7,9 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AnuncioController;
 use App\Http\Controllers\FavoritoController;
+use App\Http\Controllers\ConversacionController;
+use App\Http\Controllers\MensajeController;
+use App\Http\Controllers\SubcategoriasController;
 
 // Rutas públicas para el acceso
 Route::post('/register', [AccessController::class, 'Register']);
@@ -14,8 +17,10 @@ Route::post('/login', [AccessController::class, 'login']);
 Route::get('/verperfil/{id}',  [ProfileController::class, 'verPerfil']);
 
 Route::get('/anuncios', [AnuncioController::class, 'index']);
-Route::get('/anuncios/{id}', [AnuncioController::class, 'show']); 
+Route::get('/anuncios/{id}', [AnuncioController::class, 'show']);
+
 Route::get('/categorias', [CategoriaController::class, 'index']);
+Route::get('/subcategorias', [SubcategoriasController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AccessController::class, 'Logout']);
@@ -23,9 +28,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/editarperfil',  [ProfileController::class, 'editarPerfil']);
 
     Route::get('/conversaciones', [ConversacionController::class, 'index']);
+    Route::post('/conversaciones', [ConversacionController::class, 'store']);
     Route::get('/conversaciones/{id}', [ConversacionController::class, 'verConversacion']);
     Route::delete('/conversaciones/{id}', [ConversacionController::class, 'eliminarConversacion']);
     Route::put('/conversaciones/{id}/archivar', [ConversacionController::class, 'archivarConversacion']);
+    Route::post('/conversaciones/{conver_id}/mensajes', [MensajeController::class, 'store']);
+    Route::put('/mensajes/{id_mensaje}', [MensajeController::class, 'update']);
+    Route::delete('/mensajes/{id_mensaje}', [MensajeController::class, 'destroy']);
 
     Route::post('/favoritos/{anuncioId}', [FavoritoController::class, 'handleFavorito']);
     Route::get('/favoritos', [FavoritoController::class, 'index']);
@@ -39,4 +48,8 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::post('/categorias', [CategoriaController::class, 'store']);
     Route::put('/categorias/{id}', [CategoriaController::class, 'update']);
     Route::delete('/categorias/{id}', [CategoriaController::class, 'destroy']);
+
+    Route::post('/subcategorias', [SubcategoriasController::class, 'store']);
+    Route::put('/subcategorias/{id}', [SubcategoriasController::class, 'update']);
+    Route::delete('/subcategorias/{id}', [SubcategoriasController::class, 'destroy']);
 });
