@@ -1,0 +1,4 @@
+Tu famosa carpeta UI, pero solo para trozos repetitivos
+
+me dijo que no nos recomienda hacer lo de la ui en nuestro caso, sin framwork, ya que es 
+una comida de cabeza. solo con cosas repetitivas como menus o tarjetas de anuncios.

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Iniciar Sesión - ReLink</title>
+    </head>
+    <body>
+        <form id="registerForm">
+            <div>
+                <label for="name">Nombre</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required minlength="8">
+            </div>
+            <div>
+                <label for="password_confirmation">Confirmar Password</label>
+                <input type="password" id="password_confirmation" name="password_confirmation" required minlength="8">
+            </div>
+
+            <div id="errorMessage" style="color: red; display: none;"></div>
+            
+            <button type="submit">Registrarme</button>
+        </form>
+
+        <script type="module" src="./src/js/pages/register.js"></script>
+    </body>
+</html>
