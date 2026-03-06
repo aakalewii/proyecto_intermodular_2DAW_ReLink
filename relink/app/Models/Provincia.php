@@ -14,13 +14,13 @@ class Provincia extends Model
         'pais_id'
     ];
 
-    public function municipios(): hasMany 
+    public function municipios(): hasMany
     {
         return $this->hasMany(Municipio::class, 'provincia_id');
     }
 
-    public function pais(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function pais()
     {
-        return $this->belongsTo(Pais::class);
+        return $this->belongsTo(Pais::class, 'pais_id');
     }
 }

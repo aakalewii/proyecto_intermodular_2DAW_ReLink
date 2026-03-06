@@ -27,6 +27,11 @@ Route::get('/anuncios/{id}', [AnuncioController::class, 'show']);
 Route::get('/categorias', [CategoriaController::class, 'index']);
 Route::get('/subcategorias', [SubcategoriasController::class, 'index']);
 
+Route::get('/paises', [PaisController::class, 'index']);
+Route::get('/provincias', [ProvinciaController::class, 'index']);
+Route::get('/municipios', [MunicipioController::class, 'index']);
+Route::get('/localidades', [LocalidadController::class, 'index']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AccessController::class, 'Logout']);
     Route::get('/perfil',  [ProfileController::class, 'mostrarPerfil']);
@@ -58,9 +63,8 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::put('/subcategorias/{id}', [SubcategoriasController::class, 'update']);
     Route::delete('/subcategorias/{id}', [SubcategoriasController::class, 'destroy']);
 
-    Route::apiResource('paises', PaisController::class);
-    Route::apiResource('provincias', ProvinciaController::class);
-    Route::apiResource('municipios', MunicipioController::class);
-    Route::apiResource('localidades', LocalidadController::class);
-
+    Route::apiResource('paises', PaisController::class)->except(['index']);
+    Route::apiResource('provincias', ProvinciaController::class)->except(['index']);
+    Route::apiResource('municipios', MunicipioController::class)->except(['index']);
+    Route::apiResource('localidades', LocalidadController::class)->except(['index']);
 });

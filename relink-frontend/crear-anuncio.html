@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Anuncio</title>
+</head>
+<body>
+
+    <header id="navbar-container"></header>
+
+    <main>
+        <h1>Publicar un Nuevo Anuncio</h1>
+
+        <form id="formCrearAnuncio">
+            <div>
+                <label>Título del Anuncio:</label>
+                <input type="text" id="titulo" required>
+            </div>
+
+            <div>
+                <label>Descripción:</label>
+                <textarea id="descripcion" required></textarea>
+            </div>
+
+            <div>
+                <label>Precio (€):</label>
+                <input type="number" id="precio" step="0.01" required>
+            </div>
+
+            <div>
+                <label>ID de Subcategoría (De momento a mano):</label>
+                <input type="number" id="subcategoria_id" required>
+            </div>
+
+            <div>
+                <label>Localidad:</label>
+                <select id="localidad_id" required>
+                    <option value="" disabled selected>Cargando localidades...</option>
+                </select>
+            </div>
+
+            <div id="errorMsg" style="color: red; display: none;"></div>
+            <div id="successMsg" style="color: green; display: none;">¡Anuncio creado con éxito!</div>
+            
+            <button type="submit">Publicar Anuncio</button>
+        </form>
+    </main>
+
+    <script type="module" src="/src/js/pages/crear-anuncio.js"></script>
+</body>
+</html>

@@ -89,3 +89,90 @@ export async function deleteProvincia(id) {
     if (!response.ok) throw new Error('Error al borrar la provincia');
     return await response.json();
 }
+
+
+// -- FUNCIONES PARA MUNICIPIOS --
+
+
+export async function getMunicipios() {
+    const response = await fetch(`${API_URL}/municipios`, {
+        headers: getAuthHeaders() // ¡Añadido!
+    });
+    if (!response.ok) throw new Error('Error al cargar los municipios');
+    return await response.json();
+}
+
+export async function createMunicipio(data) {
+    const response = await fetch(`${API_URL}/municipios`, {
+        method: 'POST',
+        headers: getAuthHeaders(), // ¡Añadido!
+        body: JSON.stringify(data)
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || 'Error al crear');
+    return result;
+}
+
+export async function updateMunicipio(id, data) {
+    const response = await fetch(`${API_URL}/municipios/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(), // ¡Añadido!
+        body: JSON.stringify(data)
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || 'Error al actualizar');
+    return result;
+}
+
+export async function deleteMunicipio(id) {
+    const response = await fetch(`${API_URL}/municipios/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders() // ¡Añadido!
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || 'Error al borrar');
+    return result;
+}
+
+// -- FUNCIONES PARA LOCALIDADES --
+
+export async function getLocalidades() {
+    const response = await fetch(`${API_URL}/localidades`, {
+        headers: getAuthHeaders()
+    });
+    if (!response.ok) throw new Error('Error al cargar las localidades');
+    return await response.json(); 
+}
+
+// ¡Esta es la que el navegador no encontraba!
+export async function createLocalidad(data) {
+    const response = await fetch(`${API_URL}/localidades`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data)
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || 'Error al crear la localidad');
+    return result;
+}
+
+export async function updateLocalidad(id, data) {
+    const response = await fetch(`${API_URL}/localidades/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data)
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || 'Error al actualizar la localidad');
+    return result;
+}
+
+export async function deleteLocalidad(id) {
+    const response = await fetch(`${API_URL}/localidades/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || 'Error al borrar la localidad');
+    return result;
+}

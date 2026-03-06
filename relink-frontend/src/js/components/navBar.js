@@ -32,6 +32,8 @@ export function renderNavbar() {
             enlacesHtml = enlacesHtml + `
                 <a href="/admin/paises.html" style="margin-left: 15px;">Países</a>
                 <a href="/admin/provincias.html" style="margin-left: 15px;">Provincias</a>
+                <a href="/admin/municipios.html" style="margin-left: 15px;">Municipios</a>
+                <a href="/admin/localidades.html" style="margin-left: 15px;">Localidades</a>
             `;
         }
 

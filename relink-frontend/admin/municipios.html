@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Gestión de Provincias</title>
+    <title>Admin - Gestión de Municipios</title>
 </head>
 <body>
 
     <header id="navbar-container"></header>
 
     <main>
-        <h1>Gestión de Provincias</h1>
+        <h1>Gestión de Municipios</h1>
 
         <div>
-            <h3>Añadir Nueva Provincia</h3>
-            <form id="formAddProvincia">
-                <select id="paisProvincia" required>
-                    <option value="" disabled selected>Cargando países...</option>
+            <h3>Añadir Nuevo Municipio</h3>
+            <form id="formAddMunicipio">
+                <select id="provinciaMunicipio" required>
+                    <option value="" disabled selected>Cargando provincias...</option>
                 </select>
 
-                <input type="text" id="nombreProvincia" placeholder="Ej: Madrid" required>
+                <input type="text" id="nombreMunicipio" placeholder="Ej: San Bartolomé de Tirajana" required>
                 
                 <button type="submit">Guardar</button>
                 <button type="button" id="btnCancelar" style="display: none;">Cancelar</button>
@@ -32,16 +32,16 @@
             <thead>
                 <tr>
                     <th>Nombre</th>
-                    <th>País</th> 
+                    <th>Provincia</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody id="tablaProvincias">
-                <tr><td colspan="3">Cargando provincias...</td></tr>
+            <tbody id="tablaMunicipios">
+                <tr><td colspan="3">Cargando municipios...</td></tr>
             </tbody>
         </table>
     </main>
 
-    <script type="module" src="../src/js/pages/admin/provincias.js"></script>
+    <script type="module" src="../src/js/pages/admin/municipios.js"></script>
 </body>
 </html>

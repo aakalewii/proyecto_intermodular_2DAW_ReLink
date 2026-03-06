@@ -9,7 +9,7 @@ class AnuncioDAO
 {
     public function crearAnuncio($datos, $userId, $fechaPubli)
     {
-        DB::insert('INSERT INTO anuncios (titulo, descripcion, precio, localidad_id, subcategoria_id, user_id, fecha_publi, estado) 
+        DB::insert('INSERT INTO anuncios (titulo, descripcion, precio, localidad_id, subcategoria_id, user_id, fecha_publi, estado)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [
             $datos['titulo'],
             $datos['descripcion'],
@@ -54,7 +54,7 @@ class AnuncioDAO
     public function eliminarAnuncioLogico($id)
     {
         return DB::update('UPDATE anuncios SET estado = ? WHERE id = ?', [
-            AnuncioEstado::ELIMINADO->value, 
+            AnuncioEstado::ELIMINADO->value,
             $id
         ]);
     }
