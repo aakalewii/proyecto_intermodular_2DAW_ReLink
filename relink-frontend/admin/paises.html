@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Gestión de Países</title>
+</head>
+<body>
+
+    <header id="navbar-container"></header>
+
+    <main>
+        <h1>Gestión de Países</h1>
+
+        <div>
+            <h3>Añadir Nuevo País</h3>
+            <form id="formAddPais">
+                <input type="text" id="nombrePais" placeholder="Ej: España" required>
+                <button type="submit">Guardar</button>
+                <button type="button" id="btnCancelar" style="display: none;">Cancelar</button>
+            </form>
+            <div id="errorMsg"></div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaPaises">
+                <tr><td colspan="3">Cargando países...</td></tr>
+            </tbody>
+        </table>
+    </main>
+
+    <script type="module" src="../src/js/components/Navbar.js"></script>
+    <script type="module" src="../src/js/pages/admin/paises.js"></script>
+</body>
+</html>

@@ -9,12 +9,38 @@ export function renderNavbar() {
     const user = userString ? JSON.parse(userString) : null;
 
     if (token && user) {
+
+        // 1. Verificamos si es admin
+        let esAdmin = false;
+        if (user.rol === 'admin') {
+            esAdmin = true;
+        }
+
+        // 2. Preparamos el texto del logo
+        let logoHtml = '<h2>ReLink</h2>';
+        if (esAdmin) {
+            logoHtml = '<h2>ReLink (Admin)</h2>';
+        }
+
+        let enlacesHtml = `
+            <span>Hola, <strong>${user.name}</strong></span>
+            <a href="/index.html" style="margin-left: 15px;">Inicio</a>
+        `;
+
+        // 4. Si es admin, le sumamos los enlaces extra
+        if (esAdmin) {
+            enlacesHtml = enlacesHtml + `
+                <a href="/admin/paises.html" style="margin-left: 15px;">Países</a>
+                <a href="/admin/provincias.html" style="margin-left: 15px;">Provincias</a>
+            `;
+        }
+
         navbarContainer.innerHTML = `
-            <nav style="display: flex; justify-content: space-between; padding: 1rem; background: #eee;">
-                <h2>ReLink</h2>
+            <nav style="display: flex; justify-content: space-between; padding: 1rem;">
+                ${logoHtml}
                 <div>
-                    <span>Hola, <strong>${user.name}</strong></span>
-                    <button id="btnLogout" style="margin-left: 15px; color: red; cursor: pointer;">Cerrar Sesión</button>
+                    ${enlacesHtml}
+                    <button id="btnLogout" style="margin-left: 15px;">Cerrar Sesión</button>
                 </div>
             </nav>
         `;
@@ -37,14 +63,14 @@ export function renderNavbar() {
                 localStorage.removeItem('relink_token');
                 localStorage.removeItem('relink_user');
                 
-                alert('Sesión cerrada correctamente y token destruido.');
+                alert('Sesión cerrada correctamente');
                 window.location.href = '/login.html';
             }
         });
 
     } else {
         navbarContainer.innerHTML = `
-            <nav style="display: flex; justify-content: space-between; padding: 1rem; background: #eee;">
+            <nav style="display: flex; justify-content: space-between; padding: 1rem;">
                 <h2>ReLink</h2>
                 <div>
                     <a href="/login.html">Iniciar Sesión</a>

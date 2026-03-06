@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Gestión de Provincias</title>
+</head>
+<body>
+
+    <header id="navbar-container"></header>
+
+    <main>
+        <h1>Gestión de Provincias</h1>
+
+        <div>
+            <h3>Añadir Nueva Provincia</h3>
+            <form id="formAddProvincia">
+                <select id="paisId" required>
+                    <option value="">Cargando países...</option>
+                </select>
+
+                <input type="text" id="nombreProvincia" placeholder="Ej: Madrid" required>
+                
+                <button type="submit">Guardar</button>
+                <button type="button" id="btnCancelar" style="display: none;">Cancelar</button>
+            </form>
+            <div id="errorMsg"></div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>País</th> <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaProvincias">
+                <tr><td colspan="3">Cargando provincias...</td></tr>
+            </tbody>
+        </table>
+    </main>
+
+    <script type="module" src="../src/js/components/Navbar.js"></script>
+    <script type="module" src="../src/js/pages/admin/provincias.js"></script>
+</body>
+</html>

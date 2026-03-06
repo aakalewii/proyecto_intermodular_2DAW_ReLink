@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccessController;
 use App\Http\Controllers\CategoriaController;
@@ -10,6 +9,12 @@ use App\Http\Controllers\FavoritoController;
 use App\Http\Controllers\ConversacionController;
 use App\Http\Controllers\MensajeController;
 use App\Http\Controllers\SubcategoriasController;
+use App\Http\Controllers\PaisController;
+use App\Http\Controllers\ProvinciaController;
+use App\Http\Controllers\MunicipioController;
+use App\Http\Controllers\LocalidadController;
+
+
 
 // Rutas públicas para el acceso
 Route::post('/register', [AccessController::class, 'Register']);
@@ -52,4 +57,10 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::post('/subcategorias', [SubcategoriasController::class, 'store']);
     Route::put('/subcategorias/{id}', [SubcategoriasController::class, 'update']);
     Route::delete('/subcategorias/{id}', [SubcategoriasController::class, 'destroy']);
+
+    Route::apiResource('paises', PaisController::class);
+    Route::apiResource('provincias', ProvinciaController::class);
+    Route::apiResource('municipios', MunicipioController::class);
+    Route::apiResource('localidades', LocalidadController::class);
+
 });
