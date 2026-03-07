@@ -1,7 +1,7 @@
 const API_URL = 'http://localhost:5500/api';
 
 // Función auxiliar para obtener el token del admin
-function getAuthHeaders() {
+export function getAuthHeaders() {
     const token = localStorage.getItem('relink_token');
     return {
         'Content-Type': 'application/json',

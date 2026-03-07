@@ -8,7 +8,7 @@ use App\Http\Controllers\AnuncioController;
 use App\Http\Controllers\FavoritoController;
 use App\Http\Controllers\ConversacionController;
 use App\Http\Controllers\MensajeController;
-use App\Http\Controllers\SubcategoriasController;
+use App\Http\Controllers\SubcategoriaController;
 use App\Http\Controllers\PaisController;
 use App\Http\Controllers\ProvinciaController;
 use App\Http\Controllers\MunicipioController;
@@ -25,7 +25,7 @@ Route::get('/anuncios', [AnuncioController::class, 'index']);
 Route::get('/anuncios/{id}', [AnuncioController::class, 'show']);
 
 Route::get('/categorias', [CategoriaController::class, 'index']);
-Route::get('/subcategorias', [SubcategoriasController::class, 'index']);
+Route::get('/subcategorias', [SubcategoriaController::class, 'index']);
 
 Route::get('/paises', [PaisController::class, 'index']);
 Route::get('/provincias', [ProvinciaController::class, 'index']);
@@ -59,9 +59,9 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::put('/categorias/{id}', [CategoriaController::class, 'update']);
     Route::delete('/categorias/{id}', [CategoriaController::class, 'destroy']);
 
-    Route::post('/subcategorias', [SubcategoriasController::class, 'store']);
-    Route::put('/subcategorias/{id}', [SubcategoriasController::class, 'update']);
-    Route::delete('/subcategorias/{id}', [SubcategoriasController::class, 'destroy']);
+    Route::post('/subcategorias', [SubcategoriaController::class, 'store']);
+    Route::put('/subcategorias/{id}', [SubcategoriaController::class, 'update']);
+    Route::delete('/subcategorias/{id}', [SubcategoriaController::class, 'destroy']);
 
     Route::apiResource('paises', PaisController::class)->except(['index']);
     Route::apiResource('provincias', ProvinciaController::class)->except(['index']);

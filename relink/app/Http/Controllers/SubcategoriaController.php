@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Subcategoria;
 
-class SubcategoriasController extends Controller
+class SubcategoriaController extends Controller
 {
     public function index()
     {
@@ -17,7 +17,7 @@ class SubcategoriasController extends Controller
     {
         $validated = $request->validate([
             'nombre' => ['required', 'string', 'max:255'],
-            'descripcion' => ['required', 'string', 'max:255'],
+            'descripcion' => ['nullable', 'string', 'max:255'],
             'categoria_id' => ['required', 'integer', 'exists:categorias,id'], 
         ]);
 
@@ -39,9 +39,9 @@ class SubcategoriasController extends Controller
             ], 404);
         }
 
-        $validated = $request->request->validate([
+        $validated = $request->validate([
             'nombre' => ['required', 'string', 'max:255'],
-            'descripcion' => ['required', 'string', 'max:255'],
+            'descripcion' => ['nullable', 'string', 'max:255'],
             'categoria_id' => ['required', 'integer', 'exists:categorias,id'],
         ]);
 

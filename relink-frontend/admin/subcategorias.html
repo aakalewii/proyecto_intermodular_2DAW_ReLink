@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Gestión de Subcategorías</title>
+</head>
+<body>
+
+    <header id="navbar-container"></header>
+
+    <main>
+        <h1>Gestión de Subcategorías</h1>
+
+        <div>
+            <h3>Añadir Nueva Subcategoría</h3>
+            <form id="formAddSubcategoria">
+                
+                <select id="categoriaId" required>
+                    <option value="">Cargando categorías...</option>
+                </select>
+
+                <input type="text" id="nombreSubcategoria" placeholder="Ej: Coches" required>
+                <input type="text" id="descSubcategoria" placeholder="Ej: Vehículos de 4 ruedas">
+                
+                <button type="submit">Guardar</button>
+                <button type="button" id="btnCancelar" style="display: none; margin-left: 5px;">Cancelar</button>
+            </form>
+            <div id="errorMsg" style="display: none; color: red;"></div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Categoría</th> <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaSubcategorias">
+                <tr><td colspan="4">Cargando subcategorías...</td></tr>
+            </tbody>
+        </table>
+    </main>
+
+    <script type="module" src="../src/js/components/Navbar.js"></script>
+    <script type="module" src="../src/js/pages/admin/subcategorias.js"></script>
+</body>
+</html>

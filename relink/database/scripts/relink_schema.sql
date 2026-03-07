@@ -125,10 +125,10 @@ ALTER TABLE mensajes
 -- Añadir descripcion a categoria y subcategoria
 
 ALTER TABLE categorias
-	ADD descripcion varchar(200) not null;
+	ADD descripcion varchar(200) null;
     
 ALTER TABLE subcategorias
-	ADD descripcion varchar(200) not null;
+	ADD descripcion varchar(200) null;
     
 ALTER TABLE users 
 MODIFY COLUMN rol ENUM('cliente', 'pro', 'admin') NOT NULL DEFAULT 'cliente';
@@ -204,3 +204,16 @@ ADD CONSTRAINT fk_user_localidad
 
 ALTER TABLE mensajes
 ADD COLUMN estado VARCHAR(20) NOT NULL DEFAULT 'enviado';
+
+
+
+/* ME ACABO DE DAR CUENTA QUE HICE LA DESCRIPCION DE CAT Y SUBCAT OBLIGATORIAS Y N0 TIENE
+MUCHO SENTIDO. EJECUTEN ESTO:
+
+use relink; 
+
+ALTER TABLE categorias 
+MODIFY descripcion varchar(200) NULL;
+
+ALTER TABLE subcategorias 
+MODIFY descripcion varchar(200) NULL; */

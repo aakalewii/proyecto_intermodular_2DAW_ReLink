@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Gestión de Categorías</title>
+</head>
+<body>
+
+    <header id="navbar-container"></header>
+
+    <main>
+        <h1>Gestión de Categorías</h1>
+
+        <div>
+            <h3>Añadir Nueva Categoría</h3>
+            <form id="formAddCategoria">
+                <input type="text" id="nombreCategoria" placeholder="Ej: Motor" required>
+                <input type="text" id="descCategoria" placeholder="Ej: Categoria relacionada con el motor">
+                <button type="submit">Guardar</button>
+                <button type="button" id="btnCancelar" style="display: none; margin-left: 5px;">Cancelar</button>
+            </form>
+            <div id="errorMsg" style="display: none;"></div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descrición</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaCategorias">
+                <tr><td colspan="3">Cargando categorías...</td></tr>
+            </tbody>
+        </table>
+    </main>
+
+    <script type="module" src="../src/js/components/Navbar.js"></script>
+    <script type="module" src="../src/js/pages/admin/categorias.js"></script>
+</body>
+</html>
