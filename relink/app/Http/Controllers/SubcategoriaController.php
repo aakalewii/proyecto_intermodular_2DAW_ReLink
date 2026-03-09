@@ -69,4 +69,12 @@ class SubcategoriaController extends Controller
             'message' => 'Eliminada con éxito'
         ], 200);
     }
+
+    // Filtrar subcategoría por categoria seleccionada
+    public function porCategoria($categoria_id)
+    {
+        // Buscamos las subcategorías donde la columna categoria_id coincida
+        $subcategorias = Subcategoria::where('categoria_id', $categoria_id)->get();
+        return response()->json($subcategorias);
+    }
 }

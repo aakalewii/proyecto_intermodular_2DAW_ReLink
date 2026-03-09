@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class ImagenAnuncio extends Model
 {
-    protected $table = 'imagenes_anuncios';
+    protected $table = 'imagenes_anuncio';
 
-    protected $fillable = ['ruta', 'anuncio_id'];
+    protected $fillable = ['url', 'anuncio_id'];
 
     public function anuncio()
     {

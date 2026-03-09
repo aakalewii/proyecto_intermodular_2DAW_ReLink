@@ -24,15 +24,21 @@ export async function getAnuncios() {
 }
 
 // 2. Crear Anuncio
-export async function createAnuncio(anuncioData) {
+export async function createAnuncio(formData) {
     try {
+        const token = localStorage.getItem('relink_token');
+        
         const response = await fetch(`${API_URL}/anuncios`, {
             method: 'POST',
-            headers: getAuthHeaders(),
-            body: JSON.stringify(anuncioData)
-        });
+            headers: {
+            'Authorization': token ? `Bearer ${token}` : ''
+        },
+        body: formData
+    });
+
         if (!response.ok) throw new Error('Error al crear el anuncio');
         return await response.json();
+
     } catch (error) {
         throw error;
     }
@@ -65,4 +71,21 @@ export async function deleteAnuncio(id) {
     } catch (error) {
         throw error;
     }
+}
+
+// --- FUNCIÓN PARA SUBIR FOTOS ---
+export async function uploadImagenes(anuncioId, formData) {
+    const token = localStorage.getItem('relink_token');
+    
+    const response = await fetch(`${API_URL}/anuncios/${anuncioId}/imagenes`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        body: formData
+    });
+
+    if (!response.ok) throw new Error('Error al subir las imágenes del anuncio');
+    
+    return await response.json();
 }

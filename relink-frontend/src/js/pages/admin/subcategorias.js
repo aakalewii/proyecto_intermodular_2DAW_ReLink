@@ -1,4 +1,4 @@
-import { renderNavbar } from '../../components/Navbar.js';
+import { renderNavbar } from '../../components/navBar.js';
 import { getCategorias, getSubcategorias, createSubcategoria, updateSubcategoria, deleteSubcategoria } from '../../services/categorias.js';
 
 let subcategoriaIdEditando = null;
@@ -110,7 +110,7 @@ async function cargarTablaSubcategorias() {
             tbody.appendChild(tr);
         });
 
-        // Darle vida a los botones de BORRAR
+        // Botones de BORRAR
         document.querySelectorAll('.btn-borrar').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const id = e.target.getAttribute('data-id');
@@ -121,7 +121,7 @@ async function cargarTablaSubcategorias() {
             });
         });
 
-        // Darle vida a los botones de EDITAR
+        // Botones de EDITAR
         document.querySelectorAll('.btn-editar').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const id = e.target.getAttribute('data-id');

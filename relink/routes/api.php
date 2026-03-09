@@ -26,6 +26,7 @@ Route::get('/anuncios/{id}', [AnuncioController::class, 'show']);
 
 Route::get('/categorias', [CategoriaController::class, 'index']);
 Route::get('/subcategorias', [SubcategoriaController::class, 'index']);
+Route::get('/categorias/{id}/subcategorias', [SubcategoriaController::class, 'porCategoria']);
 
 Route::get('/paises', [PaisController::class, 'index']);
 Route::get('/provincias', [ProvinciaController::class, 'index']);
@@ -52,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/anuncios', [AnuncioController::class, 'store']);
     Route::put('/anuncios/{id}', [AnuncioController::class, 'update']);
     Route::delete('/anuncios/{id}', [AnuncioController::class, 'destroy']);
+    Route::post('/anuncios/{id}/imagenes', [App\Http\Controllers\AnuncioController::class, 'subirImagenes']);
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {

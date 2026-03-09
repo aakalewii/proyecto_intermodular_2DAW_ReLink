@@ -51,7 +51,7 @@ class AnuncioDAO
         return $this->obtenerAnuncioPorId($id);
     }
 
-    public function eliminarAnuncioLogico($id)
+    public function eliminarAnuncio($id)
     {
         return DB::update('UPDATE anuncios SET estado = ? WHERE id = ?', [
             AnuncioEstado::ELIMINADO->value,

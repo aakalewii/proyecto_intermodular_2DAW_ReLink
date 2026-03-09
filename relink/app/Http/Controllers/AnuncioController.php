@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\DAOs\AnuncioDAO;
 use App\Enums\AnuncioEstado;
+use App\Models\Anuncio;
+use App\Models\ImagenAnuncio;
+use Illuminate\Support\Facades\DB;
+
 
 class AnuncioController extends Controller
 {
@@ -30,14 +34,41 @@ class AnuncioController extends Controller
             'descripcion' => ['required', 'string', 'max:255'],
             'precio' => ['required', 'numeric'],
             'localidad_id' => ['required', 'integer'],
-            'subcategoria_id' => ['required', 'integer']
+            'subcategoria_id' => ['required', 'integer'],
+            'imagenes' => ['nullable', 'array'],
+            'imagenes.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:2048']
         ]);
+        try {
 
-        $anuncio = $this->anuncioDAO->crearAnuncio($validated, $request->user()->id, now());
+        $anuncio = DB::transaction(function () use ($validated, $request) {
+           
+        $nuevoAnuncio = $this->anuncioDAO->crearAnuncio($validated, $request->user()->id, now());
 
-        return response()->json([
-            'message' => 'Anuncio creado con éxito',
-            'data' => $anuncio], 201);
+                if ($request->hasFile('imagenes')) {
+                    foreach ($request->file('imagenes') as $foto) {
+                        
+                        $ruta = $foto->store('anuncios', 'public');
+
+                        ImagenAnuncio::create([
+                            'url' => $ruta,
+                            'anuncio_id' => $nuevoAnuncio->id
+                        ]);
+                    }
+                }
+
+                return $nuevoAnuncio;
+        });       
+            return response()->json([
+                'message' => 'Anuncio y fotos creados con éxito',
+                'data' => $anuncio
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Hubo un error al guardar: ' . $e->getMessage()
+            ], 500);
+        }
+        
     }
 
     public function update(Request $request, int $id)
@@ -91,7 +122,7 @@ class AnuncioController extends Controller
             ], 403);
         }
 
-        $this->anuncioDAO->eliminarAnuncioLogico($id);
+        $this->anuncioDAO->eliminarAnuncio($id);
 
         return response()->json([
             'message' => 'Anuncio eliminado con éxito'
@@ -119,7 +150,7 @@ class AnuncioController extends Controller
 
             // 3. Guardar en la base de datos
             $nuevaImagen = ImagenAnuncio::create([
-                'ruta' => $ruta,
+                'url' => $ruta,
                 'anuncio_id' => $anuncio->id
             ]);
 

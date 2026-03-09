@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum ConversacionEstado: string
+enum MensajeEstado: string
 {
     case ENVIADO = 'enviado';    
     case ELIMINADO = 'eliminado';

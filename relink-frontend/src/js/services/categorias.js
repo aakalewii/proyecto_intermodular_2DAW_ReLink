@@ -79,3 +79,12 @@ export async function deleteSubcategoria(id) {
     if (!response.ok) throw new Error('Error al borrar la subcategoría');
     return await response.json();
 }
+
+// Filtrado en cascada
+export async function getSubcategoriasPorCategoria(categoriaId) {
+    const response = await fetch(`${API_URL}/categorias/${categoriaId}/subcategorias`, { 
+        headers: getAuthHeaders() 
+    });
+    if (!response.ok) throw new Error('Error al cargar las subcategorías filtradas');
+    return await response.json();
+}

@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum ConversacionEstado: string
+enum AnuncioEstado: string
 {
     case PUBLICADO = 'publicado';
     case ELIMINADO = 'eliminado';

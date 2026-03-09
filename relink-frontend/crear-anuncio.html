@@ -14,6 +14,10 @@
 
         <form id="formCrearAnuncio">
             <div>
+                <label>Fotos del Anuncio (Opcional):</label>
+                <input type="file" id="imagenes" multiple accept="image/jpeg, image/png, image/jpg, image/gif">
+            </div>
+            <div>
                 <label>Título del Anuncio:</label>
                 <input type="text" id="titulo" required>
             </div>
@@ -29,8 +33,17 @@
             </div>
 
             <div>
-                <label>ID de Subcategoría (De momento a mano):</label>
-                <input type="number" id="subcategoria_id" required>
+                <label>Categoría:</label>
+                <select id="categoria_id" required>
+                    <option value="" disabled selected>Cargando categorías...</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Subcategoría:</label>
+                <select id="subcategoria_id" required disabled>
+                    <option value="" disabled selected>Selecciona primero una categoría...</option>
+                </select>
             </div>
 
             <div>
