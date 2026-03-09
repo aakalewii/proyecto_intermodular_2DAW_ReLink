@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ReLink — Planes</title>
+
+  <link rel="stylesheet" href="css/root.css">
+  <link rel="stylesheet" href="css/core.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+
+<body>
+
+  <!-- ============================================================
+       TOPBAR — Barra superior con navegación secundaria
+       ============================================================ -->
+  <div class="topbar">
+    <div class="container topbar__inner">
+
+      <!-- Lado izquierdo: mensajes rápidos -->
+      <div class="topbar__left">
+        <span class="pill pill--new" data-i18n="top.new">Nuevo</span>
+        <span class="topbar__claim" data-i18n="top.claim">
+          Envíos protegidos · Pagos seguros · Soporte 24/7
+        </span>
+      </div>
+
+      <!-- Lado derecho: navegación -->
+      <div class="topbar__right">
+        <a class="topbar__link" href="planes.html" data-i18n="top.plans">Planes</a>
+        <a class="topbar__link" href="#" data-open="help" data-i18n="top.help">Ayuda</a>
+
+        <!-- Enlace directo a favoritos -->
+        <a class="topbar__btn" href="index.html?favs=1" data-i18n="top.favs">Mis favoritos</a>
+
+        <!-- Selector de idioma -->
+        <div class="lang">
+          <button id="langBtn" class="topbar__btn" type="button" aria-expanded="false">ES ▾</button>
+          <div id="langMenu" class="lang__menu" hidden>
+            <button type="button" data-lang="es">Español</button>
+            <button type="button" data-lang="en">English</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       HERO / HEADER — Presentación de la página de planes
+       ============================================================ -->
+  <header class="header">
+    <div class="container" style="padding:18px 0 12px;">
+
+      <!-- Logo principal -->
+      <a class="brand" href="index.html" aria-label="ReLink">
+        <img class="brand__logo-flat"
+        src="assets/imagenes/ReLink_1.png"
+        alt="Logo ReLink">
+      </a>
+
+      <!-- Panel principal del hero -->
+      <div class="panel" style="padding:18px;">
+
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;">
+
+          <!-- Texto principal del hero -->
+          <div style="min-width:260px;">
+            <h1 class="h1" style="margin:0 0 6px;" data-i18n="plans.title">Planes</h1>
+
+            <p class="muted" style="margin:0;max-width:70ch;" data-i18n="plans.desc">
+              Elige el plan que mejor encaje con tu uso. Puedes empezar gratis y mejorar cuando quieras.
+            </p>
+
+            <!-- Etiquetas informativas -->
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+              <span class="pill" style="border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.04);">Sin permanencia</span>
+              <span class="pill" style="border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.04);">Cancela cuando quieras</span>
+              <span class="pill pill--new">Pago seguro</span>
+            </div>
+          </div>
+
+          <!-- “Switcher” visual (no funcional, solo UI) -->
+          <div class="panel" style="padding:10px;border-radius:18px;display:flex;gap:10px;align-items:center;">
+            <span class="muted" style="font-weight:900;">Facturación</span>
+
+            <!-- Botón activo -->
+            <button class="btn btn--chip" type="button" aria-pressed="true" style="height:40px;">Mensual</button>
+
+            <!-- Botón inactivo -->
+            <button class="btn btn--ghost" type="button" aria-pressed="false" style="height:40px;">
+              Anual <span class="pill" style="margin-left:8px;">-15%</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ============================================================
+       MAIN — Contenido principal de la página
+       ============================================================ -->
+  <main class="container" style="padding:10px 0 40px;">
+
+
+    <!-- ============================================================
+         PRICING GRID — Tarjetas de los planes
+         Cada plan es un <article> para semántica correcta.
+         ============================================================ -->
+    <section>
+      <div class="grid" style="margin-top:14px;">
+
+        <!-- ============================================================
+             PLAN GRATIS
+             ============================================================ -->
+        <article class="panel" style="padding:16px;">
+
+          <!-- Cabecera del plan -->
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">
+            <div>
+              <h2 class="h2" style="margin:0;">Gratis</h2>
+              <p class="muted mt" style="margin-top:8px;">Para empezar a comprar y vender sin límites básicos.</p>
+            </div>
+          </div>
+
+          <!-- Precio mensual -->
+          <div style="margin-top:10px;font-size:28px;font-weight:1100;">
+            0€ <span class="muted" style="font-size:13px;font-weight:800;">/mes</span>
+          </div>
+
+          <!-- Lista de características -->
+          <ul class="help__list" style="margin-top:10px;">
+            <li>Publicar anuncios ilimitados (demo)</li>
+            <li>Favoritos y “No me interesa”</li>
+            <li>Perfil público</li>
+            <li>Soporte estándar</li>
+          </ul>
+
+          <button class="btn btn--ghost w100" type="button" style="margin-top:12px;">Usar gratis</button>
+        </article>
+
+
+        <!-- ============================================================
+             PLAN PRO — Destacado como “más popular”
+             ============================================================ -->
+        <article class="panel" style="padding:16px;border-color:rgba(38,208,124,.28);">
+
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">
+            <div>
+              <h2 class="h2" style="margin:0;">Pro</h2>
+              <p class="muted mt" style="margin-top:8px;">Para vender más rápido con visibilidad extra y herramientas.</p>
+            </div>
+
+            <!-- Etiqueta de plan destacado -->
+            <span class="pill pill--new">Más popular</span>
+          </div>
+
+          <div style="margin-top:10px;font-size:28px;font-weight:1100;">
+            6,99€ <span class="muted" style="font-size:13px;font-weight:800;">/mes</span>
+          </div>
+
+          <ul class="help__list" style="margin-top:10px;">
+            <li>Destacar anuncios (x/semana)</li>
+            <li>Estadísticas de visitas y favoritos</li>
+            <li>Badges de confianza</li>
+            <li>Soporte prioritario</li>
+          </ul>
+
+          <button class="btn btn--primary w100" type="button" style="margin-top:12px;">Elegir Pro</button>
+
+          <p class="muted" style="margin:10px 0 0;font-weight:700;">
+            Ideal si publicas anuncios cada semana.
+          </p>
+        </article>
+
+
+        <!-- ============================================================
+             PLAN EMPRESA
+             ============================================================ -->
+        <article class="panel" style="padding:16px;">
+
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">
+            <div>
+              <h2 class="h2" style="margin:0;">Empresa</h2>
+              <p class="muted mt" style="margin-top:8px;">Para tiendas y negocios con catálogo y publicación masiva.</p>
+            </div>
+          </div>
+
+          <div style="margin-top:10px;font-size:28px;font-weight:1100;">
+            Custom <span class="muted" style="font-size:13px;font-weight:800;">/mes</span>
+          </div>
+
+          <ul class="help__list" style="margin-top:10px;">
+            <li>Publicación masiva</li>
+            <li>Roles (gestores / operadores)</li>
+            <li>Soporte dedicado</li>
+            <li>Integraciones y reporting</li>
+          </ul>
+
+          <button class="btn btn--green w100" type="button" style="margin-top:12px;">Contactar</button>
+        </article>
+
+      </div>
+    </section>
+
+
+    <!-- ============================================================
+         COMPARATIVA — Tabla visual con CSS Grid
+         ============================================================ -->
+    <section style="margin-top:16px;">
+      <div class="panel" style="padding:16px;">
+
+        <h2 class="h2" style="margin-bottom:10px;">Comparativa rápida</h2>
+
+        <!-- Contenedor de la tabla -->
+        <div class="panel" style="padding:12px;background:rgba(255,255,255,.03);">
+
+          <!-- Cabecera de la tabla -->
+          <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:10px;align-items:center;font-weight:1000;">
+            <div class="muted">Función</div>
+            <div>Gratis</div>
+            <div>Pro</div>
+            <div>Empresa</div>
+          </div>
+
+          <div style="height:10px;"></div>
+
+          <!-- ============================================================
+               FILAS DE LA TABLA (cada una es un grid)
+               ============================================================ -->
+
+          <!-- Publicar anuncios -->
+          <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:10px;align-items:center;">
+            <div class="muted" style="font-weight:800;">Publicar anuncios</div>
+            <div>✓</div><div>✓</div><div>✓</div>
+          </div>
+          <div style="height:8px;"></div>
+
+          <!-- Favoritos -->
+          <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:10px;align-items:center;">
+            <div class="muted" style="font-weight:800;">Favoritos</div>
+            <div>✓</div><div>✓</div><div>✓</div>
+          </div>
+          <div style="height:8px;"></div>
+
+          <!-- Destacados -->
+          <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:10px;align-items:center;">
+            <div class="muted" style="font-weight:800;">Destacados</div>
+            <div>—</div><div>✓</div><div>✓</div>
+          </div>
+          <div style="height:8px;"></div>
+
+          <!-- Estadísticas -->
+          <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:10px;align-items:center;">
+            <div class="muted" style="font-weight:800;">Estadísticas</div>
+            <div>—</div><div>✓</div><div>✓</div>
+          </div>
+          <div style="height:8px;"></div>
+
+          <!-- Soporte -->
+          <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:10px;align-items:center;">
+            <div class="muted" style="font-weight:800;">Soporte</div>
+            <div>Estándar</div><div>Prioritario</div><div>Dedicado</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============================================================
+         FAQ — Preguntas frecuentes
+         ============================================================ -->
+    <section style="margin-top:16px;">
+      <div class="panel" style="padding:16px;">
+
+        <h2 class="h2" style="margin-bottom:10px;">Preguntas frecuentes</h2>
+
+        <!-- Cada pregunta es un panel secundario -->
+        <div class="panel" style="padding:12px;background:rgba(255,255,255,.03);">
+          <h3 style="margin:0 0 6px;font-size:14px;">¿Puedo empezar gratis y luego pasar a Pro?</h3>
+          <p class="muted" style="margin:0;">Sí. Puedes subir de plan cuando quieras (y cancelar después sin permanencia).</p>
+        </div>
+
+        <div style="height:10px;"></div>
+
+        <div class="panel" style="padding:12px;background:rgba(255,255,255,.03);">
+          <h3 style="margin:0 0 6px;font-size:14px;">¿Qué significa “destacar anuncios”?</h3>
+          <p class="muted" style="margin:0;">Tus anuncios aparecen antes y con una etiqueta visual. En demo lo dejamos simulado.</p>
+        </div>
+
+        <div style="height:10px;"></div>
+
+        <div class="panel" style="padding:12px;background:rgba(255,255,255,.03);">
+          <h3 style="margin:0 0 6px;font-size:14px;">¿Empresa incluye cuentas para el equipo?</h3>
+          <p class="muted" style="margin:0;">Sí, incluye roles y permisos para gestionar catálogo y publicaciones.</p>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ============================================================
+         CTA FINAL — Llamada a la acción
+         ============================================================ -->
+    <section style="margin-top:16px;">
+      <div class="cta">
+        <h3 style="margin:0 0 8px;">¿Listo para vender más rápido?</h3>
+        <p class="muted" style="margin:0 0 12px;">Empieza gratis o prueba Pro para darle visibilidad extra a tus anuncios.</p>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a class="btn btn--ghost" href="index.html">Volver al inicio</a>
+          <button class="btn btn--primary" type="button">Elegir Pro</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- ============================================================
+       MODAL HELP — Ventana de ayuda
+       ============================================================ -->
+  <dialog id="modal-help" class="modal" aria-modal="true" role="dialog" aria-labelledby="helpTitle">
+    <div class="modal__box">
+
+      <div class="modal__head">
+        <h2 id="helpTitle">Ayuda</h2>
+        <button class="icon-btn" type="button" data-close aria-label="Cerrar">✕</button>
+      </div>
+
+      <div class="help">
+        <p><strong>Planes:</strong> esta página es demo (sin pasarela). Sirve para UI y navegación.</p>
+
+        <ul class="help__list">
+          <li>Gratis: funciones básicas.</li>
+          <li>Pro: visibilidad extra y estadísticas.</li>
+          <li>Empresa: catálogo y soporte dedicado.</li>
+        </ul>
+      </div>
+
+    </div>
+  </dialog>
+
+
+  <!-- ==========================================
+       SCRIPTS EXTERNOS 
+       ========================================== -->
+  <script src="js/core.js" defer></script>
+  <script src="js/translations.js" defer></script>
+  <script src="js/features.js" defer></script>
+  <script src="js/app.js" defer></script>
+
+</body>
+</html>

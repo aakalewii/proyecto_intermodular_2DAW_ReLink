@@ -1,0 +1,28 @@
+/* ============================================================
+   VARIABLES GLOBALES DEL PROYECTO
+   Define la paleta de colores, radios, sombras
+   y valores reutilizables en todo el proyecto.
+  ============================================================ */
+
+:root{
+  --bg0: #070a12;
+  --bg1: #0b1020;
+
+  --panel: rgba(255,255,255,.06);
+  --panel2: rgba(255,255,255,.08);
+  --stroke: rgba(255,255,255,.14);
+
+  --text: rgba(255,255,255,.92);
+  --muted: rgba(255,255,255,.72);
+
+  --green: #26d07c;
+  --green2: #18b86b;
+  --purple: #7c3aed;
+  --purple2: #a855f7;
+  --danger: #ff4d6d;
+
+  --radius: 18px;
+  --radius2: 24px;
+
+  --shadow: 0 20px 60px rgba(0,0,0,.45);
+}

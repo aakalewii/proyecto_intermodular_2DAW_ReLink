@@ -1,0 +1,555 @@
+/* ================================================================================
+   Pills
+   Etiquetas destacadas para resaltar información importante (nuevo, en envío, etc.)
+   ================================================================================ */
+
+.pill{
+  display: inline-flex;   /* Flexbox para alinear el contenido */
+  align-items: center;    /* Centrar verticalmente */
+  gap: 8px;               /* Espacio entre el icono y el texto */
+  padding: 6px 10px;      
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(0,0,0,.25);  /* Fondo semitransparente */
+  backdrop-filter: blur(10px);   /* Efecto de desenfoque */
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.pill--new{
+  border-color: rgba(38,208,124,.35);
+  background: rgba(38,208,124,.12);
+}
+
+.pill--ship{  
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  border-color: rgba(38,208,124,.35);
+  background: rgba(38,208,124,.12);
+}
+
+/* ======================================================================
+   Buttons
+   Botones con variantes para diferentes acciones (ghost, primary, danger)
+   ====================================================================== */
+
+.btn{
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 900;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+}
+
+.btn--ghost:hover{ 
+  border-color: rgba(255,255,255,.22); 
+}
+
+.btn--green{
+  border-color: rgba(38,208,124,.45);
+  background: linear-gradient(90deg, rgba(38,208,124,.95), rgba(24,184,107,.95));
+  color: #071016;
+  height: 42px;
+  padding: 0 14px;
+}
+
+.btn--primary{
+  border-color: rgba(124,58,237,.40);
+  background: linear-gradient(90deg, rgba(124,58,237,.95), rgba(38,208,124,.85));
+  color: #fff;
+}
+
+.btn--danger{
+  border-color: rgba(255,77,109,.35);
+  background: rgba(255,77,109,.12);
+}
+
+.btn--chip{
+  border-color: rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+}
+
+/* Botón Buscar */
+.btn--search{
+  border-color: rgba(38,208,124,.55);
+  background: linear-gradient(
+    90deg,
+    rgba(38,208,124,.98) 0%,
+    rgba(38,208,124,.92) 65%,
+    rgba(124,58,237,.80) 100%
+  );
+  color: #071016;
+  height: 42px;
+  padding: 0 16px;
+}
+.btn--search:hover{ 
+  filter: brightness(1.03); 
+}
+
+/* Botón "Limpiar" */
+.link{
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 900;
+  cursor: pointer;
+}
+.link:hover{ 
+  border-color: rgba(38,208,124,.25); 
+}
+
+/* ===========================================================================
+   Chips
+   Son etiquetas interactivas para categorías, filtros o etiquetas de productos
+   ============================================================================ */
+
+.chips{
+  display: flex;
+  gap: 10px;
+  padding: 10px 0 16px;
+  flex-wrap: wrap; /* Permite que se ajusten a la siguiente línea en pantallas pequeñas */
+}
+
+.chip{
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.chip:hover{ 
+  border-color: rgba(38,208,124,.35); 
+}
+
+/* =========================
+   Panel
+   ========================= */
+.panel{
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  border-radius: var(--radius2);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow);
+}
+
+/* Sidebar */
+.sidebar .field{ 
+  margin: 14px 0; 
+}
+
+.sidebar .field label{
+  font-size: 12px;
+  letter-spacing: 0.2px; 
+  color:var(--muted);
+  font-weight:900;
+}
+
+/* Botón aplicar filtros */
+#applyFilters.btn{
+  border-color: rgba(255,255,255,.16);
+  background: rgba(255,255,255,.06);
+  box-shadow: 0 14px 34px rgba(0,0,0,.25);
+}
+#applyFilters.btn:hover{
+  border-color: rgba(38,208,124,.28);
+}
+
+/* =========================
+   Inputs
+   ========================= */
+input, select, textarea{
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.22);
+  color: var(--text); /* Color de texto claro para contraste con el fondo oscuro */
+  padding: 12px 12px;
+  border-radius: 14px;
+  outline: none;
+  font-weight: 800;
+}
+
+textarea{
+  resize: vertical;
+  min-height: 96px;
+}
+
+input::placeholder, textarea::placeholder{ 
+  color: rgba(255,255,255,.55);
+}
+
+select{
+  appearance: none; 
+  background-image:
+    linear-gradient(45deg, transparent 50%, rgba(255,255,255,.75) 50%),
+    linear-gradient(135deg, rgba(255,255,255,.75) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 18px,
+    calc(100% - 12px) 18px;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+
+select option{
+  background: #0b0f1b;
+  color: #fff;
+}
+
+/* ===================================================
+   Helper + CTA
+   Mensaje de ayuda o información adicional para guiar 
+   al usuario en ciertas acciones o secciones.
+   =================================================== */
+
+.helper{
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.03);
+  border: 1px dashed rgba(255,255,255,.12);
+  color: var(--muted); /* Color de texto más suave para diferenciarlo del contenido principal */
+  font-weight: 800;
+}
+
+.cta{
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+}
+.cta h3{
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+.cta p{
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+/* ======================================================================
+   Grid + Card
+    Tarjetas para mostrar productos, artículos o cualquier contenido 
+    visual con una estructura consistente y un diseño atractivo.
+   ====================================================================== */
+
+.grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.card{
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  border-radius: var(--radius2);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.card__media{
+  position: relative;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.thumb{
+  height: 170px;
+  background: linear-gradient(135deg, rgba(38,208,124,.18), rgba(124,58,237,.18));
+}
+
+.card__body{ 
+  padding: 14px; 
+}
+
+.card__top{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.price{
+  font-size: 20px;
+  font-weight: 1000;
+}
+
+/* Etiqueta de estado */
+.tag{
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 900;
+  color: var(--text);
+  font-size: 12px;
+}
+
+.card__title{ 
+  margin: 10px 0 0; 
+  font-size: 16px; 
+}
+
+.card__title a{ 
+  text-decoration: none; 
+}
+
+/* Meta información del producto (vendedor, categoría, etc.) */
+.card__meta{
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+/* Botón "Agregar al carrito" */
+.card__bottom{
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* Botón del vendedor */
+.seller{
+  text-decoration: none;
+  border: 1px solid rgba(38,208,124,.25);
+  background: rgba(38,208,124,.10);
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-weight: 900;
+}
+
+/* =================================================
+   Muestra la calificación de un producto o servicio.
+   ================================================== */
+.rating{
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-weight: 900;
+  color: var(--muted);
+}
+
+/* ====================================
+   Interest buttons
+   Botones me interesa, no me interesa
+   ==================================== */
+  .interest-wrap{
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.28);
+  backdrop-filter: blur(12px);
+  z-index: 6;
+}
+
+.interest-btn{
+  flex: 1;
+  height:34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-weight: 950;
+  font-size: 11px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.92);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform .12s ease, border-color .15s ease, background .15s ease, box-shadow .15s ease;
+}
+
+.interest-btn--yes{
+  border-color: rgba(38,208,124,.60);
+  background: rgba(38,208,124,.20);
+}
+.interest-btn--no{
+  border-color: rgba(255,77,109,.60);
+  background: rgba(255,77,109,.18);
+}
+
+.interest-btn:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,.26);
+}
+.interest-btn:active{ 
+  transform: translateY(0); 
+}
+
+.interest-btn.is-active{
+  box-shadow: 0 0 0 4px rgba(38,208,124,.10);
+}
+.interest-btn--no.is-active{
+  box-shadow: 0 0 0 4px rgba(255,77,109,.10);
+}
+
+/* ===================================================
+   Pager
+   Paginación para navegar entre páginas de productos, 
+   resultados de búsqueda, etc.
+   =================================================== */
+.pager{
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.pages{
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.page{
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  color: rgba(255,255,255,.92);
+  font-weight: 1000;
+  cursor: pointer;
+  transition: transform .12s ease, border-color .15s ease, background .15s ease;
+}
+
+.page:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,.22);
+  background: rgba(255,255,255,.08);
+}
+
+.page.is-active{
+  border-color: rgba(38,208,124,.50);
+  background: rgba(38,208,124,.18);
+  box-shadow: 0 0 0 4px rgba(38,208,124,.10);
+}
+
+#prevPage, #nextPage{
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-weight: 1000;
+}
+
+#prevPage:disabled, #nextPage:disabled, .page:disabled{
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =====================================================================
+   Modal
+   Ventanas modales para mostrar información adicional, formularios, etc.
+   ===================================================================== */
+.modal{
+  border: none;
+  padding: 0;
+  background: transparent;
+}
+.modal::backdrop{
+  background: rgba(0,0,0,.62);
+  backdrop-filter: blur(6px);
+}
+
+.modal__box{
+  width: min(720px, calc(100vw - 24px));
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(10,12,18,.92);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+  margin: auto;
+  padding: 14px;
+  color: var(--text);
+}
+
+.modal__head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 4px 12px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.icon-btn{
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 1000;
+}
+
+.help, .help *{ 
+  color: inherit; 
+}
+.help__list{ 
+  color: var(--muted); 
+}
+
+/* =========================
+   Responsive
+   ========================= */
+@media (max-width: 980px){
+  .grid{ 
+    grid-template-columns: repeat(2, 1fr); 
+  }
+}
+
+@media (max-width: 560px){
+  .grid{ 
+    grid-template-columns: 1fr; 
+  }
+
+  .pager{
+    border-radius: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  #prevPage, #nextPage{ 
+    width: 100%; 
+  }
+
+  .pages{ 
+    order: -1;  /* Mueve las páginas antes de los botones prev/next en móviles */
+    width: 100%; 
+    justify-content: center; 
+  }
+}

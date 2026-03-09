@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ReLink — segunda mano</title>
+
+  <!-- Metadatos para SEO y redes sociales -->
+  <meta name="description" content="ReLink — Compra y vende de segunda mano.">
+  <meta property="og:title" content="ReLink — segunda mano">
+  <meta property="og:description" content="Compra y vende con confianza.">
+  <meta property="og:type" content="website">
+
+  <!-- Hojas de estilo separadas por responsabilidad (buena práctica DAW) -->
+  <link rel="stylesheet" href="css/root.css">
+  <link rel="stylesheet" href="css/core.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+
+<body>
+
+  <!-- TOPBAR: barra superior con enlaces secundarios -->
+  <div class="topbar">
+    <div class="container topbar__inner">
+
+      <!-- Parte izquierda: información rápida -->
+      <div class="topbar__left">
+        <span class="pill pill--new">Nuevo</span>
+        <span class="topbar__claim">Envíos protegidos · Pagos seguros · Soporte 24/7</span>
+      </div>
+
+      <!-- Parte derecha: navegación secundaria -->
+      <div class="topbar__right" role="navigation" aria-label="Enlaces superiores">
+        <a class="topbar__link" href="plans.html">Planes</a>
+        <a class="topbar__link" href="#" data-open="help">Ayuda</a>
+
+        <!-- Botón accesible con aria-pressed -->
+        <button id="favToggle" class="topbar__btn" type="button" aria-pressed="false">Mis favoritos</button>
+
+        <!-- Selector de idioma -->
+        <div class="lang">
+          <button id="langBtn" class="topbar__btn" type="button" aria-expanded="false" aria-controls="langMenu">ES ▾</button>
+          <div id="langMenu" class="lang__menu" hidden>
+            <button type="button" data-lang="es">Español</button>
+            <button type="button" data-lang="en">English</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER: logo, buscador y autenticación -->
+  <header class="header">
+    <div class="container header__inner">
+
+      <!-- Logo con srcset (optimización responsive) -->
+      <a class="brand" href="index.html" aria-label="ReLink">
+        <img class="brand__logo-flat"
+          src="assets/imagenes/ReLink_1.png"
+        alt="Logo ReLink">
+      </a>
+
+      <!-- Buscador principal -->
+      <form class="search" action="/search" method="get" role="search" aria-label="Buscar anuncios">
+        <span class="search__icon" aria-hidden="true">⌕</span>
+
+        <!-- IMPORTANTE: name="q" para que el backend reciba el valor -->
+        <input id="q" name="q" class="search__input" type="search" placeholder="Busca móviles, bicis, sofás, consolas..." />
+
+        <button class="search__near" type="button">Cerca de mí</button>
+        <button class="btn btn--search" type="submit">Buscar</button>
+      </form>
+
+      <!-- Zona de autenticación (se alterna con JS) -->
+      <div class="auth" aria-live="polite">
+
+        <!-- Vista para invitados -->
+        <div id="authGuest" class="auth__group">
+          <button class="btn btn--ghost" type="button" data-open="auth" data-auth-mode="login">Entrar</button>
+          <button class="btn btn--ghost" type="button" data-open="auth" data-auth-mode="register">Registro</button>
+          <button class="btn btn--primary" type="button" data-open="post">+ Publicar</button>
+        </div>
+
+        <!-- Vista para usuarios logueados -->
+        <div id="authUser" class="auth__group" hidden aria-hidden="true">
+          <button id="userChip" class="btn btn--chip" type="button">👤 usuario</button>
+          <button id="logoutBtn" class="btn btn--ghost" type="button">Salir</button>
+          <button class="btn btn--primary" type="button" data-open="post">+ Publicar</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Chips de búsqueda rápida -->
+    <div class="container chips" role="navigation" aria-label="Búsquedas rápidas">
+      <a class="chip" href="#" data-chip="iPhone">iPhone</a>
+      <a class="chip" href="#" data-chip="PS5">PS5</a>
+      <a class="chip" href="#" data-chip="Bicicleta">Bicicleta</a>
+      <a class="chip" href="#" data-chip="Sofá">Sofá</a>
+      <a class="chip" href="#" data-chip="Portátil">Portátil</a>
+    </div>
+  </header>
+
+  <!-- MAIN: filtros + resultados -->
+  <main class="container main">
+
+    <!-- Sidebar de filtros -->
+    <aside class="panel sidebar" aria-label="Filtros">
+      <div class="sidebar__head">
+        <h2 class="h2">Filtrar</h2>
+        <button id="clearFilters" class="link" type="button">Limpiar</button>
+      </div>
+
+      <!-- Filtros reales con name (importante para backend) -->
+      <div class="field">
+        <label for="cat">Categoría</label>
+        <select id="cat" name="category">
+          <option value="all">Todas</option>
+          <option value="tech">Tecnología</option>
+          <option value="motor">Motor</option>
+          <option value="home">Hogar</option>
+          <option value="fashion">Moda</option>
+          <option value="sport">Deporte</option>
+          <option value="jobs">Empleo</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="loc">Ubicación</label>
+        <input id="loc" name="location" type="text" placeholder="Ej: Las Palmas, Telde..." />
+      </div>
+
+      <div class="field grid2">
+        <div>
+          <label for="min">Precio mín.</label>
+          <input id="min" name="priceMin" type="number" min="0" placeholder="0" />
+        </div>
+        <div>
+          <label for="max">Precio máx.</label>
+          <input id="max" name="priceMax" type="number" min="0" placeholder="500" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="sort">Ordenar por</label>
+        <select id="sort" name="sort">
+          <option value="rec">Recomendados</option>
+          <option value="recent">Más recientes</option>
+          <option value="priceAsc">Precio: menor a mayor</option>
+          <option value="priceDesc">Precio: mayor a menor</option>
+        </select>
+      </div>
+
+      <button id="applyFilters" class="btn btn--ghost w100" type="button">Aplicar filtros</button>
+
+      <div class="helper">Tip: usa “Cerca de mí” en el buscador.</div>
+
+      <div class="cta">
+        <h3>Publica hoy</h3>
+        <p>Sube fotos, pon precio y listo.</p>
+        <button class="btn btn--primary w100" type="button" data-open="post">+ Crear anuncio</button>
+        <button class="btn btn--ghost w100" type="button" data-open="help">Ver cómo funciona</button>
+      </div>
+    </aside>
+
+    <!-- Zona de resultados -->
+    <section class="content" aria-label="Resultados">
+      <div class="content__head">
+        <div>
+          <h1 class="h1">Recomendados para ti</h1>
+
+          <!-- aria-live: los lectores de pantalla anuncian cambios -->
+          <p id="resultsDesc" class="muted" aria-live="polite">Mostrando 0 · Página 1/1</p>
+        </div>
+      </div>
+
+      <!-- Aquí JS inyecta las tarjetas -->
+      <div id="grid" class="grid" aria-live="polite"></div>
+
+      <div class="pager">
+        <button id="prevPage" class="btn btn--ghost" type="button">← Anterior</button>
+        <div id="pages" class="pages" role="navigation" aria-label="Paginación"></div>
+        <button id="nextPage" class="btn btn--ghost" type="button">Siguiente →</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__inner">
+
+      <!-- Columna 1 -->
+      <div class="footer__col footer__brand">
+        <a class="brand brand--flat-footer" href="index.html" aria-label="ReLink">
+          <img class="brand__logo-flat" src="assets/imagenes/ReLink_1.png" alt="Logo ReLink" loading="lazy">
+        </a>
+
+        <p class="muted mt">Compra y vende con confianza.</p>
+
+        <div class="store-badges">
+          <a class="badge" href="#" aria-label="App Store"><span class="badge__icon"></span><span>App Store</span></a>
+          <a class="badge" href="#" aria-label="Google Play"><span class="badge__icon">▶</span><span>Google Play</span></a>
+        </div>
+
+        <div class="social">
+          <a class="social__btn" href="#" aria-label="Instagram">IG</a>
+          <a class="social__btn" href="#" aria-label="X">X</a>
+          <a class="social__btn" href="#" aria-label="TikTok">TT</a>
+        </div>
+      </div>
+
+      <!-- Columna 2 -->
+      <div class="footer__col">
+        <h4>ReLink</h4>
+        <a href="#" class="footer__link">Cómo funciona</a>
+        <a href="#" class="footer__link">Envíos protegidos</a>
+        <a href="#" class="footer__link">Tarifas</a>
+        <a href="#" class="footer__link">Verificación</a>
+      </div>
+
+      <!-- Columna 3 -->
+      <div class="footer__col">
+        <h4>Soporte</h4>
+        <a href="#" class="footer__link">Centro de ayuda</a>
+        <a href="#" class="footer__link">Seguridad</a>
+        <a href="#" class="footer__link">Reportar anuncio</a>
+        <a href="#" class="footer__link">Contacto</a>
+      </div>
+
+      <!-- Columna 4 -->
+      <div class="footer__col">
+        <h4>Legal</h4>
+        <a href="#" class="footer__link">Privacidad</a>
+        <a href="#" class="footer__link">Términos</a>
+        <a href="#" class="footer__link">Cookies</a>
+        <a href="#" class="footer__link">Aviso legal</a>
+      </div>
+
+    </div>
+
+    <div class="footer__bottom">
+      <div class="container footer__bottom-inner">
+        <span class="muted">© <span id="year"></span> ReLink</span>
+        <span class="muted">Prueba Demo</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================
+     MODAL DE AUTENTICACIÓN
+     (Login + Registro)
+     ============================ -->
+
+<!-- <dialog> es un componente nativo para ventanas modales -->
+<dialog id="modal-auth" class="modal" aria-modal="true" role="dialog" aria-labelledby="authTitle">
+
+  <div class="modal__box">
+
+    <!-- Cabecera del modal -->
+    <div class="modal__head">
+      <h2 id="authTitle">Entrar</h2>
+
+      <!-- Botón para cerrar el modal (lo gestiona JS con data-close) -->
+      <button class="icon-btn" type="button" data-close aria-label="Cerrar">✕</button>
+    </div>
+
+    <!-- Sistema de pestañas accesible (login / registro) -->
+    <div class="tabs" role="tablist" aria-label="Autenticación">
+      <!-- aria-selected indica qué pestaña está activa -->
+      <button class="tab is-active" role="tab" aria-selected="true"
+              aria-controls="loginForm" id="tab-login" data-tab="login">
+        Entrar
+      </button>
+
+      <button class="tab" role="tab" aria-selected="false"
+              aria-controls="registerForm" id="tab-register" data-tab="register">
+        Registro
+      </button>
+    </div>
+
+    <!-- ============================
+         FORMULARIO LOGIN
+         ============================ -->
+    <!-- role="tabpanel" vincula la pestaña con su contenido -->
+    <form id="loginForm" class="form"
+          action="/api/auth/login" method="post"
+          role="tabpanel" aria-labelledby="tab-login">
+
+      <!-- IMPORTANTE: name="email" para que el backend reciba el dato -->
+      <div class="field">
+        <label for="loginEmail">Email</label>
+        <input id="loginEmail" name="email" type="email"
+               placeholder="email@ejemplo.com" required />
+      </div>
+
+      <div class="field">
+        <label for="loginPass">Contraseña</label>
+        <input id="loginPass" name="password" type="password"
+               placeholder="••••••" required />
+      </div>
+
+      <!-- Mensaje de error dinámico (JS lo muestra/oculta) -->
+      <div id="loginError" class="error" role="alert" aria-live="assertive" hidden></div>
+
+      <button class="btn btn--green w100" type="submit">Entrar</button>
+    </form>
+
+    <!-- ============================
+         FORMULARIO REGISTRO
+         ============================ -->
+    <form id="registerForm" class="form"
+          action="/api/auth/register" method="post"
+          role="tabpanel" aria-labelledby="tab-register"
+          hidden>
+
+      <div class="field">
+        <label for="regName">Nombre</label>
+        <input id="regName" name="name" type="text"
+               placeholder="Tu nombre" required />
+      </div>
+
+      <div class="field">
+        <label for="regEmail">Email</label>
+        <input id="regEmail" name="email" type="email"
+               placeholder="email@ejemplo.com" required />
+      </div>
+
+      <div class="field">
+        <label for="regPass">Contraseña</label>
+        <input id="regPass" name="password" type="password"
+               placeholder="Mínimo 6 caracteres" minlength="6" required />
+      </div>
+
+      <div id="registerError" class="error" role="alert" aria-live="assertive" hidden></div>
+
+      <button class="btn btn--green w100" type="submit">Registro</button>
+    </form>
+
+  </div>
+</dialog>
+
+
+
+<!-- ============================
+     MODAL PARA CREAR ANUNCIO
+     ============================ -->
+
+<dialog id="modal-post" class="modal" aria-modal="true" role="dialog" aria-labelledby="postTitle">
+
+  <div class="modal__box">
+
+    <div class="modal__head">
+      <h2 id="postTitle">Crear anuncio</h2>
+      <button class="icon-btn" type="button" data-close aria-label="Cerrar">✕</button>
+    </div>
+
+    <!-- enctype="multipart/form-data" es obligatorio para subir imágenes -->
+    <form id="postForm" class="form"
+          action="/api/posts" method="post"
+          enctype="multipart/form-data" novalidate>
+
+      <div class="field">
+        <label for="pTitle">Título</label>
+        <input id="pTitle" name="title" type="text"
+               placeholder="Ej: iPhone 13 128GB" required>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label for="pPrice">Precio (€)</label>
+          <!-- type="number" + step permite decimales -->
+          <input id="pPrice" name="price" type="number"
+                 step="0.01" min="0" placeholder="150" required>
+        </div>
+
+        <div class="field">
+          <label for="pCat">Categoría</label>
+          <select id="pCat" name="category" required>
+            <option value="all">Todas</option>
+            <option value="tech">Tecnología</option>
+            <option value="motor">Motor</option>
+            <option value="home">Hogar</option>
+            <option value="fashion">Moda</option>
+            <option value="sport">Deporte</option>
+            <option value="jobs">Empleo</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="pLoc">Ubicación</label>
+        <input id="pLoc" name="location" type="text"
+               placeholder="Las Palmas" required>
+      </div>
+
+      <div class="field">
+        <label for="pCond">Estado</label>
+        <select id="pCond" name="condition" required>
+          <option value="Nuevo">Nuevo</option>
+          <option value="Como nuevo">Como nuevo</option>
+          <option value="Buen estado">Buen estado</option>
+          <option value="A reparar">A reparar</option>
+        </select>
+      </div>
+
+      <!-- Checkbox simple -->
+      <label class="check">
+        <input id="pShip" name="shipping" type="checkbox" checked>
+        <span>Envío disponible</span>
+      </label>
+
+      <div class="field">
+        <label for="pDesc">Descripción</label>
+        <textarea id="pDesc" name="description" rows="4"
+                  placeholder="Cuenta detalles: uso, estado real, accesorios, entrega..."></textarea>
+      </div>
+
+      <!-- Subida de imagen -->
+      <div class="field">
+        <label for="pImgFile">Imagen</label>
+
+        <!-- accept limita a imágenes; capture abre cámara en móvil -->
+        <input id="pImgFile" name="image" type="file"
+               accept="image/*" capture="environment">
+
+        <small class="muted">Sube una foto desde tu PC/móvil.</small>
+
+        <!-- Vista previa generada por JS -->
+        <img id="pImgPreview" alt="Vista previa de la imagen"
+             style="display:none; max-width:100%; margin-top:8px;">
+      </div>
+
+      <div class="field">
+        <label for="pImgUrl">o URL (opcional)</label>
+        <input id="pImgUrl" name="imageUrl" type="url"
+               placeholder="https://...">
+      </div>
+
+      <!-- Mensaje de error dinámico -->
+      <div id="postError" class="error" role="alert" aria-live="assertive" hidden></div>
+
+      <button class="btn btn--primary w100" type="submit">Publicar</button>
+    </form>
+
+  </div>
+</dialog>
+
+
+
+<!-- ============================
+     MODAL DE AYUDA
+     ============================ -->
+
+<dialog id="modal-help" class="modal" aria-modal="true" role="dialog" aria-labelledby="helpTitle">
+
+  <div class="modal__box">
+
+    <div class="modal__head">
+      <h2 id="helpTitle">Ayuda</h2>
+      <button class="icon-btn" type="button" data-close aria-label="Cerrar">✕</button>
+    </div>
+
+    <div class="help">
+      <p><strong>Cómo funciona:</strong> publica un anuncio, marca “Me interesa”, chatea con el vendedor y compra con seguridad.</p>
+
+      <ul class="help__list">
+        <li>“Me interesa” guarda el producto en favoritos.</li>
+        <li>“No me interesa” oculta el producto.</li>
+        <li>Publicar requiere iniciar sesión.</li>
+      </ul>
+    </div>
+
+  </div>
+</dialog>
+
+<!-- SCRIPTS EXTERNOS -->
+<script src="js/core.js" defer></script>
+<script src="js/translations.js" defer></script>
+<script src="js/features.js" defer></script>
+<script src="js/app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ReLink — Perfil</title>
+
+  <link rel="stylesheet" href="css/root.css">
+  <link rel="stylesheet" href="css/core.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+
+<body>
+
+  <!-- ============================================================
+       TOPBAR — Barra superior con navegación secundaria
+       ============================================================ -->
+  <div class="topbar">
+    <div class="container topbar__inner">
+
+      <!-- Lado izquierdo: mensajes rápidos -->
+      <div class="topbar__left">
+        <span class="pill pill--new" data-i18n="top.new">Nuevo</span>
+        <span class="topbar__claim" data-i18n="top.claim">
+          Envíos protegidos · Pagos seguros · Soporte 24/7
+        </span>
+      </div>
+
+      <!-- Lado derecho: navegación secundaria -->
+      <div class="topbar__right">
+
+        <a class="topbar__link" href="index.html" data-i18n="top.home">Inicio</a>
+        <a class="topbar__link" href="plans.html" data-i18n="top.plans">Planes</a>
+        <a class="topbar__link" href="#" data-open="help" data-i18n="top.help">Ayuda</a>
+        <a class="topbar__btn" href="index.html?favs=1" data-i18n="top.favs">Mis favoritos</a>
+
+        <!-- Selector de idioma -->
+        <div class="lang">
+          <button id="langBtn" class="topbar__btn" type="button" aria-expanded="false">
+            ES ▾
+          </button>
+
+          <div id="langMenu" class="lang__menu" hidden>
+            <button type="button" data-lang="es">Español</button>
+            <button type="button" data-lang="en">English</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       HEADER — Logo, buscador y autenticación
+       ============================================================ -->
+  <header class="header">
+    <div class="container header__inner">
+
+      <!-- Logo principal -->
+      <a class="brand" href="index.html" aria-label="ReLink">
+        <img class="brand__logo-flat"
+             src="assets/imagenes/ReLink_1.png"
+             alt="Logo ReLink">
+      </a>
+
+      <!-- Buscador: en perfil redirige al index -->
+      <form class="search" action="index.html" method="GET" role="search" aria-label="Buscar anuncios">
+        <span class="search__icon" aria-hidden="true">⌕</span>
+
+        <!-- name="q" para que index.html reciba la búsqueda -->
+        <input id="q" name="q" class="search__input" type="search"
+               data-i18n-placeholder="search.placeholder"
+               placeholder="Busca móviles, bicis, sofás, consolas..." />
+
+        <button class="search__near" type="button">Cerca de mí</button>
+        <button class="btn btn--green" type="submit">Buscar</button>
+      </form>
+
+      <!-- Zona de autenticación -->
+      <div class="auth" aria-live="polite">
+
+        <!-- Vista para invitados -->
+        <div id="authGuest" class="auth__group">
+          <button class="btn btn--ghost" type="button"
+                  data-open="auth" data-auth-mode="login"
+                  data-i18n="auth.login">Entrar</button>
+
+          <button class="btn btn--ghost" type="button"
+                  data-open="auth" data-auth-mode="register"
+                  data-i18n="auth.register">Registro</button>
+
+          <button class="btn btn--primary" type="button" data-open="post">
+            + Publicar
+          </button>
+        </div>
+
+        <!-- Vista para usuarios logueados -->
+        <div id="authUser" class="auth__group" hidden aria-hidden="true">
+          <button id="userChip" class="btn btn--chip" type="button" title="Ver perfil">
+            👤 usuario
+          </button>
+
+          <button id="logoutBtn" class="btn btn--ghost" type="button"
+                  data-i18n="auth.logout">Salir</button>
+
+          <button class="btn btn--primary" type="button" data-open="post">
+            + Publicar
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       MAIN — Panel de perfil del usuario
+       Aquí se cargan los datos dinámicos desde JS
+       ============================================================ -->
+  <main class="container" style="padding:18px 0 34px;">
+
+    <!-- ============================================================
+         CLIENT VIEW — Vista del usuario normal
+         JS alterna entre esta vista y la vista admin.
+         ============================================================ -->
+    <section id="clientPanel">
+
+      <!-- Panel superior con avatar, nombre y email -->
+      <div class="panel" style="padding:16px;">
+
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+
+          <!-- Avatar generado por JS (inicial del nombre) -->
+          <div id="profileAvatar" class="profile-avatar"
+               style="width:56px;height:56px;border-radius:18px;
+                      display:flex;align-items:center;justify-content:center;
+                      font-weight:1100;">
+            R
+          </div>
+
+          <!-- Datos del usuario -->
+          <div style="min-width:0;">
+            <h1 id="profileName" class="h1" style="margin:0;">Usuario</h1>
+
+            <!-- Email truncado si es largo -->
+            <div id="profileEmail" class="muted"
+                 style="font-weight:800;max-width:60ch;
+                        overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+              —
+            </div>
+
+            <!-- Estadísticas del usuario (JS las rellena) -->
+            <div id="profileStats"
+                 style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+            </div>
+          </div>
+
+          <!-- Botón volver -->
+          <div style="margin-left:auto;display:flex;gap:10px;flex-wrap:wrap;">
+            <a class="btn btn--ghost" href="index.html">← Volver</a>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Listado de anuncios del usuario -->
+      <div style="margin-top:14px;">
+
+        <div style="display:flex;align-items:flex-end;
+                    justify-content:space-between;gap:12px;flex-wrap:wrap;">
+
+          <div>
+            <h2 class="h2" data-i18n="profile.listTitle">Anuncios del usuario</h2>
+
+            <!-- Descripción dinámica: “Mostrando X anuncios” -->
+            <p id="profileListDesc" class="muted" style="margin:6px 0 0;">—</p>
+          </div>
+
+        </div>
+
+        <!-- Grid donde JS inyecta los anuncios del usuario -->
+        <div id="profileGrid" class="grid" style="margin-top:12px;"></div>
+
+      </div>
+    </section>
+
+        <!-- ============================================================
+         ADMIN VIEW — Panel de administrador
+         Solo se muestra si el usuario es admin.
+         ============================================================ -->
+    <section id="adminPanel" hidden style="margin-top:0;">
+
+      <div class="panel" style="padding:16px;">
+
+        <!-- Título principal del panel admin -->
+        <h1 class="h1" style="margin:0 0 6px;">Panel de administrador</h1>
+        <p class="muted" style="margin:0;">Has iniciado sesión como admin.</p>
+
+        <!-- Tarjetas con estadísticas globales -->
+        <div class="grid" style="margin-top:14px;">
+
+          <!-- Total de usuarios registrados -->
+          <div class="panel" style="padding:14px;">
+            <div class="muted" style="font-weight:900;">Usuarios</div>
+            <div id="adminUsersCount"
+                 style="font-size:26px;font-weight:1100;margin-top:6px;">—</div>
+          </div>
+
+          <!-- Total de anuncios publicados -->
+          <div class="panel" style="padding:14px;">
+            <div class="muted" style="font-weight:900;">Anuncios</div>
+            <div id="adminAdsCount"
+                 style="font-size:26px;font-weight:1100;margin-top:6px;">—</div>
+          </div>
+
+          <!-- Total de favoritos guardados -->
+          <div class="panel" style="padding:14px;">
+            <div class="muted" style="font-weight:900;">Favoritos</div>
+            <div id="adminFavsCount"
+                 style="font-size:26px;font-weight:1100;margin-top:6px;">—</div>
+          </div>
+
+        </div>
+
+        <!-- Acciones rápidas del administrador -->
+        <div class="panel" style="padding:14px;margin-top:14px;">
+
+          <h2 class="h2" style="margin-bottom:10px;">Acciones rápidas</h2>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+            <!-- Botón para reiniciar datos de la demo -->
+            <button class="btn btn--ghost" type="button" id="btnAdminResetDemo">
+              Reset demo (ads/favs)
+            </button>
+
+            <!-- Enlace rápido al index -->
+            <a class="btn btn--ghost" href="index.html">Ir al index</a>
+          </div>
+
+          <p class="muted" style="margin:10px 0 0;">
+            Aquí luego añadiremos gestión de usuarios/anuncios (tabla, borrar, etc.).
+          </p>
+
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+
+  <!-- ============================================================
+       FOOTER — Pie de página global
+       ============================================================ -->
+  <footer class="footer">
+    <div class="container footer__inner">
+
+      <!-- Columna 1: marca y redes -->
+      <div class="footer__col footer__brand">
+        <a class="brand brand--flat-footer" href="index.html" aria-label="ReLink">
+          <img class="brand__logo-flat"
+               src="assets/imagenes/ReLink_1png.png"
+               alt="Logo ReLink">
+        </a>
+
+        <p class="muted mt">
+          Compra y vende con confianza. Publica gratis, chatea y cierra trato rápido.
+        </p>
+
+        <!-- Botones de descarga de apps -->
+        <div class="store-badges">
+          <a class="badge" href="#" aria-label="App Store">
+            <span class="badge__icon"></span>
+            <span>App Store</span>
+          </a>
+          <a class="badge" href="#" aria-label="Google Play">
+            <span class="badge__icon">▶</span>
+            <span>Google Play</span>
+          </a>
+        </div>
+
+        <!-- Redes sociales -->
+        <div class="social">
+          <a class="social__btn" href="#" aria-label="Instagram">IG</a>
+          <a class="social__btn" href="#" aria-label="X">X</a>
+          <a class="social__btn" href="#" aria-label="TikTok">TT</a>
+        </div>
+      </div>
+
+      <!-- Columna 2 -->
+      <div class="footer__col">
+        <h4>ReLink</h4>
+        <a href="#" class="footer__link">Cómo funciona</a>
+        <a href="#" class="footer__link">Envíos protegidos</a>
+        <a href="#" class="footer__link">Tarifas</a>
+        <a href="#" class="footer__link">Verificación</a>
+      </div>
+
+      <!-- Columna 3 -->
+      <div class="footer__col">
+        <h4>Soporte</h4>
+        <a href="#" class="footer__link">Centro de ayuda</a>
+        <a href="#" class="footer__link">Seguridad</a>
+        <a href="#" class="footer__link">Reportar anuncio</a>
+        <a href="#" class="footer__link">Contacto</a>
+      </div>
+
+      <!-- Columna 4 -->
+      <div class="footer__col">
+        <h4>Legal</h4>
+        <a href="#" class="footer__link">Privacidad</a>
+        <a href="#" class="footer__link">Términos</a>
+        <a href="#" class="footer__link">Cookies</a>
+        <a href="#" class="footer__link">Aviso legal</a>
+      </div>
+
+    </div>
+
+    <!-- Línea inferior del footer -->
+    <div class="footer__bottom">
+      <div class="container footer__bottom-inner">
+        <span class="muted">© <span id="year"></span> ReLink</span>
+        <span class="muted">Prueba Demo</span>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ============================================================
+       MODALES — Accesibles, con roles ARIA, formularios reales y 
+       estructura coherente en todo el proyecto.
+       ============================================================ -->
+
+  <!-- MODAL AUTENTICACIÓN (Login + Registro) -->
+  <dialog id="modal-auth" class="modal" aria-modal="true" role="dialog" aria-labelledby="authTitle">
+
+    <div class="modal__box">
+
+      <div class="modal__head">
+        <h2 id="authTitle">Entrar</h2>
+        <button class="icon-btn" type="button" data-close aria-label="Cerrar">✕</button>
+      </div>
+
+      <!-- Pestañas accesibles -->
+      <div class="tabs" role="tablist" aria-label="Autenticación">
+        <button class="tab is-active" role="tab" aria-selected="true"
+                aria-controls="loginForm" id="tab-login" data-tab="login">
+          Entrar
+        </button>
+
+        <button class="tab" role="tab" aria-selected="false"
+                aria-controls="registerForm" id="tab-register" data-tab="register">
+          Registro
+        </button>
+      </div>
+
+      <!-- Formulario Login -->
+      <form id="loginForm" class="form"
+            action="/api/auth/login" method="post"
+            role="tabpanel" aria-labelledby="tab-login">
+
+        <div class="field">
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" name="email" type="email"
+                 placeholder="email@ejemplo.com" required />
+        </div>
+
+        <div class="field">
+          <label for="loginPass">Contraseña</label>
+          <input id="loginPass" name="password" type="password"
+                 placeholder="••••••" required />
+        </div>
+
+        <div id="loginError" class="error" role="alert" aria-live="assertive" hidden></div>
+
+        <button class="btn btn--green w100" type="submit">Entrar</button>
+      </form>
+
+      <!-- Formulario Registro -->
+      <form id="registerForm" class="form"
+            action="/api/auth/register" method="post"
+            role="tabpanel" aria-labelledby="tab-register"
+            hidden>
+
+        <div class="field">
+          <label for="regName">Nombre</label>
+          <input id="regName" name="name" type="text"
+                 placeholder="Tu nombre" required />
+        </div>
+
+        <div class="field">
+          <label for="regEmail">Email</label>
+          <input id="regEmail" name="email" type="email"
+                 placeholder="email@ejemplo.com" required />
+        </div>
+
+        <div class="field">
+          <label for="regPass">Contraseña</label>
+          <input id="regPass" name="password" type="password"
+                 placeholder="Mínimo 6 caracteres" minlength="6" required />
+        </div>
+
+        <div id="registerError" class="error" role="alert" aria-live="assertive" hidden></div>
+
+        <button class="btn btn--green w100" type="submit">Registro</button>
+      </form>
+
+    </div>
+  </dialog>
+
+  <!-- ============================================================
+       MODAL CREAR ANUNCIO
+       ============================================================ -->
+  <dialog id="modal-post" class="modal" aria-modal="true" role="dialog" aria-labelledby="postTitle">
+
+    <div class="modal__box">
+
+      <div class="modal__head">
+        <h2 id="postTitle">Crear anuncio</h2>
+        <button class="icon-btn" type="button" data-close aria-label="Cerrar">✕</button>
+      </div>
+
+      <!-- enctype="multipart/form-data" obligatorio para subir imágenes -->
+      <form id="postForm" class="form"
+            action="/api/posts" method="post"
+            enctype="multipart/form-data" novalidate>
+
+        <div class="field">
+          <label for="pTitle">Título</label>
+          <input id="pTitle" name="title" type="text"
+                 placeholder="Ej: iPhone 13 128GB" required>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label for="pPrice">Precio (€)</label>
+            <input id="pPrice" name="price" type="number"
+                   step="0.01" min="0" placeholder="150" required>
+          </div>
+
+          <div class="field">
+            <label for="pCat">Categoría</label>
+            <select id="pCat" name="category" required>
+              <option value="all">Todas</option>
+              <option value="tech">Tecnología</option>
+              <option value="motor">Motor</option>
+              <option value="home">Hogar</option>
+              <option value="fashion">Moda</option>
+              <option value="sport">Deporte</option>
+              <option value="jobs">Empleo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="pLoc">Ubicación</label>
+          <input id="pLoc" name="location" type="text"
+                 placeholder="Las Palmas" required>
+        </div>
+
+        <div class="field">
+          <label for="pCond">Estado</label>
+          <select id="pCond" name="condition" required>
+            <option value="Nuevo">Nuevo</option>
+            <option value="Como nuevo">Como nuevo</option>
+            <option value="Buen estado">Buen estado</option>
+            <option value="A reparar">A reparar</option>
+          </select>
+        </div>
+
+        <label class="check">
+          <input id="pShip" name="shipping" type="checkbox" checked>
+          <span>Envío disponible</span>
+        </label>
+
+        <div class="field">
+          <label for="pDesc">Descripción</label>
+          <textarea id="pDesc" name="description" rows="4"
+                    placeholder="Cuenta detalles: uso, estado real, accesorios, entrega..."></textarea>
+        </div>
+
+        <div class="field">
+          <label for="pImgFile">Imagen</label>
+          <input id="pImgFile" name="image" type="file"
+                 accept="image/*" capture="environment">
+          <small class="muted">Sube una foto desde tu PC/móvil.</small>
+
+          <!-- Vista previa generada por JS -->
+          <img id="pImgPreview" alt="Vista previa de la imagen"
+               style="display:none; max-width:100%; margin-top:8px;">
+        </div>
+
+        <div class="field">
+          <label for="pImgUrl">o URL (opcional)</label>
+          <input id="pImgUrl" name="imageUrl" type="url"
+                 placeholder="https://...">
+        </div>
+
+        <div id="postError" class="error" role="alert" aria-live="assertive" hidden></div>
+
+        <button class="btn btn--primary w100" type="submit">Publicar</button>
+
+      </form>
+
+    </div>
+  </dialog>
+
+
+  <!-- ==========================================
+       MODAL AYUDA
+       ========================================== -->
+  <dialog id="modal-help" class="modal" aria-modal="true" role="dialog" aria-labelledby="helpTitle">
+
+    <div class="modal__box">
+
+      <div class="modal__head">
+        <h2 id="helpTitle">Ayuda</h2>
+        <button class="icon-btn" type="button" data-close aria-label="Cerrar">✕</button>
+      </div>
+
+      <div class="help">
+        <p><strong>Cómo funciona:</strong> publica un anuncio, marca “Me interesa”, chatea con el vendedor y compra con seguridad.</p>
+
+        <ul class="help__list">
+          <li>“Me interesa” guarda el producto en favoritos.</li>
+          <li>“No me interesa” oculta el producto.</li>
+          <li>Publicar requiere iniciar sesión.</li>
+        </ul>
+      </div>
+
+    </div>
+  </dialog>
+
+
+  <!-- ============================================================
+       SCRIPT: Actualiza el año automáticamente
+       ============================================================ -->
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+
+  <!-- =====================================
+       SCRIPTS EXTERNOS 
+       ===================================== -->
+  <script src="js/core.js" defer></script>
+  <script src="js/translations.js" defer></script>
+  <script src="js/features.js" defer></script>
+  <script src="js/app.js" defer></script>
+</body>
+</html>

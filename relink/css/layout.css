@@ -1,0 +1,420 @@
+/* ============================================================
+   TOPBAR — Barra superior fija
+   ============================================================ */
+.topbar{
+  position: sticky;        /* Mantiene la barra fija al hacer scroll */
+  top: 0;
+  z-index: 1000;           /* Se asegura de que quede por encima del contenido */
+  background: rgba(0,0,0,.35);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+
+  /* Efecto glassmorphism (imita la apariencia del vidrio esmerilado translúcido)*/
+  backdrop-filter: blur(12px); 
+}
+
+.topbar__inner{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.topbar__left{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.topbar__claim{
+  color: var(--muted);
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Evita que el texto se desborde */
+}
+
+.topbar__right{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.topbar__link{
+  text-decoration: none;
+  color: var(--muted);
+  font-weight: 800;
+}
+.topbar__link:hover{ 
+  color: var(--text); 
+}
+
+/* Botón reutilizable en topbar */
+.topbar__btn{
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 900;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  line-height: 1;
+}
+.topbar__btn:hover{
+  border-color: rgba(255,255,255,.22);
+}
+.topbar__btn.is-active{
+  border-color: rgba(38,208,124,.45);
+  box-shadow: 0 0 0 3px rgba(38,208,124,.12);
+}
+
+/* ============================================================
+   MENÚ DE IDIOMA
+   ============================================================ */
+.lang{ 
+  position:relative; 
+  z-index:2000; 
+}
+
+/* Menú flotante con blur y sombra */
+.lang__menu{
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 180px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 14px;
+  background: rgba(10,12,18,.92);
+  backdrop-filter: blur(14px); /* Glassmorphism */
+  box-shadow: var(--shadow);
+  padding: 8px;
+  display: grid;
+  gap: 8px;
+  z-index: 3000;
+}
+
+.lang__menu button{
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  padding: 12px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  font-weight: 900;
+}
+.lang__menu button:hover{ border-color:rgba(38,208,124,.35); }
+
+/* Necesario para ocultar el menú correctamente */
+#langMenu[hidden]{ 
+  display: none !important; 
+}
+
+/* ============================================================
+   HEADER — Cabecera principal
+   ============================================================ */
+.header{
+  position:relative;
+  z-index: 1;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  background: linear-gradient(180deg, rgba(0,0,0,.18), transparent);
+}
+
+.header__inner{
+  display:grid;
+  grid-template-columns:   /* Uso de minmax() para columnas flexibles */
+    minmax(240px, 320px)   /* Logo */
+    minmax(420px, 1fr)     /* Buscador */
+    max-content;           /* Botones */
+  gap:16px;
+  align-items: center;
+  padding: 18px 0 10px;
+}
+
+/* ============================================================
+   BRAND — Logo
+   ============================================================ */
+.brand{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  min-width: 0;
+}
+
+/* Uso de clamp() para tamaño fluido del logo */
+.brand__logo-flat{
+  height: clamp(68px, 6vw, 96px);
+  width: auto;
+  object-fit: contain;
+
+  /* Sombra suave para resaltar el logo */
+  filter: drop-shadow(0 12px 26px rgba(0,0,0,.35));
+}
+
+/* Logo más grande en footer */
+.brand--flat-footer .brand__logo-flat{
+  height: clamp(78px, 7vw, 112px);
+}
+
+/* ============================================================
+   SEARCH — Buscador principal
+   ============================================================ */
+.search{
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  backdrop-filter: blur(12px); /* Efecto glassmorphism (imita la apariencia del vidrio esmerilado translúcido) */
+  width: 100%;
+  max-width: 760px;
+  justify-self: center;
+  min-width: 0;
+}
+
+.search__icon{ 
+  opacity: 0.8; 
+  font-weight: 900; 
+  user-select: none; 
+}
+
+.search__input{
+  flex: 1;
+  min-width: 220px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.search__input::placeholder{ 
+  color: rgba(255,255,255,.55); 
+}
+
+.search__near{
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  padding: 0 14px;
+  height: 42px;
+  border-radius: 999px;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.search__near:hover{
+  border-color:rgba(255,255,255,.22);
+}
+
+/* ============================================================
+   MAIN LAYOUT — Estructura principal
+   ============================================================ */
+.main{
+  display: grid;
+  grid-template-columns: 320px 1fr; /* Sidebar + contenido */
+  gap:18px;
+  padding:18px 0 28px;
+}
+
+/* Panel reutilizable */
+.panel{
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  border-radius: var(--radius2);
+  backdrop-filter: blur(14px); /* Efecto glassmorphism */
+  box-shadow: var(--shadow);
+}
+
+/* ============================================================
+   SIDEBAR — Filtros
+   ============================================================ */
+.sidebar{
+  padding: 16px;
+  position: sticky; /* Mantiene la barra fija al hacer scroll */
+  top: 72px; /* Se queda fija al hacer scroll */
+  height: fit-content;
+}
+
+.sidebar__head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+/* ============================================================
+   CONTENT — Zona principal
+   ============================================================ */
+.content{ 
+  min-width:0; 
+}
+
+.content__head{
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+/* Grid de productos */
+.grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:14px;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer{
+  margin-top: 18px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.22);
+  backdrop-filter: blur(14px); /* Efecto glassmorphism */
+}
+
+.footer__inner{
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr 1fr;
+  gap: 18px;
+  padding: 24px 0;
+}
+
+.footer__col h4{ 
+  margin: 0 0 10px; 
+  font-size: 14px; 
+  letter-spacing: 0.2px; 
+}
+
+.footer__link{
+  display: block;
+  margin: 8px 0;
+  text-decoration: none;
+  color: var(--muted);
+  font-weight: 800;
+}
+.footer__link:hover{ 
+  color: var(--text); 
+}
+
+.store-badges{
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.badge{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  text-decoration: none;
+  font-weight: 1000;
+}
+
+.badge__icon{ 
+  font-weight: 1100; 
+  opacity: 0.9; 
+}
+
+.social{
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.social__btn{
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 1100;
+  color: var(--muted);
+}
+.social__btn:hover{ 
+  color: var(--text); 
+  border-color: rgba(38,208,124,.25); 
+}
+
+.footer__bottom{ 
+  border-top: 1px solid rgba(255,255,255,.08); 
+}
+
+.footer__bottom-inner{
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 980px){
+  .header__inner{ 
+    grid-template-columns: 1fr; 
+  }
+  .main{ 
+    grid-template-columns: 1fr; 
+  }
+  .sidebar{ 
+    position: relative; 
+    top: auto; 
+  }
+  .grid{ 
+    grid-template-columns: repeat(2, 1fr); 
+  }
+  .footer__inner{ 
+    grid-template-columns: 1fr 1fr; 
+  }
+  .search{ 
+    max-width: 100%; 
+  }
+}
+
+@media (max-width: 560px){
+  .topbar__claim{ 
+    display: none; 
+  }
+  .search__near{ 
+    display: none; 
+  }
+  .grid{ 
+    grid-template-columns: 1fr; 
+  }
+}
+
+/* Logo más grande en pantallas pequeñas */
+.brand__logo-flat{
+  height: clamp(110px, 9vw, 170px);
+  width: auto;
+}
+
+.brand--flat-footer .brand__logo-flat{
+  height: clamp(130px, 10vw, 200px);
+}
