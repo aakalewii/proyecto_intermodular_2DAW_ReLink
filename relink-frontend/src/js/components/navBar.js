@@ -23,7 +23,7 @@ export function renderNavbar() {
         }
 
         let enlacesHtml = `
-            <span>Hola, <strong>${user.name}</strong></span>
+            <a href="/perfil.html">Hola, <strong>${user.name}</strong></a>
             <a href="/index.html" style="margin-left: 15px;">Inicio</a>
         `;
 

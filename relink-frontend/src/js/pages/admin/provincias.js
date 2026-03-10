@@ -1,4 +1,4 @@
-import { renderNavbar } from '../../components/navBar.js';
+import { renderNavbar } from '../../components/Navbar.js';
 import { getPaises, getProvincias, createProvincia, updateProvincia, deleteProvincia } from '../../services/ubicaciones.js';
 
 let provinciaIdEditando = null;

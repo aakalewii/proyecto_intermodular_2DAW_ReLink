@@ -1,4 +1,4 @@
-import { renderNavbar } from '../../components/navBar.js';
+import { renderNavbar } from '../../components/Navbar.js';
 import { getPaises, createPais, updatePais, deletePais } from '../../services/ubicaciones.js';
 
 // Variable para saber si estamos creando o editando

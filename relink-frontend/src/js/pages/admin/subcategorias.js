@@ -1,4 +1,4 @@
-import { renderNavbar } from '../../components/navBar.js';
+import { renderNavbar } from '../../components/Navbar.js';
 import { getCategorias, getSubcategorias, createSubcategoria, updateSubcategoria, deleteSubcategoria } from '../../services/categorias.js';
 
 let subcategoriaIdEditando = null;

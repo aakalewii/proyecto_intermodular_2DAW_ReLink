@@ -1,6 +1,4 @@
-import { getAuthHeaders} from './ubicaciones.js';
-
-const API_URL = 'http://localhost:5500/api';
+import { API_URL, getAuthHeaders} from './auth.js';
 
 // --- CATEGORÍAS ---
 export async function getCategorias() {

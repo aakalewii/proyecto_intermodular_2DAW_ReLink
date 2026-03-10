@@ -1,4 +1,4 @@
-import { renderNavbar } from '../../components/navBar.js';
+import { renderNavbar } from '../../components/Navbar.js';
 import { getMunicipios, getLocalidades, createLocalidad, updateLocalidad, deleteLocalidad } from '../../services/ubicaciones.js';
 
 let localidadIdEditando = null;

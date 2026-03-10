@@ -1,7 +1,7 @@
-import { renderNavbar } from '../components/navBar.js';
+import { renderNavbar } from '../components/Navbar.js';
 // Importamos la función para traer las localidades
 import { getLocalidades } from '../services/ubicaciones.js';
-import { createAnuncio, uploadImagenes } from '../services/anuncios.js';
+import { createAnuncio } from '../services/anuncios.js';
 import { getCategorias, getSubcategoriasPorCategoria } from '../services/categorias.js';
 
 document.addEventListener('DOMContentLoaded', () => {

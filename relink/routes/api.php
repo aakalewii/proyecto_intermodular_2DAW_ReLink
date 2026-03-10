@@ -36,7 +36,7 @@ Route::get('/localidades', [LocalidadController::class, 'index']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AccessController::class, 'Logout']);
     Route::get('/perfil',  [ProfileController::class, 'mostrarPerfil']);
-    Route::post('/editarperfil',  [ProfileController::class, 'editarPerfil']);
+    Route::put('/perfil', [ProfileController::class, 'editarPerfil']);
 
     Route::get('/conversaciones', [ConversacionController::class, 'index']);
     Route::post('/conversaciones', [ConversacionController::class, 'store']);

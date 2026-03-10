@@ -1,4 +1,14 @@
-const API_URL = 'http://localhost:5500/api';
+export const API_URL = 'http://localhost:5500/api';
+
+// Función auxiliar para obtener el token guardado
+export function getAuthHeaders() {
+    const token = localStorage.getItem('relink_token');
+    return {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': token ? `Bearer ${token}` : ''
+    };
+}
 
 export async function registerUser(userData) {
     try {
@@ -55,10 +65,7 @@ export async function logoutUser() {
     try {
         const response = await fetch(`${API_URL}/logout`, {
             method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${token}` 
-            }
+            headers: getAuthHeaders()
         });
 
         const data = await response.json();

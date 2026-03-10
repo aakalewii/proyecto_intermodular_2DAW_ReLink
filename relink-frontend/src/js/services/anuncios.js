@@ -1,14 +1,4 @@
-const API_URL = 'http://localhost:5500/api';
-
-// Función auxiliar para obtener el token guardado
-function getAuthHeaders() {
-    const token = localStorage.getItem('relink_token');
-    return {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': token ? `Bearer ${token}` : ''
-    };
-}
+import { API_URL, getAuthHeaders} from './auth.js';
 
 // 1. Leer Anuncios
 export async function getAnuncios() {
