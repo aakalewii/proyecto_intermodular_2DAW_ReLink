@@ -1,7 +1,6 @@
-import { renderNavbar } from '../components/Navbar.js'; // Ajusta la ruta a tu navbar si es distinta
+import { renderNavbar } from '../components/Navbar.js'; // Ajusta a navBar.js si tu archivo empieza en minúscula
 import { getLocalidades } from '../services/ubicaciones.js';
 import { getCategorias, getSubcategoriasPorCategoria } from '../services/categorias.js';
-// Importamos la nueva función updateAnuncioCompleto
 import { getAnuncioById, updateAnuncioCompleto } from '../services/anuncios.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -68,6 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 imgContainer.style.textAlign = 'center';
 
                 const imgElement = document.createElement('img');
+                // OJO: Cambia el 5500 por tu puerto si es distinto
                 imgElement.src = `http://localhost:5500/storage/${img.url}`; 
                 imgElement.width = 120; 
                 
@@ -80,8 +80,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Evento para marcar la foto para borrar
                 btnBorrar.addEventListener('click', () => {
                     if (confirm('¿Seguro que quieres borrar esta foto? Se eliminará definitivamente al guardar los cambios.')) {
-                        imagenesParaBorrar.push(img.id);
-                        imgContainer.remove();
+                        imagenesParaBorrar.push(img.id); // Guardamos el ID en la lista negra
+                        imgContainer.remove(); // La ocultamos de la pantalla para dar feedback al usuario
                     }
                 });
 

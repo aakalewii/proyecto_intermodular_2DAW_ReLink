@@ -1,14 +1,4 @@
-const API_URL = 'http://localhost:5500/api';
-
-// Función auxiliar para obtener el token guardado
-function getAuthHeaders() {
-    const token = localStorage.getItem('relink_token');
-    return {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': token ? `Bearer ${token}` : ''
-    };
-}
+import { API_URL, getAuthHeaders} from './auth.js';
 
 // 1. Leer Anuncios
 export async function getAnuncios() {
@@ -24,21 +14,34 @@ export async function getAnuncios() {
 }
 
 // 2. Crear Anuncio
-export async function createAnuncio(anuncioData) {
+export async function createAnuncio(formData) {
     try {
+        const token = localStorage.getItem('relink_token');
+        
         const response = await fetch(`${API_URL}/anuncios`, {
             method: 'POST',
-            headers: getAuthHeaders(),
-            body: JSON.stringify(anuncioData)
+            headers: {
+                'Authorization': token ? `Bearer ${token}` : '',
+                'Accept': 'application/json'
+            },
+            body: formData
         });
-        if (!response.ok) throw new Error('Error al crear el anuncio');
+
+        if (!response.ok) {
+            // Si quieres ver qué error da Laravel antes de lanzar el Error:
+            const errorData = await response.json();
+            console.error('Error de Laravel:', errorData);
+            throw new Error(errorData.message || 'Error al crear el anuncio');
+        }
+        
         return await response.json();
+
     } catch (error) {
         throw error;
     }
 }
 
-// 3. Actualizar Anuncio
+// 3. Actualizar Anuncio (La antigua, enviando JSON - por si la usas en otro lado)
 export async function updateAnuncio(id, anuncioData) {
     try {
         const response = await fetch(`${API_URL}/anuncios/${id}`, {
@@ -53,38 +56,35 @@ export async function updateAnuncio(id, anuncioData) {
     }
 }
 
-// 4. Borrar Anuncio
+// 4. Ver anuncio especifico
+export async function getAnuncioById(id) {
+    const response = await fetch(`${API_URL}/anuncios/${id}`, {
+        headers: { 'Accept': 'application/json' }
+    });
+    
+    if (!response.ok){
+        throw new Error('Error al cargar el anuncio');
+    }
+    return await response.json();
+}
+
+// 5. Borrar Anuncio
 export async function deleteAnuncio(id) {
     try {
         const response = await fetch(`${API_URL}/anuncios/${id}`, {
             method: 'DELETE',
             headers: getAuthHeaders()
         });
-        if (!response.ok) throw new Error('Error al borrar el anuncio');
+        if (!response.ok){
+            throw new Error('Error al borrar el anuncio');
+        }
         return await response.json();
     } catch (error) {
         throw error;
     }
-<<<<<<< Updated upstream
-=======
 }
 
-// 6. Borrar una imagen suelta de un anuncio
-export async function deleteImagenAnuncio(imagenId) {
-    const token = localStorage.getItem('relink_token');
-    const response = await fetch(`${API_URL}/imagenes/${imagenId}`, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': token ? `Bearer ${token}` : '',
-            'Accept': 'application/json'
-        }
-    });
-
-    if (!response.ok) throw new Error('Error al borrar la imagen');
-    return await response.json();
-}
-
-// --- FUNCIÓN PARA SUBIR FOTOS ---
+// 6. Subir fotos sueltas (Individual)
 export async function uploadImagenes(anuncioId, formData) {
     const token = localStorage.getItem('relink_token');
     
@@ -103,16 +103,15 @@ export async function uploadImagenes(anuncioId, formData) {
     return await response.json();
 }
 
-// --- NUEVA FUNCIÓN: ACTUALIZAR ANUNCIO CON FOTOS (FormData) ---
+// 7. ACTUALIZAR ANUNCIO CON FOTOS (El que usamos en la vista de editar)
 export async function updateAnuncioCompleto(id, formData) {
     const token = localStorage.getItem('relink_token');
     
     const response = await fetch(`${API_URL}/anuncios/${id}`, {
-        method: 'POST', // Usamos POST porque Laravel lo requiere cuando enviamos archivos y el _method=PUT
+        method: 'POST', // Usamos POST porque enviamos _method=PUT dentro del formData
         headers: {
             'Authorization': token ? `Bearer ${token}` : '',
             'Accept': 'application/json'
-            // OJO: No pongas 'Content-Type': 'multipart/form-data' aquí, fetch lo pone solo con el boundary correcto
         },
         body: formData
     });
@@ -122,5 +121,4 @@ export async function updateAnuncioCompleto(id, formData) {
         throw new Error(err.message || 'Error al actualizar el anuncio completo');
     }
     return await response.json();
->>>>>>> Stashed changes
 }

@@ -5,13 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\DAOs\AnuncioDAO;
 use App\Enums\AnuncioEstado;
-<<<<<<< Updated upstream
-=======
 use App\Models\Anuncio;
 use App\Models\ImagenAnuncio;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
->>>>>>> Stashed changes
 
 class AnuncioController extends Controller
 {
@@ -35,12 +32,10 @@ class AnuncioController extends Controller
             'descripcion' => ['required', 'string', 'max:255'],
             'precio' => ['required', 'numeric'],
             'localidad_id' => ['required', 'integer'],
-            'subcategoria_id' => ['required', 'integer']
+            'subcategoria_id' => ['required', 'integer'],
+            'imagenes' => ['nullable', 'array'],
+            'imagenes.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:2048']
         ]);
-<<<<<<< Updated upstream
-
-        $anuncio = $this->anuncioDAO->crearAnuncio($validated, $request->user()->id, now());
-=======
 
         try {
             $anuncio = DB::transaction(function () use ($validated, $request) {
@@ -79,11 +74,11 @@ class AnuncioController extends Controller
                 'message' => 'Anuncio no encontrado o no disponible'
             ], 404);
         }
->>>>>>> Stashed changes
 
         return response()->json([
-            'message' => 'Anuncio creado con éxito',
-            'data' => $anuncio], 201);
+            'message' => 'Anuncio recuperado con éxito',
+            'datos' => $anuncio
+        ], 200);
     }
 
     public function update(Request $request, int $id)
@@ -114,7 +109,7 @@ class AnuncioController extends Controller
                 // 1. Actualizamos los textos usando el DAO
                 $this->anuncioDAO->actualizarAnuncio($id, $validated);
 
-                // 2. Borramos las fotos marcadas usando el DAO (Él se encarga de borrar el archivo físico)
+                // 2. Borramos las fotos marcadas usando el DAO
                 if (!empty($validated['imagenes_a_borrar'])) {
                     $this->anuncioDAO->eliminarImagenes($validated['imagenes_a_borrar'], $anuncio->id);
                 }
@@ -154,14 +149,14 @@ class AnuncioController extends Controller
             return response()->json(['message' => 'No tienes permiso para eliminar este anuncio'], 403);
         }
 
-        $this->anuncioDAO->eliminarAnuncioLogico($id);
+        $this->anuncioDAO->eliminarAnuncio($id);
 
         return response()->json([
             'message' => 'Anuncio eliminado con éxito'
         ], 200);
     }
 
-    // Las funciones extra de imágenes sueltas, usando también el DAO para la eliminación física
+    // Funciones extra por si las necesitas en el futuro
     public function eliminarImagen(Request $request, $id)
     {
         $imagen = ImagenAnuncio::findOrFail($id);
@@ -187,30 +182,12 @@ class AnuncioController extends Controller
         $anuncio = Anuncio::findOrFail($anuncioId);
         $rutasGuardadas = [];
 
-<<<<<<< Updated upstream
-    // 2. Procesar cada imagen
-    if ($request->hasFile('imagenes')) {
-        foreach ($request->file('imagenes') as $foto) {
-            
-            // Guardar en la carpeta 'public/anuncios'
-            $ruta = $foto->store('anuncios', 'public');
-
-            // 3. Guardar en la base de datos
-            $nuevaImagen = ImagenAnuncio::create([
-                'ruta' => $ruta,
-                'anuncio_id' => $anuncio->id
-            ]);
-
-            $rutasGuardadas[] = $nuevaImagen;
-=======
         if ($request->hasFile('imagenes')) {
             foreach ($request->file('imagenes') as $foto) {
                 $ruta = $foto->store('anuncios', 'public');
-                // Guardamos usando el DAO
                 $this->anuncioDAO->guardarImagen($anuncio->id, $ruta);
                 $rutasGuardadas[] = $ruta;
             }
->>>>>>> Stashed changes
         }
 
         return response()->json([

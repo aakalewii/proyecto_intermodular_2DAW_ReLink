@@ -1,6 +1,7 @@
 import { renderNavbar } from '../components/Navbar.js';
 import { getMiPerfil, updatePerfil } from '../services/perfil.js';
 import { getLocalidades } from '../services/ubicaciones.js'; 
+// AÑADIDO: Importamos la función para borrar anuncios
 import { deleteAnuncio } from '../services/anuncios.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -29,6 +30,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // Pintamos la información
         pintarDatosLectura(datosUsuarioActual);
+        
+        // Pasamos los anuncios a la función para que los pinte (ya vienen filtrados desde Laravel)
         pintarMisAnuncios(datosUsuarioActual.anuncios);
 
     } catch (error) {
@@ -37,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
 
-    // --- LÓGICA DE LOS BOTONES ---
+    // --- LÓGICA DE LOS BOTONES DEL PERFIL ---
 
     // Al darle a "Editar Perfil"
     document.getElementById('btn-editar').addEventListener('click', async () => {
@@ -94,7 +97,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
 
-    // --- GUARDAR LOS CAMBIOS ---
+    // --- GUARDAR LOS CAMBIOS DEL PERFIL ---
     
     formEditar.addEventListener('submit', async (e) => {
         e.preventDefault(); 
@@ -180,11 +183,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // PINTAR ANUNCIOS Y BOTÓN DE BORRAR
     function pintarMisAnuncios(anuncios) {
         const listaAnuncios = document.getElementById('mis-anuncios-lista');
         listaAnuncios.innerHTML = ''; 
 
-        if (anuncios.length === 0) {
+        if (!anuncios || anuncios.length === 0) {
             listaAnuncios.innerHTML = '<p>Aún no has publicado ningún anuncio.</p>';
             return; 
         }
@@ -199,24 +203,25 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <h4 style="margin: 0 0 5px 0;">${anuncio.titulo}</h4>
                 <p style="margin: 0 0 10px 0;">Precio: <strong>${anuncio.precio}€</strong></p>
                 <a href="/ver-anuncio.html?id=${anuncio.id}" style="margin-right: 10px;">Ver detalle</a>
-                <button style="color: red; cursor: pointer;">Borrar Anuncio</button>
+                <a href="/editar-anuncio.html?id=${anuncio.id}" style="margin-right: 10px; color: #007bff; text-decoration: none;">Editar</a>
+                <button style="color: red; cursor: pointer; border: none; background: none; padding: 0;">Borrar Anuncio</button>
             `;
             
-            // --- LÓGICA DEL BOTÓN DE BORRAR ---
-            const btnBorrar = card.querySelector('button'); // Capturamos el botón de esta tarjeta
+            // Capturamos el botón que acabamos de crear en esta tarjeta
+            const btnBorrar = card.querySelector('button'); 
             
             btnBorrar.addEventListener('click', async () => {
-                // Confirmación de seguridad
                 if (confirm(`¿Seguro que quieres borrar el anuncio "${anuncio.titulo}"?`)) {
                     try {
                         btnBorrar.textContent = "Borrando...";
                         btnBorrar.disabled = true;
 
-                        // Llamamos al servicio para borrar en Laravel
                         await deleteAnuncio(anuncio.id);
+                        
+                        // Lo quitamos de la pantalla si todo fue bien
                         card.remove();
 
-                        // Comprobamos si nos hemos quedado a cero anuncios para poner el mensaje
+                        // Comprobamos si nos hemos quedado sin anuncios
                         if (listaAnuncios.children.length === 0) {
                             listaAnuncios.innerHTML = '<p>Aún no has publicado ningún anuncio.</p>';
                         }
@@ -228,7 +233,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 }
             });
-            // ----------------------------------
 
             listaAnuncios.appendChild(card);
         });

@@ -1,15 +1,13 @@
-import { renderNavbar } from '../components/navBar.js';
-// Importamos la función para traer las localidades
+import { renderNavbar } from '../components/Navbar.js';
 import { getLocalidades } from '../services/ubicaciones.js';
+import { getCategorias, getSubcategoriasPorCategoria } from '../services/categorias.js';
 import { createAnuncio } from '../services/anuncios.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Renderizamos la barra de navegación
+document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Renderizar el Navbar
     renderNavbar();
 
-    cargarSelectLocalidades();
-
-    // 2. Comprobamos si el usuario está logueado
+    // 2. Comprobar si el usuario está logueado
     const token = localStorage.getItem('relink_token');
     if (!token) {
         alert("Debes iniciar sesión para publicar un anuncio.");
@@ -17,102 +15,118 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Cuestionario para la creación del anuncio
     const form = document.getElementById('formCrearAnuncio');
-    const errorMessageDiv = document.getElementById('errorMsg');
-    const submitButton = form.querySelector('button[type="submit"]');
-
-    if (!form) return;
-
-    // 3. Escuchamos cuando el usuario le da a enviar
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        limpiarErrores();
-
-        // Extraemos los datos del formulario
-        const tituloValue = document.getElementById('titulo').value;
-        const descripcionValue = document.getElementById('descripcion').value;
-        const precioValue = document.getElementById('precio').value;
-        const subcategoriaValue = document.getElementById('subcategoria_id').value;
-        const localidadValue = document.getElementById('localidad_id').value;
-
-        // Armamos el objeto
-        const anuncioData = {
-            titulo: tituloValue,
-            descripcion: descripcionValue,
-            precio: parseFloat(precioValue), // Lo convertimos a número decimal
-            subcategoria_id: parseInt(subcategoriaValue), // Lo convertimos a número entero
-            localidad_id: parseInt(localidadValue)
-        };
-
-        // Aseguramos que el precio y los IDs sean números
-        anuncioData.precio = parseFloat(anuncioData.precio);
-        anuncioData.subcategoria_id = parseInt(anuncioData.subcategoria_id);
-        if (anuncioData.localidad_id) {
-            anuncioData.localidad_id = parseInt(anuncioData.localidad_id);
-        }
-
-        cargando(true);
-
-        try {
-            // Llamamos a nuestro servicio
-            await createAnuncio(anuncioData);
-
-            alert('¡Anuncio publicado con éxito!');
-            window.location.href = '/index.html'; // Lo mandamos al inicio para que vea su anuncio
-
-        } catch (error) {
-            mostrarError(error.message || 'Error al publicar el anuncio. Revisa los datos.');
-        } finally {
-            cargando(false);
-        }
-    });
-
-    // --- FUNCIÓN PARA LLENAR EL DESPLEGABLE DE LOCALIDADES ---
-async function cargarSelectLocalidades() {
+    const selectCategoria = document.getElementById('categoria_id');
+    const selectSubcategoria = document.getElementById('subcategoria_id');
     const selectLocalidad = document.getElementById('localidad_id');
+    const btnPublicar = document.getElementById('btnPublicar');
+    const errorMsg = document.getElementById('errorMsg');
+    const successMsg = document.getElementById('successMsg');
+
+    // --- CARGA INICIAL DE DATOS ---
+
+    // Cargar Categorías
+    try {
+        const categorias = await getCategorias();
+        selectCategoria.innerHTML = '<option value="" disabled selected>Selecciona una categoría...</option>';
+        categorias.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.id;
+            option.textContent = cat.nombre;
+            selectCategoria.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Error cargando categorías:", error);
+    }
+
+    // Cargar Localidades
     try {
         const localidades = await getLocalidades();
         selectLocalidad.innerHTML = '<option value="" disabled selected>Selecciona una localidad...</option>';
-        
-        localidades.forEach(localidad => {
+        localidades.forEach(loc => {
             const option = document.createElement('option');
-            option.value = localidad.id;
-            
-            // Un toque pro: mostramos el nombre de la localidad y su municipio entre paréntesis
-            // Ejemplo: "Playa del Inglés (San Bartolomé de Tirajana)"
-            const nombreMuni = localidad.municipio ? localidad.municipio.nombre : '';
-            option.textContent = nombreMuni ? `${localidad.nombre} (${nombreMuni})` : localidad.nombre;
-            
+            option.value = loc.id;
+            // Mostramos el nombre de la localidad y el municipio si existe
+            const nombreMuni = loc.municipio ? loc.municipio.nombre : '';
+            option.textContent = nombreMuni ? `${loc.nombre} (${nombreMuni})` : loc.nombre;
             selectLocalidad.appendChild(option);
         });
     } catch (error) {
-        selectLocalidad.innerHTML = '<option value="" disabled>Error al cargar localidades</option>';
-    }
-}
-
-    // --- FUNCIONES AUXILIARES ---
-    function mostrarError(message) {
-        if (errorMessageDiv) {
-            errorMessageDiv.textContent = message;
-            errorMessageDiv.style.display = 'block';
-        } else {
-            alert(message);
-        }
+        console.error("Error cargando localidades:", error);
     }
 
-    function limpiarErrores() {
-        if (errorMessageDiv) {
-            errorMessageDiv.textContent = '';
-            errorMessageDiv.style.display = 'none';
-        }
-    }
+    // --- EVENTOS ---
 
-    function cargando(isLoading) {
-        if (submitButton) {
-            submitButton.disabled = isLoading;
-            submitButton.textContent = isLoading ? 'Publicando...' : 'Publicar Anuncio';
-            submitButton.style.opacity = isLoading ? '0.7' : '1';
+    // Cambio de categoría -> Cargar subcategorías
+    selectCategoria.addEventListener('change', async (e) => {
+        const categoriaId = e.target.value;
+        selectSubcategoria.innerHTML = '<option value="" disabled selected>Cargando subcategorías...</option>';
+        selectSubcategoria.disabled = true;
+
+        try {
+            const subcategorias = await getSubcategoriasPorCategoria(categoriaId);
+            selectSubcategoria.innerHTML = '<option value="" disabled selected>Selecciona una subcategoría...</option>';
+            
+            if (subcategorias.length === 0) {
+                selectSubcategoria.innerHTML = '<option value="" disabled>No hay subcategorías disponibles</option>';
+            } else {
+                subcategorias.forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub.id;
+                    option.textContent = sub.nombre;
+                    selectSubcategoria.appendChild(option);
+                });
+                selectSubcategoria.disabled = false;
+            }
+        } catch (error) {
+            console.error("Error cargando subcategorías:", error);
         }
-    }
+    });
+
+    // Envío del Formulario
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Reset de mensajes y estado de carga
+        errorMsg.style.display = 'none';
+        successMsg.style.display = 'none';
+        btnPublicar.disabled = true;
+        btnPublicar.textContent = 'Publicando...';
+
+        // Creamos el FormData para poder enviar archivos
+        const formData = new FormData();
+        formData.append('titulo', document.getElementById('titulo').value);
+        formData.append('descripcion', document.getElementById('descripcion').value);
+        formData.append('precio', document.getElementById('precio').value);
+        formData.append('subcategoria_id', selectSubcategoria.value);
+        formData.append('localidad_id', selectLocalidad.value);
+
+        // Añadimos las imágenes si existen
+        const inputImagenes = document.getElementById('imagenes');
+        if (inputImagenes.files.length > 0) {
+            for (let i = 0; i < inputImagenes.files.length; i++) {
+                formData.append('imagenes[]', inputImagenes.files[i]);
+            }
+        }
+
+        try {
+            await createAnuncio(formData);
+            
+            // Éxito
+            successMsg.style.display = 'block';
+            form.reset();
+            
+            // Redirigir tras un breve tiempo
+            setTimeout(() => {
+                window.location.href = '/index.html';
+            }, 2000);
+
+        } catch (error) {
+            console.error("Error al crear el anuncio:", error);
+            errorMsg.textContent = error.message || "Hubo un error al publicar el anuncio.";
+            errorMsg.style.display = 'block';
+            btnPublicar.disabled = false;
+            btnPublicar.textContent = 'Publicar Anuncio';
+        }
+    });
 });

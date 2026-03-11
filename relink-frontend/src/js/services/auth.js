@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5500/api';
+export const API_URL = 'http://localhost:5500/api';
 
 export async function registerUser(userData) {
     try {
@@ -72,4 +72,13 @@ export async function logoutUser() {
         console.error("Error en el logout:", error);
         throw error;
     }
+}
+
+export function getAuthHeaders() {
+    const token = localStorage.getItem('relink_token');
+    return {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': token ? `Bearer ${token}` : ''
+    };
 }

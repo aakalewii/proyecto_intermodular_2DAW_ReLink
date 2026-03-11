@@ -14,8 +14,6 @@ use App\Http\Controllers\ProvinciaController;
 use App\Http\Controllers\MunicipioController;
 use App\Http\Controllers\LocalidadController;
 
-
-
 // Rutas públicas para el acceso
 Route::post('/register', [AccessController::class, 'Register']);
 Route::post('/login', [AccessController::class, 'login']);
@@ -35,7 +33,9 @@ Route::get('/localidades', [LocalidadController::class, 'index']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AccessController::class, 'Logout']);
     Route::get('/perfil',  [ProfileController::class, 'mostrarPerfil']);
-    Route::post('/editarperfil',  [ProfileController::class, 'editarPerfil']);
+
+    // Ajustado para que coincida con tu JS (que hace PUT a /perfil)
+    Route::put('/perfil',  [ProfileController::class, 'editarPerfil']);
 
     Route::get('/conversaciones', [ConversacionController::class, 'index']);
     Route::post('/conversaciones', [ConversacionController::class, 'store']);
@@ -52,11 +52,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/anuncios', [AnuncioController::class, 'store']);
     Route::put('/anuncios/{id}', [AnuncioController::class, 'update']);
     Route::delete('/anuncios/{id}', [AnuncioController::class, 'destroy']);
-<<<<<<< Updated upstream
-=======
-    Route::post('/anuncios/{id}/imagenes', [App\Http\Controllers\AnuncioController::class, 'subirImagenes']);
+
+    // --- LAS DOS RUTAS NUEVAS PARA IMÁGENES ---
+    Route::post('/anuncios/{id}/imagenes', [AnuncioController::class, 'subirImagenes']);
     Route::delete('/imagenes/{id}', [AnuncioController::class, 'eliminarImagen']);
->>>>>>> Stashed changes
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {

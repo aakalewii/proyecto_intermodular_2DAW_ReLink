@@ -23,9 +23,6 @@ export function renderNavbar() {
         }
 
         let enlacesHtml = `
-<<<<<<< Updated upstream
-            <span>Hola, <strong>${user.name}</strong></span>
-=======
             <style>
                 .btn-nuevo-anuncio {
                     background-color: #28a745;
@@ -46,7 +43,6 @@ export function renderNavbar() {
                 <i class="fa-solid fa-plus"></i> Crear Anuncio
             </a>
             <a href="/perfil.html">Hola, <strong>${user.name}</strong></a>
->>>>>>> Stashed changes
             <a href="/index.html" style="margin-left: 15px;">Inicio</a>
         `;
         // --- FIN DE LO NUEVO ---
