@@ -23,9 +23,33 @@ export function renderNavbar() {
         }
 
         let enlacesHtml = `
+<<<<<<< Updated upstream
             <span>Hola, <strong>${user.name}</strong></span>
+=======
+            <style>
+                .btn-nuevo-anuncio {
+                    background-color: #28a745;
+                    color: white;
+                    border: 2px solid #28a745;
+                    padding: 6px 12px;
+                    border-radius: 5px;
+                    text-decoration: none;
+                    margin-right: 15px;
+                    transition: all 0.3s ease;
+                }
+                .btn-nuevo-anuncio:hover {
+                    background-color: white;
+                    color: #28a745;
+                }
+            </style>
+            <a href="/crear-anuncio.html" class="btn-nuevo-anuncio">
+                <i class="fa-solid fa-plus"></i> Crear Anuncio
+            </a>
+            <a href="/perfil.html">Hola, <strong>${user.name}</strong></a>
+>>>>>>> Stashed changes
             <a href="/index.html" style="margin-left: 15px;">Inicio</a>
         `;
+        // --- FIN DE LO NUEVO ---
 
         // 4. Si es admin, le sumamos los enlaces extra
         if (esAdmin) {

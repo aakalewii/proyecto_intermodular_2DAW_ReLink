@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - ReLink</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <header id="navbar-container"></header>
+
+    <main style="padding: 20px; max-width: 800px; margin: auto;">
+        <h2>Mi Perfil</h2>
+        
+        <section style="border: 1px solid #ccc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <h3>Datos Personales</h3>
+            
+            <div id="bloque-lectura">
+                <p><strong>Nombre Completo:</strong> <span id="perf-nombre">Cargando...</span></p>
+                <p><strong>Email:</strong> <span id="perf-email">Cargando...</span></p>
+                <p><strong>Teléfono:</strong> <span id="perf-telefono">Cargando...</span></p>
+                <p><strong>Localidad:</strong> <span id="perf-localidad">Cargando...</span></p>
+                
+                <button id="btn-editar">Editar Perfil</button>
+            </div>
+
+                <form id="form-editar" style="display: none; flex-direction: column; gap: 10px; max-width: 400px;">                
+                
+                <label>Nombre:</label>
+                <input type="text" id="edit-nombre" required>
+
+                <label>Apellidos:</label>
+                <input type="text" id="edit-apellidos">
+
+                <label>Teléfono:</label>
+                <input type="text" id="edit-telefono">
+
+                <label>Localidad:</label>
+                <select id="edit-localidad">
+                    <option value="">Cargando localidades...</option>
+                </select>
+
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button type="submit" style="background: #28a745; color: white; padding: 5px 10px; border: none; cursor: pointer;">Guardar</button>
+                    <button type="button" id="btn-cancelar" style="background: #6c757d; color: white; padding: 5px 10px; border: none; cursor: pointer;">Cancelar</button>
+                </div>
+            </form>
+        </section>
+
+        <section style="margin-top: 30px;">
+            <h3>Mis Anuncios Publicados</h3>
+            
+            <div id="mis-anuncios-lista" style="display: flex; flex-direction: column; gap: 10px;">
+                <p>Cargando anuncios...</p>
+            </div>
+        </section>
+        
+    </main>
+
+    <script type="module" src="/src/js/pages/perfil.js"></script>
+</body>
+</html>

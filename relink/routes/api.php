@@ -52,6 +52,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/anuncios', [AnuncioController::class, 'store']);
     Route::put('/anuncios/{id}', [AnuncioController::class, 'update']);
     Route::delete('/anuncios/{id}', [AnuncioController::class, 'destroy']);
+<<<<<<< Updated upstream
+=======
+    Route::post('/anuncios/{id}/imagenes', [App\Http\Controllers\AnuncioController::class, 'subirImagenes']);
+    Route::delete('/imagenes/{id}', [AnuncioController::class, 'eliminarImagen']);
+>>>>>>> Stashed changes
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {

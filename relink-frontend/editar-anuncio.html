@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Anuncio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+    <header id="navbar-container"></header>
+
+    <main>
+        <h1>Editar Anuncio</h1>
+
+        <form id="formCrearAnuncio">
+            <div>
+                <label>Título del Anuncio:</label>
+                <input type="text" id="titulo" required>
+            </div>
+
+            <div>
+                <label>Descripción:</label>
+                <textarea id="descripcion" rows="4" required></textarea>
+            </div>
+
+            <div>
+                <label>Precio (€):</label>
+                <input type="number" id="precio" step="0.01" required>
+            </div>
+
+            <div>
+                <label>Categoría:</label>
+                <select id="categoria_id" required>
+                    <option value="" disabled selected>Cargando categorías...</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Subcategoría:</label>
+                <select id="subcategoria_id" required disabled>
+                    <option value="" disabled selected>Selecciona primero una categoría</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Localidad:</label>
+                <select id="localidad_id" required>
+                    <option value="" disabled selected>Cargando localidades...</option>
+                </select>
+            </div>
+
+            <hr>
+
+            <div>
+                <h3>Imágenes Actuales</h3>
+                <div id="contenedorImagenesActuales">Cargando imágenes...</div>
+            </div>
+
+            <div>
+                <label>Añadir Nuevas Imágenes:</label>
+                <input type="file" id="nuevas_imagenes" accept="image/*" multiple>
+            </div>
+
+            <hr>
+
+            <div id="errorMsg" style="color: red; display: none;"></div>
+            
+            <button type="submit">Guardar Cambios</button>
+        </form>
+    </main>
+
+    <script type="module" src="/src/js/pages/editar-anuncio.js"></script>
+</body>
+</html>
