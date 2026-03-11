@@ -1,9 +1,15 @@
 import { renderNavbar } from '../../components/Navbar.js';
 import { getCategorias, createCategoria, updateCategoria, deleteCategoria } from '../../services/categorias.js';
+import { verificarAccesoAdmin } from '../../services/auth.js';
 
 let categoriaIdEditando = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    if (!verificarAccesoAdmin()) {
+        return; 
+    }
+
     renderNavbar();
     cargarTablaCategorias();
 
@@ -90,7 +96,7 @@ async function cargarTablaCategorias() {
             tbody.appendChild(tr);
         });
 
-        // Dar vida a los botones de BORRAR
+        // Botones de BORRAR
         let botonesBorrar = document.querySelectorAll('.btn-borrar');
         botonesBorrar.forEach(btn => {
             btn.addEventListener('click', async (e) => {
@@ -102,7 +108,7 @@ async function cargarTablaCategorias() {
             });
         });
 
-        // Dar vida a los botones de EDITAR
+        // Botones de EDITAR
         let botonesEditar = document.querySelectorAll('.btn-editar');
         botonesEditar.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -123,6 +129,7 @@ async function cargarTablaCategorias() {
                 
                 // Bloquear los demás botones de la tabla
                 let botonesTabla = document.querySelectorAll('.btn-editar, .btn-borrar');
+                
                 botonesTabla.forEach(botonTabla => {
                     botonTabla.disabled = true;
                     botonTabla.style.opacity = '0.5';

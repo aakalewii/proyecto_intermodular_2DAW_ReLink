@@ -1,9 +1,15 @@
 import { renderNavbar } from '../../components/Navbar.js';
 import { getPaises, getProvincias, createProvincia, updateProvincia, deleteProvincia } from '../../services/ubicaciones.js';
+import { verificarAccesoAdmin } from '../../services/auth.js';
 
 let provinciaIdEditando = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+    
+    if (!verificarAccesoAdmin()) {
+        return; 
+    }
+
     renderNavbar(); // Pintamos el menú superior
     cargarSelectPaises(); // Select de países
     cargarTablaProvincias(); // Pedimos los datos al backend

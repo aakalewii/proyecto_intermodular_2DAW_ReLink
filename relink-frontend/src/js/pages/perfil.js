@@ -1,29 +1,34 @@
 import { renderNavbar } from '../components/Navbar.js';
 import { getMiPerfil, updatePerfil } from '../services/perfil.js';
+// Asegúrate de que este archivo existe y se llama así
 import { getLocalidades } from '../services/ubicaciones.js'; 
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Cargamos el navbar y comprobamos seguridad
+    
+    // Cargamos el navbar
     renderNavbar();
 
+    // Comprobamos seguridad
     const token = localStorage.getItem('relink_token');
     if (!token) {
         window.location.href = '/login.html';
         return; 
     }
 
-    // Guardamos los datos globales para reutilizarlos en el formulario
+    // Variable global para guardar los datos que vienen de la base de datos
     let datosUsuarioActual = null; 
+
+    // Referencias a los bloques de lectura y edicion
+    const bloqueLectura = document.getElementById('bloque-lectura');
+    const formEditar = document.getElementById('form-editar');
 
     // --- CARGA INICIAL DE LA PÁGINA ---
     try {
         const respuesta = await getMiPerfil();
         datosUsuarioActual = respuesta.datos;
         
-        // Pintamos los textos del perfil
+        // Pintamos la información
         pintarDatosLectura(datosUsuarioActual);
-        
-        // Pintamos las tarjetas de los anuncios
         pintarMisAnuncios(datosUsuarioActual.anuncios);
 
     } catch (error) {
@@ -31,77 +36,119 @@ document.addEventListener('DOMContentLoaded', async () => {
         alert("Hubo un problema al cargar tu perfil. Revisa la consola.");
     }
 
-    // --- LÓGICA DE EDICIÓN DE PERFIL ---
-    const bloqueLectura = document.getElementById('bloque-lectura');
-    const formEditar = document.getElementById('form-editar');
 
-    // Botón "Editar Perfil"
+    // --- LÓGICA DE LOS BOTONES ---
+
+    // Al darle a "Editar Perfil"
     document.getElementById('btn-editar').addEventListener('click', async () => {
+        
+        // Escondemos textos, mostramos formulario
         bloqueLectura.style.display = 'none';
         formEditar.style.display = 'flex';
 
-        // Rellenamos los inputs con lo que ya sabemos
-        document.getElementById('edit-nombre').value = datosUsuarioActual.name;
-        document.getElementById('edit-apellidos').value = datosUsuarioActual.apellidos || '';
-        document.getElementById('edit-telefono').value = datosUsuarioActual.telefono || '';
+        // Rellenar Nombre
+        document.getElementById('edit-nombre').value = datosUsuarioActual.nombre;
 
-        // Cargamos el desplegable de localidades
+        // Rellenar Apellidos
+        if (datosUsuarioActual.apellidos !== null) {
+            document.getElementById('edit-apellidos').value = datosUsuarioActual.apellidos;
+        } else {
+            document.getElementById('edit-apellidos').value = "";
+        }
+
+        // Rellenar Teléfono
+        if (datosUsuarioActual.telefono !== null) {
+            document.getElementById('edit-telefono').value = datosUsuarioActual.telefono;
+        } else {
+            document.getElementById('edit-telefono').value = "";
+        }
+
+        // Cargar el desplegable de localidades
         try {
             const resLocalidades = await getLocalidades();
             const selectLocalidad = document.getElementById('edit-localidad');
+            
+            // Empezamos con la opción vacía
             selectLocalidad.innerHTML = '<option value="">Selecciona una localidad...</option>';
             
+            // Llenamos el desplegable usando un IF normal para marcar la seleccionada
             resLocalidades.forEach(loc => {
-                const isSelected = loc.id === datosUsuarioActual.localidad_id ? 'selected' : '';
-                selectLocalidad.innerHTML += `<option value="${loc.id}" ${isSelected}>${loc.nombre}</option>`;
+                let opcionSeleccionada = "";
+                
+                if (loc.id === datosUsuarioActual.localidad_id) {
+                    opcionSeleccionada = "selected";
+                }
+
+                selectLocalidad.innerHTML += `<option value="${loc.id}" ${opcionSeleccionada}>${loc.nombre}</option>`;
             });
+            
         } catch (e) {
             console.error("No se pudieron cargar las localidades", e);
         }
     });
 
-    // Botón "Cancelar"
+    // Al darle a "Cancelar"
     document.getElementById('btn-cancelar').addEventListener('click', () => {
         formEditar.style.display = 'none';
         bloqueLectura.style.display = 'block';
     });
 
-    // Guardar los cambios (Submit del formulario)
+
+    // --- GUARDAR LOS CAMBIOS ---
+    
     formEditar.addEventListener('submit', async (e) => {
         e.preventDefault(); 
 
-        // Capturamos el valor de la localidad
+        // Leer la localidad elegida
         const localidadValue = document.getElementById('edit-localidad').value;
+        let idLocalidadEnviar;
+        
+        // Si no eligió nada, mandamos null, si no, mandamos el número
+        if (localidadValue === "") {
+            idLocalidadEnviar = null;
+        } else {
+            idLocalidadEnviar = localidadValue;
+        }
 
+        // Preparar el paquete para Laravel
         const nuevosDatos = {
             name: document.getElementById('edit-nombre').value,
             apellidos: document.getElementById('edit-apellidos').value,
             telefono: document.getElementById('edit-telefono').value,
-            // Si está vacío, mandamos null. Si tiene número, mandamos el número.
-            localidad_id: localidadValue === "" ? null : localidadValue
+            localidad_id: idLocalidadEnviar
         };
 
         try {
+            // Enviar los datos
             const respuestaActualizacion = await updatePerfil(nuevosDatos);
+            const userActualizado = respuestaActualizacion.data;
             
-            // Refrescamos nuestra variable local con lo que devuelve Laravel
-            datosUsuarioActual.name = respuestaActualizacion.data.name;
-            datosUsuarioActual.apellidos = respuestaActualizacion.data.apellidos;
-            datosUsuarioActual.nombre_completo = respuestaActualizacion.data.name + ' ' + (respuestaActualizacion.data.apellidos || '');
-            datosUsuarioActual.telefono = respuestaActualizacion.data.telefono;
+            // Guardar los datos nuevos en nuestra variable local
+            datosUsuarioActual.nombre = userActualizado.name;
+            datosUsuarioActual.apellidos = userActualizado.apellidos;
             
-            if(respuestaActualizacion.data.localidad) {
-                datosUsuarioActual.localidad_nombre = respuestaActualizacion.data.localidad.nombre;
-                datosUsuarioActual.localidad_id = respuestaActualizacion.data.localidad.id;
+            // Para el nombre completo, revisamos si hay apellidos
+            if (userActualizado.apellidos !== null) {
+                datosUsuarioActual.nombre_completo = userActualizado.name + ' ' + userActualizado.apellidos;
+            } else {
+                datosUsuarioActual.nombre_completo = userActualizado.name;
+            }
+            
+            datosUsuarioActual.telefono = userActualizado.telefono;
+            
+            // Si Laravel nos devolvió la ciudad, la guardamos
+            if (userActualizado.localidad) {
+                datosUsuarioActual.localidad_nombre = userActualizado.localidad.nombre;
+                datosUsuarioActual.localidad_id = userActualizado.localidad.id;
             }
 
-            // Repintamos y cerramos
+            // Repintar textos y ocultar formulario
             pintarDatosLectura(datosUsuarioActual);
             formEditar.style.display = 'none';
             bloqueLectura.style.display = 'block';
 
-            // Actualizamos también el nombre en el navbar para que coincida
-            localStorage.setItem('relink_user', JSON.stringify(respuestaActualizacion.data));
+            // Actualizar el navbar
+            localStorage.setItem('relink_user', JSON.stringify(userActualizado));
             renderNavbar();
 
             alert("¡Perfil actualizado correctamente!");
@@ -111,20 +158,33 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // --- BLOQUE 3: FUNCIONES AUXILIARES ---
+
+    // --- FUNCIONES PARA PINTAR ---
 
     function pintarDatosLectura(user) {
         document.getElementById('perf-nombre').textContent = user.nombre_completo;
         document.getElementById('perf-email').textContent = user.email;
-        document.getElementById('perf-telefono').textContent = user.telefono || 'No especificado';
-        document.getElementById('perf-localidad').textContent = user.localidad_nombre || 'No definida';
+        
+        // Pintar teléfono
+        if (user.telefono !== null) {
+            document.getElementById('perf-telefono').textContent = user.telefono;
+        } else {
+            document.getElementById('perf-telefono').textContent = "No especificado";
+        }
+
+        // Pintar localidad
+        if (user.localidad_nombre) {
+            document.getElementById('perf-localidad').textContent = user.localidad_nombre;
+        } else {
+            document.getElementById('perf-localidad').textContent = "No definida";
+        }
     }
 
     function pintarMisAnuncios(anuncios) {
         const listaAnuncios = document.getElementById('mis-anuncios-lista');
         listaAnuncios.innerHTML = ''; 
 
-        if (!anuncios || anuncios.length === 0) {
+        if (anuncios.length === 0) {
             listaAnuncios.innerHTML = '<p>Aún no has publicado ningún anuncio.</p>';
             return; 
         }

@@ -1,9 +1,15 @@
 import { renderNavbar } from '../../components/Navbar.js';
 import { getProvincias, getMunicipios, createMunicipio, updateMunicipio, deleteMunicipio } from '../../services/ubicaciones.js';
+import { verificarAccesoAdmin } from '../../services/auth.js';
 
 let municipioIdEditando = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    if (!verificarAccesoAdmin()) {
+        return; 
+    }
+
     renderNavbar(); // Pintamos el menú superior
     cargarSelectProvincias(); // Select de provincias
     cargarTablaMunicipios(); // Pedimos los datos al backend

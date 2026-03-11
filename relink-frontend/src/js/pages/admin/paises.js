@@ -1,10 +1,16 @@
 import { renderNavbar } from '../../components/Navbar.js';
 import { getPaises, createPais, updatePais, deletePais } from '../../services/ubicaciones.js';
+import { verificarAccesoAdmin } from '../../services/auth.js';
 
 // Variable para saber si estamos creando o editando
 let paisIdEditando = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+    
+    if (!verificarAccesoAdmin()) {
+            return; 
+    }
+
     renderNavbar(); // Pintamos el menú superior
     cargarTablaPaises(); // Pedimos los datos al backend
 
@@ -52,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reactivamos TODOS los botones de la tabla
         document.querySelectorAll('.btn-editar, .btn-borrar').forEach(btn => {
             btn.disabled = false;
-            btn.style.opacity = '1'; // Les devolvemos su color normal
+            btn.style.opacity = '1';
         });
     }
 });
@@ -81,7 +87,7 @@ async function cargarTablaPaises() {
             tbody.appendChild(tr);
         });
 
-        // 3A. Darle vida a los botones de BORRAR
+        // Botones de BORRAR
         document.querySelectorAll('.btn-borrar').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const id = e.target.getAttribute('data-id');
@@ -92,7 +98,7 @@ async function cargarTablaPaises() {
             });
         });
 
-        // Darle vida a los botones de EDITAR
+        // Botones de EDITAR
         document.querySelectorAll('.btn-editar').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const id = e.target.getAttribute('data-id');

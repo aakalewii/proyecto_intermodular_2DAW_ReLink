@@ -1,9 +1,15 @@
 import { renderNavbar } from '../../components/Navbar.js';
 import { getCategorias, getSubcategorias, createSubcategoria, updateSubcategoria, deleteSubcategoria } from '../../services/categorias.js';
+import { verificarAccesoAdmin } from '../../services/auth.js';
 
 let subcategoriaIdEditando = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    if (!verificarAccesoAdmin()) {
+        return; 
+    }
+
     renderNavbar(); // Pintamos el menú superior
     cargarSelectCategorias(); // Select de categorías
     cargarTablaSubcategorias(); // Pedimos los datos al backend

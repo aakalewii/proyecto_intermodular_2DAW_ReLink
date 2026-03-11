@@ -35,4 +35,43 @@ class FavoritoController extends Controller
             return response()->json(['message' => 'Añadido a favoritos'], 201);
         }
     }
+
+    public function index(Request $request){
+        
+        $user = $request->user();
+
+        $favoritos = DB::table('anuncios')
+            ->join('favoritos', 'anuncios.id', '=', 'favoritos.anuncio_id')
+            ->where('favoritos.user_id', $user->id)
+            ->where('anuncios.estado', 'publicado')
+            ->select('anuncios.*')
+            ->get();
+            
+        if ($favoritos->isEmpty()) {
+            return response()->json([
+                'message' => 'No tienes nada en tu lista de favoritos',
+                'datos' => []
+            ], 200);
+        }
+            
+        return response()->json([
+            'message' => 'Lista de favoritos',
+            'datos' => $favoritos
+        ], 200);
+
+    }
+
+    public function checkFavorito(Request $request, int $anuncio_id)
+    {
+        $user = $request->user();
+
+        $existe = DB::table('favoritos')
+            ->where('user_id', $user->id)
+            ->where('anuncio_id', $anuncio_id)
+            ->exists();
+
+        return response()->json([
+            'is_favorito' => $existe
+        ], 200);
+    }
 }

@@ -71,6 +71,22 @@ class AnuncioController extends Controller
         
     }
 
+    public function show($id)
+    {
+        $anuncio = $this->anuncioDAO->obtenerDetalleAnuncio($id);
+
+        if ($anuncio == null) {
+            return response()->json([
+                'message' => 'Anuncio no encontrado o no disponible'
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Anuncio recuperado con éxito',
+            'datos' => $anuncio
+        ], 200);
+    }
+
     public function update(Request $request, int $id)
     {
 

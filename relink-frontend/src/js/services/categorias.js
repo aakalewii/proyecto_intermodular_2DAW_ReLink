@@ -13,7 +13,9 @@ export async function createCategoria(data) {
         headers: getAuthHeaders(),
         body: JSON.stringify(data)
     });
-    if (!response.ok) throw new Error('Error al crear la categoría');
+    if (!response.ok){
+        throw new Error('Error al crear la categoría');
+    }
     return await response.json();
 }
 
@@ -23,7 +25,9 @@ export async function updateCategoria(id, data) {
         headers: getAuthHeaders(),
         body: JSON.stringify(data)
     });
-    if (!response.ok) throw new Error('Error al actualizar la categoría');
+    if (!response.ok){
+        throw new Error('Error al actualizar la categoría');
+    }
     return await response.json();
 }
 
@@ -32,14 +36,18 @@ export async function deleteCategoria(id) {
         method: 'DELETE',
         headers: getAuthHeaders()
     });
-    if (!response.ok) throw new Error('Error al borrar la categoría');
+    if (!response.ok){
+        throw new Error('Error al borrar la categoría');
+    }
     return await response.json();
 }
 
 // --- SUBCATEGORÍAS ---
 export async function getSubcategorias() {
     const response = await fetch(`${API_URL}/subcategorias`, { headers: getAuthHeaders() });
-    if (!response.ok) throw new Error('Error al cargar las subcategorías');
+    if (!response.ok){
+        throw new Error('Error al cargar las subcategorías');
+    }
     return await response.json();
 }
 
@@ -74,7 +82,9 @@ export async function deleteSubcategoria(id) {
         method: 'DELETE',
         headers: getAuthHeaders()
     });
-    if (!response.ok) throw new Error('Error al borrar la subcategoría');
+    if (!response.ok){
+        throw new Error('Error al borrar la subcategoría');
+    }
     return await response.json();
 }
 
@@ -83,6 +93,8 @@ export async function getSubcategoriasPorCategoria(categoriaId) {
     const response = await fetch(`${API_URL}/categorias/${categoriaId}/subcategorias`, { 
         headers: getAuthHeaders() 
     });
-    if (!response.ok) throw new Error('Error al cargar las subcategorías filtradas');
+    if (!response.ok){
+        throw new Error('Error al cargar las subcategorías filtradas');
+    }
     return await response.json();
 }

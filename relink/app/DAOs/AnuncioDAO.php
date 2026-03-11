@@ -37,6 +37,22 @@ class AnuncioDAO
         return DB::selectOne('SELECT * FROM anuncios WHERE id = ?', [$id]);
     }
 
+    public function obtenerDetalleAnuncio($id)
+    {
+        $anuncio = DB::selectOne('SELECT * FROM anuncios WHERE id = ? AND estado = ?', [
+            $id, 
+            AnuncioEstado::PUBLICADO->value
+        ]);
+
+        if (!$anuncio) return null;
+
+        $anuncio->user = DB::selectOne('SELECT id, name FROM users WHERE id = ?', [$anuncio->user_id]);
+        $anuncio->localidad = DB::selectOne('SELECT id, nombre FROM localidades WHERE id = ?', [$anuncio->localidad_id]);
+        $anuncio->imagenes = DB::select('SELECT id, url FROM imagenes_anuncio WHERE anuncio_id = ?', [$id]);
+
+        return $anuncio;
+    }
+
     public function actualizarAnuncio($id, $datos)
     {
         DB::update('UPDATE anuncios SET titulo = ?, descripcion = ?, precio = ?, localidad_id = ?, subcategoria_id = ? WHERE id = ?', [

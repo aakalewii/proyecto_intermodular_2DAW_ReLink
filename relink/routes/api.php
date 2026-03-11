@@ -49,6 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/favoritos/{anuncioId}', [FavoritoController::class, 'handleFavorito']);
     Route::get('/favoritos', [FavoritoController::class, 'index']);
+    Route::get('/favoritos/check/{anuncio_id}', [FavoritoController::class, 'checkFavorito']);
 
     Route::post('/anuncios', [AnuncioController::class, 'store']);
     Route::put('/anuncios/{id}', [AnuncioController::class, 'update']);

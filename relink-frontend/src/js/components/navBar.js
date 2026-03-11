@@ -10,13 +10,13 @@ export function renderNavbar() {
 
     if (token && user) {
 
-        // 1. Verificamos si es admin
+        // Verificamos si es admin
         let esAdmin = false;
         if (user.rol === 'admin') {
             esAdmin = true;
         }
 
-        // 2. Preparamos el texto del logo
+        // Preparamos el texto del logo
         let logoHtml = '<h2>ReLink</h2>';
         if (esAdmin) {
             logoHtml = '<h2>ReLink (Admin)</h2>';
@@ -27,7 +27,7 @@ export function renderNavbar() {
             <a href="/index.html" style="margin-left: 15px;">Inicio</a>
         `;
 
-        // 4. Si es admin, le sumamos los enlaces extra
+        // Si es admin, le sumamos los enlaces extra
         if (esAdmin) {
             enlacesHtml = enlacesHtml + `
                 <a href="/admin/paises.html" style="margin-left: 15px;">Países</a>
@@ -47,7 +47,7 @@ export function renderNavbar() {
             </nav>
         `;
 
-        // 2. Actualizamos el evento del clic
+        // Actualizamos el evento del clic
         const btnLogout = document.getElementById('btnLogout');
         
         btnLogout.addEventListener('click', async () => {
@@ -56,12 +56,12 @@ export function renderNavbar() {
             btnLogout.disabled = true;
 
             try {
-                // A. Avisamos a Laravel para que destruya el token en la Base de Datos
+                // Avisamos a Laravel para que destruya el token en la Base de Datos
                 await logoutUser();
             } catch (error) {
                 console.warn("No se pudo conectar con Laravel para el logout, pero cerraremos en el navegador.");
             } finally {
-                // B. Pase lo que pase, borramos el rastro en el navegador
+                // Pase lo que pase, borramos el rastro en el navegador
                 localStorage.removeItem('relink_token');
                 localStorage.removeItem('relink_user');
                 

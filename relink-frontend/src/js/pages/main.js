@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
 async function cargarAnuncios() {
     // Busca un contenedor en tu index.html que se llame id="lista-anuncios"
     const contenedor = document.getElementById('lista-anuncios');
-    if (!contenedor) return;
 
     contenedor.innerHTML = '<p>Cargando anuncios...</p>';
 
@@ -39,9 +38,9 @@ async function cargarAnuncios() {
                 
                 tarjeta.innerHTML = `
                     <h3>${anuncio.titulo}</h3>
-                    <p style="color: green; font-weight: bold; font-size: 1.2em;">${anuncio.precio} €</p>
+                    <p>${anuncio.precio} €</p>
                     <p>${anuncio.descripcion}</p>
-                    <small style="color: #666;">Publicado el: ${new Date(anuncio.fecha_publi || anuncio.created_at).toLocaleDateString()}</small>
+                    <small>Publicado el: ${new Date(anuncio.fecha_publi).toLocaleDateString()}</small>
                     <br>
                     <button onclick="verDetalle(${anuncio.id})" style="margin-top: 10px;">Ver más</button>
                 `;

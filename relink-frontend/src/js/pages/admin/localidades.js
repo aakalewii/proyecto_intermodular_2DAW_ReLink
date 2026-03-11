@@ -1,9 +1,15 @@
 import { renderNavbar } from '../../components/Navbar.js';
 import { getMunicipios, getLocalidades, createLocalidad, updateLocalidad, deleteLocalidad } from '../../services/ubicaciones.js';
+import { verificarAccesoAdmin } from '../../services/auth.js';
 
 let localidadIdEditando = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    if (!verificarAccesoAdmin()) {
+        return; 
+    }
+
     renderNavbar(); // Pintamos el menú superior
     cargarSelectMunicipios(); // Select de municipios
     cargarTablaLocalidades(); // Pedimos los datos al backend

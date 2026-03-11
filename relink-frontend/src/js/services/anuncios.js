@@ -49,14 +49,29 @@ export async function updateAnuncio(id, anuncioData) {
     }
 }
 
-// 4. Borrar Anuncio
+// 4. Ver anuncio especifico
+export async function getAnuncioById(id) {
+    const response = await fetch(`${API_URL}/anuncios/${id}`, {
+        // Es una ruta pública, así que solo necesitamos el Accept
+        headers: { 'Accept': 'application/json' }
+    });
+    
+    if (!response.ok){
+        throw new Error('Error al cargar el anuncio');
+    }
+    return await response.json();
+}
+
+// 5. Borrar Anuncio
 export async function deleteAnuncio(id) {
     try {
         const response = await fetch(`${API_URL}/anuncios/${id}`, {
             method: 'DELETE',
             headers: getAuthHeaders()
         });
-        if (!response.ok) throw new Error('Error al borrar el anuncio');
+        if (!response.ok){
+            throw new Error('Error al borrar el anuncio');
+        }
         return await response.json();
     } catch (error) {
         throw error;
@@ -75,7 +90,9 @@ export async function uploadImagenes(anuncioId, formData) {
         body: formData
     });
 
-    if (!response.ok) throw new Error('Error al subir las imágenes del anuncio');
+    if (!response.ok){
+        throw new Error('Error al subir las imágenes del anuncio');
+    }
     
     return await response.json();
 }

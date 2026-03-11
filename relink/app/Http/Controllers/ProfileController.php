@@ -15,6 +15,8 @@ class ProfileController extends Controller
         return response()->json([
             'mensaje' => 'Perfil personal.',
             'datos' => [
+                'nombre' => $user->name, 
+                'apellidos' => $user->apellidos,
                 'nombre_completo' => $user->name . ' ' . $user->apellidos,
                 'email' => $user->email,
                 'contraseña' => $user->password,

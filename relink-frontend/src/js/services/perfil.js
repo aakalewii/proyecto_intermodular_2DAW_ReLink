@@ -4,7 +4,9 @@ export async function getMiPerfil() {
     const response = await fetch(`${API_URL}/perfil`, {
         headers: getAuthHeaders()
     });
-    if (!response.ok) throw new Error('No se pudo cargar el perfil');
+    if (!response.ok){
+        throw new Error('No se pudo cargar el perfil');
+    }
     return await response.json();
 }
 
@@ -14,14 +16,18 @@ export async function updatePerfil(datos) {
         headers: getAuthHeaders(),
         body: JSON.stringify(datos)
     });
-    if (!response.ok) throw new Error('Error al actualizar');
+    if (!response.ok){
+        throw new Error('Error al actualizar');
+    }
     return await response.json();
 }
 
 export async function getPerfilUsuario(userId) {
     const response = await fetch(`${API_URL}/verperfil/${userId}`);
     
-    if (!response.ok) throw new Error('No se pudo cargar el perfil del vendedor');
+    if (!response.ok){
+        throw new Error('No se pudo cargar el perfil del vendedor');
+    }
     
     return await response.json();
 }
