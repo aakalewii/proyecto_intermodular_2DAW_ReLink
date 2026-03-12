@@ -1,5 +1,3 @@
-drop database if exists relink;
-create database if not exists relink;
 use relink;
 
 -- Por si quieres borrar y recrear
@@ -132,20 +130,6 @@ ALTER TABLE subcategorias
     
 ALTER TABLE users 
 MODIFY COLUMN rol ENUM('cliente', 'pro', 'admin') NOT NULL DEFAULT 'cliente';
-
-CREATE TABLE personal_access_tokens (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    tokenable_type VARCHAR(255) NOT NULL,
-    tokenable_id BIGINT UNSIGNED NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    token VARCHAR(64) NOT NULL UNIQUE,
-    abilities TEXT NULL,
-    last_used_at TIMESTAMP NULL,
-    expires_at TIMESTAMP NULL,
-    created_at TIMESTAMP NULL,
-    updated_at TIMESTAMP NULL,
-    INDEX (tokenable_type, tokenable_id)
-);
 
 ALTER TABLE users
 ADD COLUMN `online` BOOLEAN DEFAULT 0;
