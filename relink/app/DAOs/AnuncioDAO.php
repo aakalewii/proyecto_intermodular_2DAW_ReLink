@@ -4,6 +4,7 @@ namespace App\DAOs;
 
 use Illuminate\Support\Facades\DB;
 use App\Enums\AnuncioEstado;
+use Illuminate\Support\Facades\Storage;
 
 class AnuncioDAO
 {
@@ -40,7 +41,7 @@ class AnuncioDAO
     public function obtenerDetalleAnuncio($id)
     {
         $anuncio = DB::selectOne('SELECT * FROM anuncios WHERE id = ? AND estado = ?', [
-            $id, 
+            $id,
             AnuncioEstado::PUBLICADO->value
         ]);
 
@@ -73,5 +74,40 @@ class AnuncioDAO
             AnuncioEstado::ELIMINADO->value,
             $id
         ]);
+    }
+
+    // ==========================================
+    // NUEVAS FUNCIONES PARA IMÁGENES
+    // ==========================================
+
+    public function guardarImagen($anuncioId, $ruta)
+    {
+        // Si tu tabla imagenes_anuncio tiene created_at y updated_at, puedes añadirlos en este array
+        DB::table('imagenes_anuncio')->insert([
+            'url' => $ruta,
+            'anuncio_id' => $anuncioId
+        ]);
+    }
+
+    public function eliminarImagenes(array $ids, $anuncioId)
+    {
+        if (empty($ids)) return;
+
+        // 1. Buscamos las imágenes asegurándonos de que pertenecen a este anuncio por seguridad
+        $imagenes = DB::table('imagenes_anuncio')
+            ->whereIn('id', $ids)
+            ->where('anuncio_id', $anuncioId)
+            ->get();
+
+        // 2. Borramos los archivos físicos del disco duro
+        foreach ($imagenes as $img) {
+            Storage::disk('public')->delete($img->url);
+        }
+
+        // 3. Las borramos de la base de datos de golpe
+        DB::table('imagenes_anuncio')
+            ->whereIn('id', $ids)
+            ->where('anuncio_id', $anuncioId)
+            ->delete();
     }
 }

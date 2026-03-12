@@ -4,18 +4,21 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-
+use App\Enums\AnuncioEstado;
 class ProfileController extends Controller
 {
     public function mostrarPerfil(Request $request){
-         
+
         $userId = $request->user()->id;
-        $user = User::with(['localidad', 'anuncios'])->find($userId);
+
+        $user = User::with(['localidad', 'anuncios' => function ($query) {
+            $query->where('estado', AnuncioEstado::PUBLICADO->value);
+        }])->find($userId);
 
         return response()->json([
             'mensaje' => 'Perfil personal.',
             'datos' => [
-                'nombre' => $user->name, 
+                'nombre' => $user->name,
                 'apellidos' => $user->apellidos,
                 'nombre_completo' => $user->name . ' ' . $user->apellidos,
                 'email' => $user->email,
@@ -29,7 +32,7 @@ class ProfileController extends Controller
     }
 
     public function editarPerfil(Request $request){
-        
+
         $user = $request->user();
 
         $validated = $request->validate([
@@ -47,22 +50,23 @@ class ProfileController extends Controller
     }
 
     public function verPerfil(int $id)
-{
-    // Buscamos al usuario y cargamos sus anuncios activos
-    $user = User::with('anuncios', 'localidad')->find($id);
+    {
+        $user = User::with(['localidad', 'anuncios' => function ($query) {
+            $query->where('estado', AnuncioEstado::PUBLICADO->value);
+        }])->find($id);
 
-    if (!$user) {
-        return response()->json(['message' => 'Vendedor no encontrado'], 404);
+        if (!$user) {
+            return response()->json(['message' => 'Vendedor no encontrado'], 404);
+        }
+
+        return response()->json([
+            'data' => [
+                'nombre' => $user->name,
+                'apellidos' => $user->apellidos,
+                'telefono' => $user->telefono,
+                'localidad' => $user->localidad ? $user->localidad->nombre : 'No definida',
+                'anuncios' => $user->anuncios,
+            ]
+        ], 200);
     }
-
-    return response()->json([
-        'data' => [
-            'nombre' => $user->name,
-            'apellidos' => $user->apellidos,
-            'telefono' => $user->telefono,
-            'localidad' => $user->localidad ? $user->localidad->nombre : 'No definida',
-            'anuncios' => $user->anuncios, 
-        ]
-    ], 200);
-}
 }

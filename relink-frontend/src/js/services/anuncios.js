@@ -34,7 +34,7 @@ export async function createAnuncio(formData) {
     }
 }
 
-// 3. Actualizar Anuncio
+// 3. Actualizar Anuncio (La antigua, enviando JSON)
 export async function updateAnuncio(id, anuncioData) {
     try {
         const response = await fetch(`${API_URL}/anuncios/${id}`, {
@@ -94,5 +94,24 @@ export async function uploadImagenes(anuncioId, formData) {
         throw new Error('Error al subir las imágenes del anuncio');
     }
     
+    return await response.json();
+}
+
+export async function updateAnuncioCompleto(id, formData) {
+    const token = localStorage.getItem('relink_token');
+    
+    const response = await fetch(`${API_URL}/anuncios/${id}`, {
+        method: 'POST',
+        headers: {
+            'Authorization': token ? `Bearer ${token}` : '',
+            'Accept': 'application/json'
+        },
+        body: formData
+    });
+
+    if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Error al actualizar el anuncio completo');
+    }
     return await response.json();
 }

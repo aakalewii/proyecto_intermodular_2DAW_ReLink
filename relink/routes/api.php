@@ -55,6 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/anuncios/{id}', [AnuncioController::class, 'update']);
     Route::delete('/anuncios/{id}', [AnuncioController::class, 'destroy']);
     Route::post('/anuncios/{id}/imagenes', [App\Http\Controllers\AnuncioController::class, 'subirImagenes']);
+    Route::delete('/imagenes/{id}', [AnuncioController::class, 'eliminarImagen']);
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {

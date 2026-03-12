@@ -3,21 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Anuncio</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Editar Anuncio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
     <header id="navbar-container"></header>
 
     <main>
-        <h1>Publicar un Nuevo Anuncio</h1>
+        <h1>Editar Anuncio</h1>
 
         <form id="formCrearAnuncio">
-            <div>
-                <label>Fotos del Anuncio (Opcional):</label>
-                <input type="file" id="imagenes" multiple accept="image/jpeg, image/png, image/jpg, image/gif">
-            </div>
             <div>
                 <label>Título del Anuncio:</label>
                 <input type="text" id="titulo" required>
@@ -25,7 +21,7 @@
 
             <div>
                 <label>Descripción:</label>
-                <textarea id="descripcion" required></textarea>
+                <textarea id="descripcion" rows="4" required></textarea>
             </div>
 
             <div>
@@ -43,7 +39,7 @@
             <div>
                 <label>Subcategoría:</label>
                 <select id="subcategoria_id" required disabled>
-                    <option value="" disabled selected>Selecciona primero una categoría...</option>
+                    <option value="" disabled selected>Selecciona primero una categoría</option>
                 </select>
             </div>
 
@@ -54,13 +50,26 @@
                 </select>
             </div>
 
+            <hr>
+
+            <div>
+                <h3>Imágenes Actuales</h3>
+                <div id="contenedorImagenesActuales">Cargando imágenes...</div>
+            </div>
+
+            <div>
+                <label>Añadir Nuevas Imágenes:</label>
+                <input type="file" id="nuevas_imagenes" accept="image/*" multiple>
+            </div>
+
+            <hr>
+
             <div id="errorMsg" style="color: red; display: none;"></div>
-            <div id="successMsg" style="color: green; display: none;">¡Anuncio creado con éxito!</div>
             
-            <button type="submit">Publicar Anuncio</button>
+            <button type="submit">Guardar Cambios</button>
         </form>
     </main>
 
-    <script type="module" src="/src/js/pages/crear-anuncio.js"></script>
+    <script type="module" src="/src/js/pages/editar-anuncio.js"></script>
 </body>
 </html>
