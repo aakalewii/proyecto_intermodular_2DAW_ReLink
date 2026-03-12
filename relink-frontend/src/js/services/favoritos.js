@@ -25,3 +25,17 @@ export async function checkIfFavorito(anuncioId) {
     
     return await response.json(); 
 }
+
+// Obtener todos los anuncios favoritos del usuario
+export async function getMisFavoritos() {
+    const response = await fetch(`${API_URL}/favoritos`, {
+        method: 'GET',
+        headers: getAuthHeaders()
+    });
+
+    if (!response.ok) {
+        throw new Error('Error al cargar la lista de favoritos');
+    }
+    
+    return await response.json(); 
+}

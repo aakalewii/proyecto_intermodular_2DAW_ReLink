@@ -22,7 +22,6 @@ export function renderNavbar() {
             logoHtml = '<h2>ReLink (Admin)</h2>';
         }
 
-        // --- EL ESTILO Y EL BOTÓN (Apunta a crear-anuncio.html) ---
         let enlacesHtml = `
             <style>
                 .btn-nuevo-anuncio {
@@ -36,7 +35,7 @@ export function renderNavbar() {
                     transition: all 0.3s ease;
                     display: inline-flex;
                     align-items: center;
-                    gap: 6px; /* Espacio entre el icono y el texto */
+                    gap: 6px;
                 }
                 .btn-nuevo-anuncio:hover {
                     background-color: white;
@@ -47,6 +46,7 @@ export function renderNavbar() {
                 <i class="fa-solid fa-plus"></i> Crear Anuncio
             </a>
             <a href="/perfil.html">Hola, <strong>${user.name}</strong></a>
+            <a href="/favoritos.html" style="margin-left: 15px;"></i> Favoritos</a>
             <a href="/index.html" style="margin-left: 15px;">Inicio</a>
         `;
 
