@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Anuncio | ReLink</title>
+</head>
+<body>
+    <header id="navbar-container"></header>
+
+    <main>
+        <h1>Editar mi Anuncio</h1>
+
+        <form id="formEditarAnuncio">
+            <div id="fotosActualesContainer" style="margin-bottom: 20px;">
+                <label>Fotos actuales:</label>
+                <div id="listaFotosActuales" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    </div>
+            </div>
+
+            <div>
+                <label>Añadir más fotos (Opcional):</label>
+                <input type="file" id="imagenes" multiple accept="image/jpeg, image/png, image/jpg, image/gif">
+            </div>
+
+            <div>
+                <label>Título:</label>
+                <input type="text" id="titulo" required>
+            </div>
+
+            <div>
+                <label>Descripción:</label>
+                <textarea id="descripcion" required></textarea>
+            </div>
+
+            <div>
+                <label>Precio (€):</label>
+                <input type="number" id="precio" step="0.01" required>
+            </div>
+
+            <div>
+                <label>Categoría:</label>
+                <select id="categoria_id" required>
+                    <option value="" disabled selected>Cargando categorías...</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Subcategoría:</label>
+                <select id="subcategoria_id" required>
+                    <option value="" disabled selected>Selecciona una subcategoría...</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Localidad:</label>
+                <select id="localidad_id" required>
+                    <option value="" disabled selected>Cargando localidades...</option>
+                </select>
+            </div>
+
+            <div id="errorMsg" style="color: red; display: none;"></div>
+            <div id="successMsg" style="color: green; display: none;">¡Anuncio actualizado con éxito!</div>
+            
+            <button type="submit" id="btnGuardar">Guardar Cambios</button>
+        </form>
+    </main>
+
+    <script type="module" src="/src/js/pages/editar-anuncio.js"></script>
+</body>
+</html>
