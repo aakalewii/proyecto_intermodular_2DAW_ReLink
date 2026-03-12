@@ -78,7 +78,7 @@ export async function deleteAnuncio(id) {
     }
 }
 
-// --- FUNCIÓN PARA SUBIR FOTOS (Individual) ---
+// --- FUNCIÓN PARA SUBIR FOTOS ---
 export async function uploadImagenes(anuncioId, formData) {
     const token = localStorage.getItem('relink_token');
     
@@ -101,11 +101,10 @@ export async function updateAnuncioCompleto(id, formData) {
     const token = localStorage.getItem('relink_token');
     
     const response = await fetch(`${API_URL}/anuncios/${id}`, {
-        method: 'POST', // Usamos POST porque Laravel lo requiere cuando enviamos archivos y el _method=PUT
+        method: 'POST',
         headers: {
             'Authorization': token ? `Bearer ${token}` : '',
             'Accept': 'application/json'
-            // OJO: No pongas 'Content-Type': 'multipart/form-data' aquí, fetch lo pone solo con el boundary correcto
         },
         body: formData
     });

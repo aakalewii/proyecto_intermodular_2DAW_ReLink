@@ -42,7 +42,7 @@ async function cargarAnuncios() {
                     <p>${anuncio.descripcion}</p>
                     <small>Publicado el: ${new Date(anuncio.fecha_publi).toLocaleDateString()}</small>
                     <br>
-                    <button onclick="verDetalle(${anuncio.id})" style="margin-top: 10px;">Ver más</button>
+                    <button onclick="window.location.href='/ver-anuncio.html?id=${anuncio.id}'" style="margin-top: 10px; cursor: pointer;">Ver más</button>
                 `;
                 contenedor.appendChild(tarjeta);
             }

@@ -193,40 +193,44 @@ document.addEventListener('DOMContentLoaded', async () => {
             card.style.border = "1px solid #eee";
             card.style.padding = "10px";
             card.style.borderRadius = "5px";
-            
+
             card.innerHTML = `
                 <h4 style="margin: 0 0 5px 0;">${anuncio.titulo}</h4>
                 <p style="margin: 0 0 10px 0;">Precio: <strong>${anuncio.precio}€</strong></p>
-                <a href="/ver-anuncio.html?id=${anuncio.id}" style="margin-right: 10px;">Ver detalle</a>
-                <button style="color: red; cursor: pointer;">Borrar Anuncio</button>
+                
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <a href="/ver-anuncio.html?id=${anuncio.id}" style="color: #007bff; text-decoration: none;">Ver detalle</a>
+                    
+                    <a href="/editar-anuncio.html?id=${anuncio.id}" style="color: #28a745; text-decoration: none;">
+                        <i class="fa-solid fa-pen"></i> Editar Anuncio
+                    </a>
+                    
+                    <button class="btn-borrar" style="color: red; cursor: pointer; background: none; border: none; padding: 0; font-size: 16px;">
+                        <i class="fa-solid fa-trash"></i> Borrar
+                    </button>
+                </div>
             `;
             
             // --- LÓGICA DEL BOTÓN DE BORRAR ---
-            const btnBorrar = card.querySelector('button'); // Capturamos el botón de esta tarjeta
+            const btnBorrar = card.querySelector('.btn-borrar'); 
             
             btnBorrar.addEventListener('click', async () => {
-                // Confirmación de seguridad
                 if (confirm(`¿Seguro que quieres borrar el anuncio "${anuncio.titulo}"?`)) {
                     try {
-                        // Feedback visual mientras borra
-                        btnBorrar.textContent = "Borrando...";
+                        btnBorrar.innerHTML = "Borrando...";
                         btnBorrar.disabled = true;
 
-                        // Llamamos al servicio para borrar en Laravel
                         await deleteAnuncio(anuncio.id);
                         
-                        // Si va bien, eliminamos la tarjeta del HTML visualmente
                         card.remove();
 
-                        // Comprobamos si nos hemos quedado a cero anuncios para poner el mensaje
                         if (listaAnuncios.children.length === 0) {
                             listaAnuncios.innerHTML = '<p>Aún no has publicado ningún anuncio.</p>';
                         }
 
                     } catch (error) {
                         alert("No se pudo borrar el anuncio: " + error.message);
-                        // Restauramos el botón si falla
-                        btnBorrar.textContent = "Borrar Anuncio";
+                        btnBorrar.innerHTML = `<i class="fa-solid fa-trash"></i> Borrar`;
                         btnBorrar.disabled = false;
                     }
                 }

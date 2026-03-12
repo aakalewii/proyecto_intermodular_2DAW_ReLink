@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             imgPrincipal.src = 'https://placehold.co/800x400?text=Sin+Imagen';
         }
 
-        // Lógica de Favoritos (Opcional según tu servicio)
+        // Lógica de Favoritos
         const btnFavorito = document.getElementById('btn-favorito');
         const token = localStorage.getItem('relink_token');
 
