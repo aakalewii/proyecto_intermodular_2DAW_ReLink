@@ -1,4 +1,4 @@
-import { renderNavbar } from '../components/Navbar.js';
+import { renderNavbar } from '../components/navBar.js';
 import { getAnuncios } from '../services/anuncios.js';
 
 document.addEventListener('DOMContentLoaded', () => {

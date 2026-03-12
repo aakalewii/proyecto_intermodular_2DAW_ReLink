@@ -1,4 +1,4 @@
-import { renderNavbar } from '../components/Navbar.js';
+import { renderNavbar } from '../components/navBar.js';
 import { getLocalidades } from '../services/ubicaciones.js';
 import { getCategorias, getSubcategoriasPorCategoria } from '../services/categorias.js';
 // Importamos la nueva función updateAnuncioCompleto

@@ -1,4 +1,4 @@
-import { renderNavbar } from '../components/Navbar.js'; // Revisa que sea Navbar.js o navBar.js según tu proyecto
+import { renderNavbar } from '../components/navBar.js';
 import { getMiPerfil, updatePerfil } from '../services/perfil.js';
 import { getLocalidades } from '../services/ubicaciones.js'; 
 // AÑADIDO: Importamos la función para borrar anuncios de tu servicio

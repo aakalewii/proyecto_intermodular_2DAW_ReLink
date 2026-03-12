@@ -51,6 +51,16 @@ class AnuncioDAO
         $anuncio->localidad = DB::selectOne('SELECT id, nombre FROM localidades WHERE id = ?', [$anuncio->localidad_id]);
         $anuncio->imagenes = DB::select('SELECT id, url FROM imagenes_anuncio WHERE anuncio_id = ?', [$id]);
 
+        // Traer la subcategoría y su categoría padre
+        $anuncio->subcategoria = DB::selectOne('SELECT id, nombre, categoria_id FROM subcategorias WHERE id = ?', [$anuncio->subcategoria_id]);
+
+        if ($anuncio->subcategoria) {
+            // Lo guardamos tanto dentro de subcategoria como directo en el anuncio para que el JS lo encuentre a la primera
+            $categoria = DB::selectOne('SELECT id, nombre FROM categorias WHERE id = ?', [$anuncio->subcategoria->categoria_id]);
+            $anuncio->subcategoria->categoria = $categoria;
+            $anuncio->categoria = $categoria;
+        }
+
         return $anuncio;
     }
 

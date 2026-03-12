@@ -1,4 +1,4 @@
-import { renderNavbar } from '../components/Navbar.js';
+import { renderNavbar } from '../components/navBar.js';
 // Importamos la función para traer las localidades
 import { getLocalidades } from '../services/ubicaciones.js';
 import { createAnuncio } from '../services/anuncios.js';

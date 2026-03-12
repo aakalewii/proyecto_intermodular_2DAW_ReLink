@@ -1,4 +1,4 @@
-import { renderNavbar } from '../components/Navbar.js';
+import { renderNavbar } from '../components/navBar.js';
 import { getAnuncioById } from '../services/anuncios.js';
 import { toggleFavorito, checkIfFavorito } from '../services/favoritos.js'; 
 
@@ -24,10 +24,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('ad-titulo').textContent = anuncio.titulo;
         document.getElementById('ad-precio').textContent = anuncio.precio;
         document.getElementById('ad-descripcion').textContent = anuncio.descripcion;
-        document.getElementById('ad-categoria').textContent = anuncio.categoria ? anuncio.categoria.nombre : 'Sin categoría';
         document.getElementById('ad-localidad').textContent = anuncio.localidad ? anuncio.localidad.nombre : 'Ubicación desconocida';
         document.getElementById('ad-fecha').textContent = new Date(anuncio.fecha_publi).toLocaleDateString('es-ES');
         document.getElementById('link-vendedor').textContent = anuncio.user ? anuncio.user.name : "Usuario Anónimo";
+
+        // --- LÓGICA DE CATEGORÍA Y SUBCATEGORÍA ---
+        const spanCategoria = document.getElementById('ad-categoria');
+        const spanSubcategoria = document.getElementById('ad-subcategoria');
+
+        if (anuncio.subcategoria) {
+            spanSubcategoria.textContent = anuncio.subcategoria.nombre;
+            // Si tu backend devuelve la categoría anidada dentro de la subcategoría:
+            if (anuncio.subcategoria.categoria) {
+                spanCategoria.textContent = anuncio.subcategoria.categoria.nombre;
+            } else {
+                spanCategoria.textContent = 'Categoría Principal';
+            }
+        } else {
+            spanSubcategoria.textContent = 'Sin subcategoría';
+            spanCategoria.textContent = 'Sin categoría';
+        }
 
         // Galería de fotos
         const imgPrincipal = document.getElementById('img-principal');
