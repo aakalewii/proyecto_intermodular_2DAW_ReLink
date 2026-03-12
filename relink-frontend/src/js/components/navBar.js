@@ -22,7 +22,30 @@ export function renderNavbar() {
             logoHtml = '<h2>ReLink (Admin)</h2>';
         }
 
+        // --- EL ESTILO Y EL BOTÓN (Apunta a crear-anuncio.html) ---
         let enlacesHtml = `
+            <style>
+                .btn-nuevo-anuncio {
+                    background-color: #28a745; 
+                    color: white; 
+                    border: 2px solid #28a745; 
+                    padding: 6px 12px; 
+                    border-radius: 5px; 
+                    text-decoration: none; 
+                    margin-right: 15px; 
+                    transition: all 0.3s ease;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px; /* Espacio entre el icono y el texto */
+                }
+                .btn-nuevo-anuncio:hover {
+                    background-color: white;
+                    color: #28a745;
+                }
+            </style>
+            <a href="/crear-anuncio.html" class="btn-nuevo-anuncio">
+                <i class="fa-solid fa-plus"></i> Crear Anuncio
+            </a>
             <a href="/perfil.html">Hola, <strong>${user.name}</strong></a>
             <a href="/index.html" style="margin-left: 15px;">Inicio</a>
         `;
@@ -38,9 +61,9 @@ export function renderNavbar() {
         }
 
         navbarContainer.innerHTML = `
-            <nav style="display: flex; justify-content: space-between; padding: 1rem;">
+            <nav style="display: flex; justify-content: space-between; padding: 1rem; align-items: center;">
                 ${logoHtml}
-                <div>
+                <div style="display: flex; align-items: center;">
                     ${enlacesHtml}
                     <button id="btnLogout" style="margin-left: 15px;">Cerrar Sesión</button>
                 </div>
@@ -72,7 +95,7 @@ export function renderNavbar() {
 
     } else {
         navbarContainer.innerHTML = `
-            <nav style="display: flex; justify-content: space-between; padding: 1rem;">
+            <nav style="display: flex; justify-content: space-between; padding: 1rem; align-items: center;">
                 <h2>ReLink</h2>
                 <div>
                     <a href="/login.html">Iniciar Sesión</a>

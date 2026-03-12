@@ -4,15 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Enums\AnuncioEstado; // <-- ¡MUY IMPORTANTE! Añadimos esto para poder usar el estado
-
+use App\Enums\AnuncioEstado;
 class ProfileController extends Controller
 {
     public function mostrarPerfil(Request $request){
 
         $userId = $request->user()->id;
 
-        // ¡LA MAGIA ESTÁ AQUÍ! Filtramos la relación de anuncios
         $user = User::with(['localidad', 'anuncios' => function ($query) {
             $query->where('estado', AnuncioEstado::PUBLICADO->value);
         }])->find($userId);
@@ -24,7 +22,7 @@ class ProfileController extends Controller
                 'apellidos' => $user->apellidos,
                 'nombre_completo' => $user->name . ' ' . $user->apellidos,
                 'email' => $user->email,
-                'contraseña' => $user->password, // Nota: Por seguridad, normalmente no se envía la contraseña al frontend
+                'contraseña' => $user->password,
                 'telefono' => $user->telefono,
                 'localidad_id' => $user->localidad_id,
                 'localidad_nombre' => $user->localidad ? $user->localidad->nombre : 'No definida',
@@ -53,7 +51,6 @@ class ProfileController extends Controller
 
     public function verPerfil(int $id)
     {
-        // ¡TAMBIÉN LO APLICAMOS AQUÍ! Para que otros no vean los anuncios borrados
         $user = User::with(['localidad', 'anuncios' => function ($query) {
             $query->where('estado', AnuncioEstado::PUBLICADO->value);
         }])->find($id);

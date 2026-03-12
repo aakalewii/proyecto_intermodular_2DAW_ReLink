@@ -3,34 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Anuncio | ReLink</title>
+    <title>Editar Anuncio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+
     <header id="navbar-container"></header>
 
     <main>
-        <h1>Editar mi Anuncio</h1>
+        <h1>Editar Anuncio</h1>
 
-        <form id="formEditarAnuncio">
-            <div id="fotosActualesContainer" style="margin-bottom: 20px;">
-                <label>Fotos actuales:</label>
-                <div id="listaFotosActuales" style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    </div>
-            </div>
-
+        <form id="formCrearAnuncio">
             <div>
-                <label>Añadir más fotos (Opcional):</label>
-                <input type="file" id="imagenes" multiple accept="image/jpeg, image/png, image/jpg, image/gif">
-            </div>
-
-            <div>
-                <label>Título:</label>
+                <label>Título del Anuncio:</label>
                 <input type="text" id="titulo" required>
             </div>
 
             <div>
                 <label>Descripción:</label>
-                <textarea id="descripcion" required></textarea>
+                <textarea id="descripcion" rows="4" required></textarea>
             </div>
 
             <div>
@@ -47,8 +38,8 @@
 
             <div>
                 <label>Subcategoría:</label>
-                <select id="subcategoria_id" required>
-                    <option value="" disabled selected>Selecciona una subcategoría...</option>
+                <select id="subcategoria_id" required disabled>
+                    <option value="" disabled selected>Selecciona primero una categoría</option>
                 </select>
             </div>
 
@@ -59,10 +50,23 @@
                 </select>
             </div>
 
+            <hr>
+
+            <div>
+                <h3>Imágenes Actuales</h3>
+                <div id="contenedorImagenesActuales">Cargando imágenes...</div>
+            </div>
+
+            <div>
+                <label>Añadir Nuevas Imágenes:</label>
+                <input type="file" id="nuevas_imagenes" accept="image/*" multiple>
+            </div>
+
+            <hr>
+
             <div id="errorMsg" style="color: red; display: none;"></div>
-            <div id="successMsg" style="color: green; display: none;">¡Anuncio actualizado con éxito!</div>
             
-            <button type="submit" id="btnGuardar">Guardar Cambios</button>
+            <button type="submit">Guardar Cambios</button>
         </form>
     </main>
 

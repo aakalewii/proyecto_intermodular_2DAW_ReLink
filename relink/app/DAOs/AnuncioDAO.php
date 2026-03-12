@@ -4,7 +4,7 @@ namespace App\DAOs;
 
 use Illuminate\Support\Facades\DB;
 use App\Enums\AnuncioEstado;
-use Illuminate\Support\Facades\Storage; // <--- Añadimos Storage para poder borrar los archivos físicos
+use Illuminate\Support\Facades\Storage;
 
 class AnuncioDAO
 {

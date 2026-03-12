@@ -1,146 +1,233 @@
 import { renderNavbar } from '../components/Navbar.js';
-import { getAnuncioDetalle, updateAnuncio } from '../services/anuncios.js';
 import { getLocalidades } from '../services/ubicaciones.js';
 import { getCategorias, getSubcategoriasPorCategoria } from '../services/categorias.js';
+// Importamos la nueva función updateAnuncioCompleto
+import { getAnuncioById, updateAnuncioCompleto } from '../services/anuncios.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     renderNavbar();
 
-    // 1. Obtener el ID del anuncio de la URL
+    const token = localStorage.getItem('relink_token');
+    if (!token) {
+        alert("Debes iniciar sesión para editar un anuncio.");
+        window.location.href = '/login.html';
+        return;
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const anuncioId = urlParams.get('id');
 
     if (!anuncioId) {
+        alert("No se ha especificado ningún anuncio para editar.");
         window.location.href = '/index.html';
         return;
     }
 
-    const form = document.getElementById('formEditarAnuncio');
-    const selectCat = document.getElementById('categoria_id');
-    const selectSub = document.getElementById('subcategoria_id');
-    const selectLoc = document.getElementById('localidad_id');
+    const form = document.getElementById('formCrearAnuncio');
+    const errorMessageDiv = document.getElementById('errorMsg');
+    const submitButton = form.querySelector('button[type="submit"]');
 
-    // 2. Cargar datos iniciales (Localidades y Categorías)
+    const selectCategoria = document.getElementById('categoria_id');
+    const selectSubcategoria = document.getElementById('subcategoria_id');
+    const selectLocalidad = document.getElementById('localidad_id');
+    const divImagenesActuales = document.getElementById('contenedorImagenesActuales');
+    const inputNuevasFotos = document.getElementById('nuevas_imagenes');
+
+    // AQUÍ GUARDAMOS LOS IDs DE LAS FOTOS QUE EL USUARIO QUIERE BORRAR
+    let imagenesParaBorrar = [];
+
+    if(submitButton) submitButton.textContent = 'Guardar Cambios';
+
+    await cargarSelectCategorias();
+    await cargarSelectLocalidades();
+
+    // PEDIMOS LOS DATOS DEL ANUNCIO
     try {
-        const [localidades, categorias, anuncioRespuesta] = await Promise.all([
-            getLocalidades(),
-            getCategorias(),
-            getAnuncioDetalle(anuncioId)
-        ]);
+        const response = await getAnuncioById(anuncioId);
+        const anuncio = response.datos; 
 
-        // Sacamos el objeto anuncio real de la respuesta del servidor
-        const anuncio = anuncioRespuesta.datos; 
-
-        // Rellenar Localidades
-        localidades.forEach(loc => {
-            const opt = new Option(loc.nombre, loc.id);
-            if(loc.id == anuncio.localidad_id) opt.selected = true;
-            selectLoc.add(opt);
-        });
-
-        // Rellenar Categorías
-        categorias.forEach(cat => {
-            const opt = new Option(cat.nombre, cat.id);
-            // Comprobamos si el anuncio tiene subcategoría para marcar la categoría padre
-            if(anuncio.subcategoria && cat.id == anuncio.subcategoria.categoria_id) opt.selected = true;
-            selectCat.add(opt);
-        });
-
-        // Cargar Subcategorías de la categoría actual y seleccionar la del anuncio
-        await cargarSubcategorias(selectCat.value, anuncio.subcategoria_id);
-
-        // Rellenar campos de texto
         document.getElementById('titulo').value = anuncio.titulo;
         document.getElementById('descripcion').value = anuncio.descripcion;
         document.getElementById('precio').value = anuncio.precio;
+        selectLocalidad.value = anuncio.localidad_id;
 
-        // Mostrar fotos actuales
-        const listaFotos = document.getElementById('listaFotosActuales');
-        listaFotos.innerHTML = ''; // Limpiar por si acaso
+        // Rellenar categorías
+        if (anuncio.subcategoria_id && anuncio.subcategoria && anuncio.subcategoria.categoria_id) {
+            selectCategoria.value = anuncio.subcategoria.categoria_id;
+            await cargarSubcategorias(anuncio.subcategoria.categoria_id);
+            selectSubcategoria.value = anuncio.subcategoria_id;
+        }
+
+        // PINTAR IMÁGENES ACTUALES
+        divImagenesActuales.innerHTML = '';
         if (anuncio.imagenes && anuncio.imagenes.length > 0) {
             anuncio.imagenes.forEach(img => {
                 const imgContainer = document.createElement('div');
-                imgContainer.style.position = 'relative';
+                imgContainer.style.display = 'inline-block';
+                imgContainer.style.margin = '10px';
+                imgContainer.style.textAlign = 'center';
+
+                const imgElement = document.createElement('img');
+                imgElement.src = `http://localhost:5500/storage/${img.url}`; 
+                imgElement.width = 120; 
                 
-                const imgEl = document.createElement('img');
-                imgEl.src = `http://localhost:5500/storage/${img.url}`;
-                imgEl.style.width = '80px';
-                imgEl.style.height = '80px';
-                imgEl.style.objectFit = 'cover';
-                imgEl.style.borderRadius = '5px';
+                const btnBorrar = document.createElement('button');
+                btnBorrar.textContent = "Eliminar";
+                btnBorrar.type = "button";
+                btnBorrar.style.display = "block";
+                btnBorrar.style.margin = "5px auto";
                 
-                imgContainer.appendChild(imgEl);
-                listaFotos.appendChild(imgContainer);
+                // Evento para marcar la foto para borrar
+                btnBorrar.addEventListener('click', () => {
+                    if (confirm('¿Seguro que quieres borrar esta foto? Se eliminará definitivamente al guardar los cambios.')) {
+                        imagenesParaBorrar.push(img.id); // Guardamos el ID en la lista negra
+                        imgContainer.remove(); // La ocultamos de la pantalla para dar feedback al usuario
+                    }
+                });
+
+                imgContainer.appendChild(imgElement);
+                imgContainer.appendChild(btnBorrar);
+                divImagenesActuales.appendChild(imgContainer);
             });
+        } else {
+            divImagenesActuales.textContent = 'No hay imágenes subidas en este anuncio.';
         }
 
     } catch (error) {
-        console.error("Error al cargar datos:", error);
+        alert("No se pudo cargar el anuncio. ¿Seguro que existe o es tuyo?");
+        window.location.href = '/index.html';
+        return;
     }
 
-    // Evento para cambiar subcategorías al cambiar categoría
-    selectCat.addEventListener('change', (e) => cargarSubcategorias(e.target.value));
+    // EVENTO: CAMBIO DE CATEGORÍA
+    selectCategoria.addEventListener('change', async (e) => {
+        await cargarSubcategorias(e.target.value);
+    });
 
-    async function cargarSubcategorias(catId, selectedId = null) {
-    if (!catId) return;
-
-    try {
-        const subs = await getSubcategoriasPorCategoria(catId);
-        selectSub.innerHTML = '';
-        
-        const listaSubs = subs.datos || subs;
-
-        listaSubs.forEach(s => {
-            const opt = new Option(s.nombre, s.id);
-            if(s.id == selectedId) opt.selected = true;
-            selectSub.add(opt);
-        });
-        selectSub.disabled = false;
-    } catch (error) {
-        console.error("Error al cargar subcategorías:", error);
-    }
-}
-
-    // 3. Enviar el formulario actualizado
+    // EVENTO: GUARDAR LOS CAMBIOS
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        const btnGuardar = document.getElementById('btnGuardar');
-        btnGuardar.disabled = true;
-        btnGuardar.textContent = 'Guardando...';
-
-        const formData = new FormData();
-        
-        // TRUCO PARA LARAVEL: Multipart/form-data no funciona bien con PUT puro
-        // Enviamos como POST pero simulamos PUT
-        formData.append('_method', 'PUT'); 
-
-        formData.append('titulo', document.getElementById('titulo').value);
-        formData.append('descripcion', document.getElementById('descripcion').value);
-        formData.append('precio', document.getElementById('precio').value);
-        formData.append('subcategoria_id', selectSub.value);
-        formData.append('localidad_id', selectLoc.value);
-
-        const inputImg = document.getElementById('imagenes');
-        if (inputImg.files.length > 0) {
-            for (let i = 0; i < inputImg.files.length; i++) {
-                formData.append('imagenes[]', inputImg.files[i]);
-            }
-        }
+        limpiarErrores();
+        cargando(true);
 
         try {
-            // Pasamos el formData con el _method PUT dentro
-            await updateAnuncio(anuncioId, formData);
+            // Creamos la caja FormData para enviarlo todo junto
+            const formData = new FormData();
             
-            document.getElementById('successMsg').style.display = 'block';
-            setTimeout(() => window.location.href = '/mis-anuncios.html', 2000);
-        } catch (err) {
-            console.error(err);
-            const errorDiv = document.getElementById('errorMsg');
-            errorDiv.textContent = "Error al actualizar el anuncio.";
-            errorDiv.style.display = 'block';
-            btnGuardar.disabled = false;
-            btnGuardar.textContent = 'Guardar Cambios';
+            // Truco de Laravel: Enviamos POST pero le decimos que internamente actúe como PUT
+            formData.append('_method', 'PUT');
+
+            // Textos
+            formData.append('titulo', document.getElementById('titulo').value);
+            formData.append('descripcion', document.getElementById('descripcion').value);
+            formData.append('precio', document.getElementById('precio').value);
+            formData.append('subcategoria_id', document.getElementById('subcategoria_id').value);
+            formData.append('localidad_id', document.getElementById('localidad_id').value);
+
+            // Añadimos la lista de imágenes a borrar (Laravel las leerá como un array)
+            imagenesParaBorrar.forEach(id => {
+                formData.append('imagenes_a_borrar[]', id);
+            });
+
+            // Añadimos las fotos nuevas (si hay)
+            if (inputNuevasFotos && inputNuevasFotos.files.length > 0) {
+                for (let i = 0; i < inputNuevasFotos.files.length; i++) {
+                    formData.append('nuevas_imagenes[]', inputNuevasFotos.files[i]);
+                }
+            }
+
+            // Enviamos todo a tu nueva función en servicios
+            await updateAnuncioCompleto(anuncioId, formData);
+
+            alert('¡Anuncio actualizado con éxito!');
+            window.location.reload();
+
+        } catch (error) {
+            mostrarError(error.message || 'Error al actualizar el anuncio. Revisa los datos.');
+        } finally {
+            cargando(false);
         }
     });
+
+    // FUNCIONES PARA LLENAR DESPLEGABLES
+    async function cargarSelectCategorias() {
+        try {
+            const categorias = await getCategorias();
+            selectCategoria.innerHTML = '<option value="" disabled selected>Selecciona una categoría...</option>';
+            categorias.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat.id;
+                option.textContent = cat.nombre;
+                selectCategoria.appendChild(option);
+            });
+        } catch (error) {
+            selectCategoria.innerHTML = '<option value="" disabled>Error al cargar categorías</option>';
+        }
+    }
+
+    async function cargarSubcategorias(categoriaId) {
+        selectSubcategoria.innerHTML = '<option value="" disabled selected>Cargando subcategorías...</option>';
+        selectSubcategoria.disabled = true;
+
+        try {
+            const subcategoriasFiltradas = await getSubcategoriasPorCategoria(categoriaId);
+            selectSubcategoria.innerHTML = '<option value="" disabled selected>Selecciona una subcategoría...</option>';
+            
+            if (subcategoriasFiltradas.length === 0) {
+                selectSubcategoria.innerHTML = '<option value="" disabled>No hay subcategorías</option>';
+                return;
+            }
+
+            subcategoriasFiltradas.forEach(sub => {
+                const option = document.createElement('option');
+                option.value = sub.id;
+                option.textContent = sub.nombre;
+                selectSubcategoria.appendChild(option);
+            });
+
+            selectSubcategoria.disabled = false;
+        } catch (error) {
+            selectSubcategoria.innerHTML = '<option value="" disabled>Error al cargar subcategorías</option>';
+        }
+    }
+
+    async function cargarSelectLocalidades() {
+        try {
+            const localidades = await getLocalidades();
+            selectLocalidad.innerHTML = '<option value="" disabled selected>Selecciona una localidad...</option>';
+            localidades.forEach(localidad => {
+                const option = document.createElement('option');
+                option.value = localidad.id;
+                const nombreMuni = localidad.municipio ? localidad.municipio.nombre : '';
+                option.textContent = nombreMuni ? `${localidad.nombre} (${nombreMuni})` : localidad.nombre;
+                selectLocalidad.appendChild(option);
+            });
+        } catch (error) {
+            selectLocalidad.innerHTML = '<option value="" disabled>Error al cargar localidades</option>';
+        }
+    }
+
+    function mostrarError(message) {
+        if (errorMessageDiv) {
+            errorMessageDiv.textContent = message;
+            errorMessageDiv.style.display = 'block';
+        } else {
+            alert(message);
+        }
+    }
+
+    function limpiarErrores() {
+        if (errorMessageDiv) {
+            errorMessageDiv.textContent = '';
+            errorMessageDiv.style.display = 'none';
+        }
+    }
+
+    function cargando(isLoading) {
+        if (submitButton) {
+            submitButton.disabled = isLoading;
+            submitButton.textContent = isLoading ? 'Guardando...' : 'Guardar Cambios';
+            submitButton.style.opacity = isLoading ? '0.7' : '1';
+        }
+    }
 });

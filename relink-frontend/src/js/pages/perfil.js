@@ -1,89 +1,239 @@
-import { renderNavbar } from '../components/navBar.js';
-import { getAnuncios, deleteAnuncio } from '../services/anuncios.js';
+import { renderNavbar } from '../components/Navbar.js'; // Revisa que sea Navbar.js o navBar.js según tu proyecto
+import { getMiPerfil, updatePerfil } from '../services/perfil.js';
+import { getLocalidades } from '../services/ubicaciones.js'; 
+// AÑADIDO: Importamos la función para borrar anuncios de tu servicio
+import { deleteAnuncio } from '../services/anuncios.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Cargamos el menú
+    
+    // Cargamos el navbar
     renderNavbar();
 
-    // 2. Comprobamos sesión
+    // Comprobamos seguridad
     const token = localStorage.getItem('relink_token');
-    const userString = localStorage.getItem('relink_user');
-
-    if (!token || !userString) {
+    if (!token) {
         window.location.href = '/login.html';
-        return;
+        return; 
     }
 
-    const usuarioActual = JSON.parse(userString);
-    const contenedorAnuncios = document.getElementById('misAnunciosContainer');
+    // Variable global para guardar los datos que vienen de la base de datos
+    let datosUsuarioActual = null; 
 
+    // Referencias a los bloques de lectura y edicion
+    const bloqueLectura = document.getElementById('bloque-lectura');
+    const formEditar = document.getElementById('form-editar');
+
+    // --- CARGA INICIAL DE LA PÁGINA ---
     try {
-        // 3. Obtener y filtrar anuncios
-        const todosLosAnuncios = await getAnuncios();
+        const respuesta = await getMiPerfil();
+        datosUsuarioActual = respuesta.datos;
         
-        // Filtramos: solo los anuncios cuyo user_id coincida con el mío
-        const misAnuncios = todosLosAnuncios.filter(anuncio => anuncio.user_id === usuarioActual.id);
+        // Pintamos la información
+        pintarDatosLectura(datosUsuarioActual);
+        pintarMisAnuncios(datosUsuarioActual.anuncios);
 
-        contenedorAnuncios.innerHTML = ''; // Limpiamos el contenedor
+    } catch (error) {
+        console.error("Error al cargar perfil:", error);
+        alert("Hubo un problema al cargar tu perfil. Revisa la consola.");
+    }
 
-        if (misAnuncios.length === 0) {
-            contenedorAnuncios.innerHTML = '<p>No tienes ningún anuncio publicado todavía.</p>';
-            return;
+    // --- LÓGICA DE LOS BOTONES ---
+
+    // Al darle a "Editar Perfil"
+    document.getElementById('btn-editar').addEventListener('click', async () => {
+        
+        // Escondemos textos, mostramos formulario
+        bloqueLectura.style.display = 'none';
+        formEditar.style.display = 'flex';
+
+        // Rellenar Nombre
+        document.getElementById('edit-nombre').value = datosUsuarioActual.nombre;
+
+        // Rellenar Apellidos
+        if (datosUsuarioActual.apellidos !== null) {
+            document.getElementById('edit-apellidos').value = datosUsuarioActual.apellidos;
+        } else {
+            document.getElementById('edit-apellidos').value = "";
         }
 
-        // 4. Pintar los anuncios
-        misAnuncios.forEach(anuncio => {
-            const divAnuncio = document.createElement('div');
-            divAnuncio.style = "border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);";
+        // Rellenar Teléfono
+        if (datosUsuarioActual.telefono !== null) {
+            document.getElementById('edit-telefono').value = datosUsuarioActual.telefono;
+        } else {
+            document.getElementById('edit-telefono').value = "";
+        }
 
-            // Usamos enlaces <a> directos. CERO 'onclick' aquí para evitar errores de scope.
-            divAnuncio.innerHTML = `
-                <h3 style="margin-top: 0; color: #333;">${anuncio.titulo}</h3>
-                <p style="font-size: 1.2rem; font-weight: bold; color: #28a745; margin: 10px 0;">${anuncio.precio} €</p>
+        // Cargar el desplegable de localidades
+        try {
+            const resLocalidades = await getLocalidades();
+            const selectLocalidad = document.getElementById('edit-localidad');
+            
+            // Empezamos con la opción vacía
+            selectLocalidad.innerHTML = '<option value="">Selecciona una localidad...</option>';
+            
+            // Llenamos el desplegable usando un IF normal para marcar la seleccionada
+            resLocalidades.forEach(loc => {
+                let opcionSeleccionada = "";
                 
-                <div class="botones-accion" style="display: flex; gap: 10px; margin-top: 15px;">
-                    <a href="/ver-anuncio.html?id=${anuncio.id}" style="padding: 8px 15px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9rem;">
-                        <i class="fa-solid fa-eye"></i> Ver
-                    </a>
+                if (loc.id === datosUsuarioActual.localidad_id) {
+                    opcionSeleccionada = "selected";
+                }
 
-                    <a href="/editar-anuncio.html?id=${anuncio.id}" style="padding: 8px 15px; background: #ffc107; color: black; text-decoration: none; border-radius: 4px; font-size: 0.9rem;">
-                        <i class="fa-solid fa-pen"></i> Editar
-                    </a>
-                </div>
+                selectLocalidad.innerHTML += `<option value="${loc.id}" ${opcionSeleccionada}>${loc.nombre}</option>`;
+            });
+            
+        } catch (e) {
+            console.error("No se pudieron cargar las localidades", e);
+        }
+    });
+
+    // Al darle a "Cancelar"
+    document.getElementById('btn-cancelar').addEventListener('click', () => {
+        formEditar.style.display = 'none';
+        bloqueLectura.style.display = 'block';
+    });
+
+
+    // --- GUARDAR LOS CAMBIOS ---
+    formEditar.addEventListener('submit', async (e) => {
+        e.preventDefault(); 
+
+        // Leer la localidad elegida
+        const localidadValue = document.getElementById('edit-localidad').value;
+        let idLocalidadEnviar;
+        
+        // Si no eligió nada, mandamos null, si no, mandamos el número
+        if (localidadValue === "") {
+            idLocalidadEnviar = null;
+        } else {
+            idLocalidadEnviar = localidadValue;
+        }
+
+        // Preparar el paquete para Laravel
+        const nuevosDatos = {
+            name: document.getElementById('edit-nombre').value,
+            apellidos: document.getElementById('edit-apellidos').value,
+            telefono: document.getElementById('edit-telefono').value,
+            localidad_id: idLocalidadEnviar
+        };
+
+        try {
+            // Enviar los datos
+            const respuestaActualizacion = await updatePerfil(nuevosDatos);
+            const userActualizado = respuestaActualizacion.data;
+            
+            // Guardar los datos nuevos en nuestra variable local
+            datosUsuarioActual.nombre = userActualizado.name;
+            datosUsuarioActual.apellidos = userActualizado.apellidos;
+            
+            // Para el nombre completo, revisamos si hay apellidos
+            if (userActualizado.apellidos !== null) {
+                datosUsuarioActual.nombre_completo = userActualizado.name + ' ' + userActualizado.apellidos;
+            } else {
+                datosUsuarioActual.nombre_completo = userActualizado.name;
+            }
+            
+            datosUsuarioActual.telefono = userActualizado.telefono;
+            
+            // Si Laravel nos devolvió la ciudad, la guardamos
+            if (userActualizado.localidad) {
+                datosUsuarioActual.localidad_nombre = userActualizado.localidad.nombre;
+                datosUsuarioActual.localidad_id = userActualizado.localidad.id;
+            }
+
+            // Repintar textos y ocultar formulario
+            pintarDatosLectura(datosUsuarioActual);
+            formEditar.style.display = 'none';
+            bloqueLectura.style.display = 'block';
+
+            // Actualizar el navbar
+            localStorage.setItem('relink_user', JSON.stringify(userActualizado));
+            renderNavbar();
+
+            alert("¡Perfil actualizado correctamente!");
+
+        } catch (error) {
+            alert("Hubo un error al guardar los datos: " + error.message);
+        }
+    });
+
+
+    // --- FUNCIONES PARA PINTAR ---
+
+    function pintarDatosLectura(user) {
+        document.getElementById('perf-nombre').textContent = user.nombre_completo;
+        document.getElementById('perf-email').textContent = user.email;
+        
+        // Pintar teléfono
+        if (user.telefono !== null) {
+            document.getElementById('perf-telefono').textContent = user.telefono;
+        } else {
+            document.getElementById('perf-telefono').textContent = "No especificado";
+        }
+
+        // Pintar localidad
+        if (user.localidad_nombre) {
+            document.getElementById('perf-localidad').textContent = user.localidad_nombre;
+        } else {
+            document.getElementById('perf-localidad').textContent = "No definida";
+        }
+    }
+
+    function pintarMisAnuncios(anuncios) {
+        const listaAnuncios = document.getElementById('mis-anuncios-lista');
+        listaAnuncios.innerHTML = ''; 
+
+        if (anuncios.length === 0) {
+            listaAnuncios.innerHTML = '<p>Aún no has publicado ningún anuncio.</p>';
+            return; 
+        }
+
+        anuncios.forEach(anuncio => {
+            const card = document.createElement('div');
+            card.style.border = "1px solid #eee";
+            card.style.padding = "10px";
+            card.style.borderRadius = "5px";
+            
+            card.innerHTML = `
+                <h4 style="margin: 0 0 5px 0;">${anuncio.titulo}</h4>
+                <p style="margin: 0 0 10px 0;">Precio: <strong>${anuncio.precio}€</strong></p>
+                <a href="/ver-anuncio.html?id=${anuncio.id}" style="margin-right: 10px;">Ver detalle</a>
+                <button style="color: red; cursor: pointer;">Borrar Anuncio</button>
             `;
-
-            // 5. Botón Eliminar (Lo creamos por separado para el evento clic)
-            const btnEliminar = document.createElement('button');
-            btnEliminar.innerHTML = '<i class="fa-solid fa-trash"></i> Eliminar';
-            btnEliminar.style = "padding: 8px 15px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem;";
-
-            btnEliminar.addEventListener('click', async () => {
-                const confirmacion = confirm(`¿Estás seguro de eliminar "${anuncio.titulo}"?`);
-                if (confirmacion) {
+            
+            // --- LÓGICA DEL BOTÓN DE BORRAR ---
+            const btnBorrar = card.querySelector('button'); // Capturamos el botón de esta tarjeta
+            
+            btnBorrar.addEventListener('click', async () => {
+                // Confirmación de seguridad
+                if (confirm(`¿Seguro que quieres borrar el anuncio "${anuncio.titulo}"?`)) {
                     try {
-                        btnEliminar.textContent = "Borrando...";
-                        btnEliminar.disabled = true;
+                        // Feedback visual mientras borra
+                        btnBorrar.textContent = "Borrando...";
+                        btnBorrar.disabled = true;
+
+                        // Llamamos al servicio para borrar en Laravel
                         await deleteAnuncio(anuncio.id);
-                        divAnuncio.remove();
                         
-                        if (contenedorAnuncios.children.length === 0) {
-                            contenedorAnuncios.innerHTML = '<p>No tienes anuncios publicados.</p>';
+                        // Si va bien, eliminamos la tarjeta del HTML visualmente
+                        card.remove();
+
+                        // Comprobamos si nos hemos quedado a cero anuncios para poner el mensaje
+                        if (listaAnuncios.children.length === 0) {
+                            listaAnuncios.innerHTML = '<p>Aún no has publicado ningún anuncio.</p>';
                         }
+
                     } catch (error) {
-                        alert("No se pudo eliminar: " + error.message);
-                        btnEliminar.innerHTML = '<i class="fa-solid fa-trash"></i> Eliminar';
-                        btnEliminar.disabled = false;
+                        alert("No se pudo borrar el anuncio: " + error.message);
+                        // Restauramos el botón si falla
+                        btnBorrar.textContent = "Borrar Anuncio";
+                        btnBorrar.disabled = false;
                     }
                 }
             });
+            // ----------------------------------
 
-            // Añadimos el botón de eliminar al div de botones
-            divAnuncio.querySelector('.botones-accion').appendChild(btnEliminar);
-            contenedorAnuncios.appendChild(divAnuncio);
+            listaAnuncios.appendChild(card);
         });
-
-    } catch (error) {
-        console.error("Error cargando perfil:", error);
-        contenedorAnuncios.innerHTML = '<p style="color:red;">Error al cargar tus anuncios.</p>';
     }
 });
