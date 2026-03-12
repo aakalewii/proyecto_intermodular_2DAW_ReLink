@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('ad-descripcion').textContent = anuncio.descripcion;
 
         // Si Laravel nos devuelve las relaciones de categoría y localidad, las pintamos. Si no, ponemos algo por defecto.
-        document.getElementById('ad-categoria').textContent = anuncio.categoria ? anuncio.categoria.nombre : 'Sin categoría';
+        document.getElementById('ad-categoria').textContent = anuncio.subcategoria ? anuncio.subcategoria.nombre : 'Sin subcategoría';
         document.getElementById('ad-localidad').textContent = anuncio.localidad ? `${anuncio.localidad.nombre}` : 'Ubicación desconocida';
 
         // Formatear la fecha para que se vea bonita (Día/Mes/Año)
@@ -61,12 +61,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             function getUrlFoto(img) {
                 let ruta = img.url;
 
-                /* if (ruta.startsWith('http')) {
+                if (ruta.startsWith('http')) {
                     return ruta; 
-                } else { */
+                } else {
                     let rutaCompleta = URL_BACKEND_STORAGE + ruta;
                     return rutaCompleta;
-                //}
+                }
             }
             // ----------------------------------------------
 
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         } else {
             // Si el anuncio se publicó sin fotos, ponemos una de relleno
-            imgPrincipal.src = 'https://placehold.co/800x400/eeeeee/999999?text=Sin+Imagen';
+            imgPrincipal.src = URL_BACKEND_STORAGE + '/anucios/default.jpg';
         }
 
         // --- LÓGICA DEL BOTÓN DE FAVORITOS ---
