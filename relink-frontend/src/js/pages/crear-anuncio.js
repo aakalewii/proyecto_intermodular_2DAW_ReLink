@@ -1,5 +1,5 @@
 import { renderNavbar } from '../components/Navbar.js';
-// Importamos la función para traer las localidades
+// Importamos la función para traer las localidades y categorias y subcategorias
 import { getLocalidades } from '../services/ubicaciones.js';
 import { createAnuncio } from '../services/anuncios.js';
 import { getCategorias, getSubcategoriasPorCategoria } from '../services/categorias.js';
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         selectSubcategoria.disabled = true;
 
         try {
-            // Le pedimos a Laravel SOLAMENTE las subcategorías de esta categoría
+            // Cargamos las subcategorías de la categoria seleccionada
             const subcategoriasFiltradas = await getSubcategoriasPorCategoria(categoriaSeleccionadaId);
 
             selectSubcategoria.innerHTML = '<option value="" disabled selected>Selecciona una subcategoría...</option>';
@@ -61,24 +61,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 3. Escuchamos cuando el usuario le da a enviar
+    // Escuchamos cuando el usuario le da a enviar
    form.addEventListener('submit', async (e) => {
         e.preventDefault();
         limpiarErrores();
         cargando(true);
 
         try {
-            // 1. Creamos la "caja" vacía
+            // Creamos la caja vacía
             const formData = new FormData();
 
-            // 2. Metemos los textos sacándolos directamente del HTML
+            // Metemos los textos sacándolos directamente del HTML
             formData.append('titulo', document.getElementById('titulo').value);
             formData.append('descripcion', document.getElementById('descripcion').value);
             formData.append('precio', document.getElementById('precio').value);
             formData.append('subcategoria_id', document.getElementById('subcategoria_id').value);
             formData.append('localidad_id', document.getElementById('localidad_id').value);
 
-            // 3. Buscamos el input de las fotos
+            // Buscamos el input de las fotos
             const inputArchivos = document.getElementById('imagenes');
             
             // Si el input existe y el usuario ha seleccionado al menos una foto...
@@ -90,11 +90,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // 4. Se lo mandamos TODO de golpe a nuestra función del servicio
+            // Se lo mandamos TODO de golpe a nuestra función del servicio
             await createAnuncio(formData);
 
-            alert('¡Anuncio y fotos publicados con éxito!');
-            window.location.href = '/index.html'; 
+            window.location.href = '/perfil.html'; 
 
         } catch (error) {
             mostrarError(error.message || 'Error al publicar el anuncio. Revisa los datos.');

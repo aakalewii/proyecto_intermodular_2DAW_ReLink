@@ -19,9 +19,17 @@ class AnuncioController extends Controller
         $this->anuncioDAO = $anuncioDAO;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $anuncios = $this->anuncioDAO->obtenerPublicados();
+
+        // Como la ruta es publica usamos auth('sanctum) para forzar la lectura del token
+        $user = auth('sanctum')->user();
+
+        // Si usuario existe cogemos su id, si no, vale null
+        $userId = $user ? $user->id : null;
+
+        // Accedemos a la función del DAO
+        $anuncios = $this->anuncioDAO->obtenerPublicados($userId);
         return response()->json($anuncios);
     }
 
@@ -39,10 +47,10 @@ class AnuncioController extends Controller
 
         try {
             $anuncio = DB::transaction(function () use ($validated, $request) {
-                // 1. Creamos el anuncio usando el DAO
+                // Creamos el anuncio usando el DAO
                 $nuevoAnuncio = $this->anuncioDAO->crearAnuncio($validated, $request->user()->id, now());
 
-                // 2. Si hay fotos, las guardamos físicamente y llamamos al DAO
+                // Si hay fotos, las guardamos físicamente y llamamos al DAO
                 if ($request->hasFile('imagenes')) {
                     foreach ($request->file('imagenes') as $foto) {
                         $ruta = $foto->store('anuncios', 'public');

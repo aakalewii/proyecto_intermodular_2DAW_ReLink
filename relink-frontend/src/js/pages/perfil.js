@@ -150,8 +150,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             localStorage.setItem('relink_user', JSON.stringify(userActualizado));
             renderNavbar();
 
-            alert("¡Perfil actualizado correctamente!");
-
         } catch (error) {
             alert("Hubo un error al guardar los datos: " + error.message);
         }

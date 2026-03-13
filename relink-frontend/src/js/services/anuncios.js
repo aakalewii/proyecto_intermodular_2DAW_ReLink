@@ -3,11 +3,29 @@ import { API_URL, getAuthHeaders} from './auth.js';
 // 1. Leer Anuncios
 export async function getAnuncios() {
     try {
+
+        const token = localStorage.getItem('relink_token');
+
+        const headersConfig = { 
+            'Accept': 'application/json' 
+        };
+
+        if (token) {
+            headersConfig['Authorization'] = `Bearer ${token}`;
+        }
+
+
         const response = await fetch(`${API_URL}/anuncios`, {
-            headers: { 'Accept': 'application/json' }
+            method: 'GET',
+            headers: headersConfig
         });
-        if (!response.ok) throw new Error('Error al cargar los anuncios');
+
+        if (!response.ok){
+            throw new Error('Error al cargar los anuncios');
+        }
+
         return await response.json();
+        
     } catch (error) {
         throw error;
     }

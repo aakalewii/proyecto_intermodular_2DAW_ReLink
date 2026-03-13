@@ -46,6 +46,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         const response = await getAnuncioById(anuncioId);
         const anuncio = response.datos; 
 
+        const miUsuarioString = localStorage.getItem('relink_user');
+
+        const miUsuario = JSON.parse(miUsuarioString);
+
+        if (anuncio.user_id != miUsuario.id) {
+            alert("No tienes permiso para editar un anuncio que no es tuyo.");
+            window.location.href = '/index.html'; // hacer pa un futuro una pagina html de Acceso denegado
+            return;
+        }
+
         document.getElementById('titulo').value = anuncio.titulo;
         document.getElementById('descripcion').value = anuncio.descripcion;
         document.getElementById('precio').value = anuncio.precio;
@@ -80,8 +90,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Evento para marcar la foto para borrar
                 btnBorrar.addEventListener('click', () => {
                     if (confirm('¿Seguro que quieres borrar esta foto? Se eliminará definitivamente al guardar los cambios.')) {
-                        imagenesParaBorrar.push(img.id); // Guardamos el ID en la lista negra
-                        imgContainer.remove(); // La ocultamos de la pantalla para dar feedback al usuario
+                        imagenesParaBorrar.push(img.id); // Guardamos el ID en el array
+                        imgContainer.remove(); // La ocultamos de la pantalla
                     }
                 });
 
@@ -99,12 +109,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // EVENTO: CAMBIO DE CATEGORÍA
+    // CAMBIO DE CATEGORÍA
     selectCategoria.addEventListener('change', async (e) => {
         await cargarSubcategorias(e.target.value);
     });
 
-    // EVENTO: GUARDAR LOS CAMBIOS
+    // GUARDAR LOS CAMBIOS
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         limpiarErrores();
@@ -124,12 +134,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             formData.append('subcategoria_id', document.getElementById('subcategoria_id').value);
             formData.append('localidad_id', document.getElementById('localidad_id').value);
 
-            // Añadimos la lista de imágenes a borrar (Laravel las leerá como un array)
+            // Añadimos la lista de imágenes a borrar
             imagenesParaBorrar.forEach(id => {
                 formData.append('imagenes_a_borrar[]', id);
             });
 
-            // Añadimos las fotos nuevas (si hay)
+            // Si hay fotos nuevas añadimos
             if (inputNuevasFotos && inputNuevasFotos.files.length > 0) {
                 for (let i = 0; i < inputNuevasFotos.files.length; i++) {
                     formData.append('nuevas_imagenes[]', inputNuevasFotos.files[i]);
@@ -139,7 +149,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Enviamos todo a tu nueva función en servicios
             await updateAnuncioCompleto(anuncioId, formData);
 
-            alert('¡Anuncio actualizado con éxito!');
             window.location.reload();
 
         } catch (error) {

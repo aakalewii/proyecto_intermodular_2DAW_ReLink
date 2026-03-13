@@ -45,6 +45,12 @@ class FavoritoController extends Controller
             ->where('favoritos.user_id', $user->id)
             ->where('anuncios.estado', 'publicado')
             ->select('anuncios.*')
+            ->addSelect(['foto_principal' => DB::table('imagenes_anuncio')
+            ->select('url')
+            ->whereColumn('anuncio_id', 'anuncios.id')
+            ->orderBy('id', 'asc')
+            ->limit(1)
+            ])
             ->get();
             
         if ($favoritos->isEmpty()) {
