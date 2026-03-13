@@ -1,0 +1,275 @@
+/* --- Variables --- */
+:root {
+    --primary-color: #343a40;
+    --accent-color: #007bff;
+    --bg-color: #f8f9fa;
+    --text-color: #333;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --border-color: #ced4da;
+    --card-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    --hover-shadow: 0 8px 15px rgba(0,0,0,0.15);
+}
+
+/* --- Base --- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    margin: 0;
+    color: var(--text-color);
+}
+
+main {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+h1, h2, h3 {
+    color: var(--primary-color);
+}
+
+/* --- Títulos Principales de Página --- */
+.page-title {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    border-bottom: 3px solid var(--accent-color);
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+/* =========================================
+   1. TARJETAS DE ANUNCIOS (index.html, favoritos.html)
+   ========================================= */
+.grid-anuncios {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.anuncio-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid #eee;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.anuncio-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;     /* Recorta la foto proporcionalmente sin deformarla */
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.anuncio-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--hover-shadow);
+    border-color: #b8daff;
+}
+
+.anuncio-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.3rem;
+}
+
+.anuncio-card .precio {
+    color: var(--accent-color);
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 0 15px 0;
+}
+
+.anuncio-card .descripcion-corta {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+    flex-grow: 1; /* Empuja el botón hacia abajo */
+}
+
+/* Botones en tarjetas públicas */
+.btn-ver-mas {
+    background-color: white;
+    color: var(--accent-color);
+    border: 2px solid var(--accent-color);
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    text-align: center;
+    transition: all 0.3s ease;
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+}
+
+.btn-ver-mas:hover {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+/* =========================================
+   2. DETALLE DEL ANUNCIO (ver-anuncio.html)
+   ========================================= */
+.layout-anuncio {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.col-fotos {
+    flex: 1.5;
+    min-width: 300px;
+}
+
+.col-info {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+}
+
+.foto-principal {
+    width: 100%;
+    height: 450px;
+    object-fit: contain;
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid #eee;
+}
+
+.galeria-miniaturas {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.miniatura {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    opacity: 0.6;
+    transition: all 0.2s;
+}
+
+.miniatura:hover, .miniatura.activa {
+    opacity: 1;
+    border-color: var(--accent-color);
+}
+
+.etiqueta {
+    display: inline-block;
+    background: #e9ecef;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 10px;
+}
+
+.tarjeta-vendedor {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Botón Principal (Ej: Contactar) */
+.btn-primary {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-align: center;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+/* =========================================
+   3. FORMULARIOS PÚBLICOS (Crear/Editar Anuncio, Perfil)
+   ========================================= */
+.formulario-publico {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.formulario-publico div {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.formulario-publico label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #495057;
+}
+
+.formulario-publico input[type="text"],
+.formulario-publico input[type="number"],
+.formulario-publico select,
+.formulario-publico textarea {
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: #fff;
+    transition: all 0.3s;
+}
+
+.formulario-publico input:focus,
+.formulario-publico select:focus,
+.formulario-publico textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+/* Contenedor de "Mis Favoritos" o "Mis Anuncios" en el Perfil */
+.seccion-perfil {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 30px;
+}
+
+/* Asegurar que todos los campos del formulario público ocupen el 100% de su columna */
+.formulario-publico .form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.formulario-publico input,
+.formulario-publico select,
+.formulario-publico textarea {
+    width: 100%;
+    box-sizing: border-box;
+}

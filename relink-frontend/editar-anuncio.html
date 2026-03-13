@@ -3,71 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Anuncio</title>
+    <title>Editar Anuncio - ReLink</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="/src/css/components/navBar.css">
+    <link rel="stylesheet" href="./src/css/public.css">
 </head>
 <body>
 
     <header id="navbar-container"></header>
 
     <main>
-        <h1>Editar Anuncio</h1>
+        <div style="text-align: center;">
+            <h1 class="page-title">Editar Anuncio</h1>
+        </div>
 
-        <form id="formCrearAnuncio">
-            <div>
+        <form id="formEditarAnuncio" class="formulario-publico">
+            
+            <div class="form-group">
                 <label>Título del Anuncio:</label>
                 <input type="text" id="titulo" required>
             </div>
 
-            <div>
+            <div class="form-group">
                 <label>Descripción:</label>
                 <textarea id="descripcion" rows="4" required></textarea>
             </div>
 
-            <div>
+            <div class="form-group">
                 <label>Precio (€):</label>
                 <input type="number" id="precio" step="0.01" required>
             </div>
 
-            <div>
-                <label>Categoría:</label>
-                <select id="categoria_id" required>
-                    <option value="" disabled selected>Cargando categorías...</option>
-                </select>
+            <div style="display: flex; gap: 20px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Categoría:</label>
+                    <select id="categoria_id" required>
+                        <option value="" disabled selected>Cargando categorías...</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="flex: 1;">
+                    <label>Subcategoría:</label>
+                    <select id="subcategoria_id" required disabled>
+                        <option value="" disabled selected>Selecciona primero una categoría</option>
+                    </select>
+                </div>
             </div>
 
-            <div>
-                <label>Subcategoría:</label>
-                <select id="subcategoria_id" required disabled>
-                    <option value="" disabled selected>Selecciona primero una categoría</option>
-                </select>
-            </div>
-
-            <div>
+            <div class="form-group">
                 <label>Localidad:</label>
                 <select id="localidad_id" required>
                     <option value="" disabled selected>Cargando localidades...</option>
                 </select>
             </div>
 
-            <hr>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
 
-            <div>
-                <h3>Imágenes Actuales</h3>
-                <div id="contenedorImagenesActuales">Cargando imágenes...</div>
+            <div class="form-group">
+                <h3 style="margin-top: 0; font-size: 1.1rem; color: #495057;"><i class="fa-solid fa-images"></i> Imágenes Actuales</h3>
+                <div id="contenedorImagenesActuales" style="display: flex; gap: 10px; flex-wrap: wrap; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
+                    Cargando imágenes...
+                </div>
             </div>
 
-            <div>
+            <div class="form-group">
                 <label>Añadir Nuevas Imágenes:</label>
-                <input type="file" id="nuevas_imagenes" accept="image/*" multiple>
+                <input type="file" id="nuevas_imagenes" accept="image/*" multiple style="padding: 10px; background: #f8f9fa; border: 1px dashed #ced4da;">
             </div>
 
-            <hr>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
 
-            <div id="errorMsg" style="color: red; display: none;"></div>
+            <div id="errorMsg" style="color: #dc3545; background: #f8d7da; padding: 10px; border-radius: 6px; display: none; margin-bottom: 15px;"></div>
+            <div id="successMsg" style="color: #28a745; background: #d4edda; padding: 10px; border-radius: 6px; display: none; margin-bottom: 15px;">¡Anuncio actualizado con éxito!</div>
             
-            <button type="submit">Guardar Cambios</button>
+            <button type="submit" id="btnGuardar" class="btn-primary" style="width: 100%; padding: 15px; font-size: 1.2rem;">
+                <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
+            </button>
         </form>
     </main>
 

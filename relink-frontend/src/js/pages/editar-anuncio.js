@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    const form = document.getElementById('formCrearAnuncio');
+    const form = document.getElementById('formEditarAnuncio');
     const errorMessageDiv = document.getElementById('errorMsg');
     const submitButton = form.querySelector('button[type="submit"]');
 
