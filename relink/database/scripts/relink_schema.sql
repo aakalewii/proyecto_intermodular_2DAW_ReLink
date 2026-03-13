@@ -189,27 +189,13 @@ ADD CONSTRAINT fk_user_localidad
 ALTER TABLE mensajes
 ADD COLUMN estado VARCHAR(20) NOT NULL DEFAULT 'enviado';
 
-
-
-/* ME ACABO DE DAR CUENTA QUE HICE LA DESCRIPCION DE CAT Y SUBCAT OBLIGATORIAS Y N0 TIENE
-MUCHO SENTIDO. EJECUTEN ESTO:
-
-use relink;
-
-ALTER TABLE categorias
-MODIFY descripcion varchar(200) NULL;
-
-ALTER TABLE subcategorias
-MODIFY descripcion varchar(200) NULL; */
-
-
 --Hacer que los anuncios puedan tener localidad null--
--- 1. Borramos la regla estricta actual
+-- Borramos la regla estricta actual
 ALTER TABLE anuncios DROP FOREIGN KEY fk_anuncio_localidad;
 
--- 2. Permitimos que la columna acepte nulos (Asegúrate de que el tipo de dato coincide, normalmente es BIGINT UNSIGNED)
+-- Permitimos que la columna acepte nulos (Asegúrate de que el tipo de dato coincide, normalmente es BIGINT UNSIGNED)
 ALTER TABLE anuncios MODIFY localidad_id BIGINT UNSIGNED NULL;
 
--- 3. Creamos la nueva regla con "ON DELETE SET NULL"
+-- Creamos la nueva regla con "ON DELETE SET NULL"
 ALTER TABLE anuncios ADD CONSTRAINT fk_anuncio_localidad
 FOREIGN KEY (localidad_id) REFERENCES localidades(id) ON DELETE SET NULL;
