@@ -124,11 +124,11 @@ ALTER TABLE mensajes
 
 ALTER TABLE categorias
 	ADD descripcion varchar(200) null;
-    
+
 ALTER TABLE subcategorias
 	ADD descripcion varchar(200) null;
-    
-ALTER TABLE users 
+
+ALTER TABLE users
 MODIFY COLUMN rol ENUM('cliente', 'pro', 'admin') NOT NULL DEFAULT 'cliente';
 
 ALTER TABLE users
@@ -164,18 +164,18 @@ CREATE TABLE localidades (
     FOREIGN KEY (municipio_id) REFERENCES municipios(id) ON DELETE CASCADE
 );
 
-ALTER TABLE anuncios 
+ALTER TABLE anuncios
 ADD COLUMN localidad_id BIGINT UNSIGNED NOT NULL,
-ADD CONSTRAINT fk_anuncio_localidad 
-    FOREIGN KEY (localidad_id) REFERENCES localidades(id) 
+ADD CONSTRAINT fk_anuncio_localidad
+    FOREIGN KEY (localidad_id) REFERENCES localidades(id)
     ON DELETE RESTRICT;
 
-ALTER TABLE users 
+ALTER TABLE users
 ADD COLUMN localidad_id BIGINT UNSIGNED NULL,
-ADD CONSTRAINT fk_user_localidad 
-    FOREIGN KEY (localidad_id) REFERENCES localidades(id) 
+ADD CONSTRAINT fk_user_localidad
+    FOREIGN KEY (localidad_id) REFERENCES localidades(id)
     ON DELETE SET NULL;
-    
+
     CREATE TABLE favoritos (
     user_id BIGINT UNSIGNED NOT NULL,
     anuncio_id BIGINT UNSIGNED NOT NULL,
@@ -194,10 +194,22 @@ ADD COLUMN estado VARCHAR(20) NOT NULL DEFAULT 'enviado';
 /* ME ACABO DE DAR CUENTA QUE HICE LA DESCRIPCION DE CAT Y SUBCAT OBLIGATORIAS Y N0 TIENE
 MUCHO SENTIDO. EJECUTEN ESTO:
 
-use relink; 
+use relink;
 
-ALTER TABLE categorias 
+ALTER TABLE categorias
 MODIFY descripcion varchar(200) NULL;
 
-ALTER TABLE subcategorias 
+ALTER TABLE subcategorias
 MODIFY descripcion varchar(200) NULL; */
+
+
+--Hacer que los anuncios puedan tener localidad null--
+-- 1. Borramos la regla estricta actual
+ALTER TABLE anuncios DROP FOREIGN KEY fk_anuncio_localidad;
+
+-- 2. Permitimos que la columna acepte nulos (Asegúrate de que el tipo de dato coincide, normalmente es BIGINT UNSIGNED)
+ALTER TABLE anuncios MODIFY localidad_id BIGINT UNSIGNED NULL;
+
+-- 3. Creamos la nueva regla con "ON DELETE SET NULL"
+ALTER TABLE anuncios ADD CONSTRAINT fk_anuncio_localidad
+FOREIGN KEY (localidad_id) REFERENCES localidades(id) ON DELETE SET NULL;
