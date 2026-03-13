@@ -1,5 +1,3 @@
-import { logoutUser } from '../services/auth.js';
-
 export function renderNavbar() {
     const navbarContainer = document.getElementById('navbar-container');
     if (!navbarContainer) return;
@@ -9,99 +7,72 @@ export function renderNavbar() {
     const user = userString ? JSON.parse(userString) : null;
 
     if (token && user) {
+        // Comprobamos el enum del rol
+        const esAdmin = user.rol === 'admin';
+        
+        let logoHtml = esAdmin ? '<h2>ReLink <span>(Admin)</span></h2>' : '<h2>ReLink</h2>';
+        
+        let enlacesHtml = ''; 
 
-        // Verificamos si es admin
-        let esAdmin = false;
-        if (user.rol === 'admin') {
-            esAdmin = true;
-        }
-
-        // Preparamos el texto del logo
-        let logoHtml = '<h2>ReLink</h2>';
+        // --- LÓGICA DE ROLES ---
         if (esAdmin) {
-            logoHtml = '<h2>ReLink (Admin)</h2>';
-        }
-
-        let enlacesHtml = `
-            <style>
-                .btn-nuevo-anuncio {
-                    background-color: #28a745; 
-                    color: white; 
-                    border: 2px solid #28a745; 
-                    padding: 6px 12px; 
-                    border-radius: 5px; 
-                    text-decoration: none; 
-                    margin-right: 15px; 
-                    transition: all 0.3s ease;
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 6px;
-                }
-                .btn-nuevo-anuncio:hover {
-                    background-color: white;
-                    color: #28a745;
-                }
-            </style>
-            <a href="/crear-anuncio.html" class="btn-nuevo-anuncio">
-                <i class="fa-solid fa-plus"></i> Crear Anuncio
-            </a>
-            <a href="/perfil.html">Hola, <strong>${user.name}</strong></a>
-            <a href="/favoritos.html" style="margin-left: 15px;"></i> Favoritos</a>
-            <a href="/index.html" style="margin-left: 15px;">Inicio</a>
-        `;
-
-        // Si es admin, le sumamos los enlaces extra
-        if (esAdmin) {
-            enlacesHtml = enlacesHtml + `
-                <a href="/admin/paises.html" style="margin-left: 15px;">Países</a>
-                <a href="/admin/provincias.html" style="margin-left: 15px;">Provincias</a>
-                <a href="/admin/municipios.html" style="margin-left: 15px;">Municipios</a>
-                <a href="/admin/localidades.html" style="margin-left: 15px;">Localidades</a>
+            enlacesHtml += `
+                <a href="/index.html" class="nav-link">Inicio</a>
+                <a href="/admin/panel.html" class="nav-link">Panel Administrativo</a>
+            `;
+        } else {
+            enlacesHtml += `
+                <a href="/crear-anuncio.html" class="btn-nuevo-anuncio">
+                    <i class="fa-solid fa-plus"></i> Crear Anuncio
+                </a>
+                <a href="/perfil.html" class="nav-link">Hola, <strong>${user.name}</strong></a>
+                <a href="/index.html" class="nav-link">Inicio</a>
+                <a href="/favoritos.html" class="nav-link"><i class="fa-regular fa-heart"></i> Favoritos</a>
             `;
         }
 
         navbarContainer.innerHTML = `
-            <nav style="display: flex; justify-content: space-between; padding: 1rem; align-items: center;">
+            <nav class="navbar-relink">
                 ${logoHtml}
-                <div style="display: flex; align-items: center;">
+                <div class="nav-menu">
                     ${enlacesHtml}
-                    <button id="btnLogout" style="margin-left: 15px;">Cerrar Sesión</button>
+                    <button id="btnLogout" class="btn-logout">Cerrar Sesión</button>
                 </div>
             </nav>
         `;
 
-        // Actualizamos el evento del clic
         const btnLogout = document.getElementById('btnLogout');
-        
         btnLogout.addEventListener('click', async () => {
-            // Cambiamos el texto para que el usuario vea que está cargando
             btnLogout.textContent = "Saliendo...";
             btnLogout.disabled = true;
-
             try {
-                // Avisamos a Laravel para que destruya el token en la Base de Datos
-                await logoutUser();
+                // Si la tienes importada funcionará, si no, pasará al catch
+                if (typeof logoutUser !== 'undefined') {
+                    await logoutUser();
+                }
             } catch (error) {
-                console.warn("No se pudo conectar con Laravel para el logout, pero cerraremos en el navegador.");
+                console.warn("Logout en servidor falló, limpiando local...");
             } finally {
-                // Pase lo que pase, borramos el rastro en el navegador
                 localStorage.removeItem('relink_token');
                 localStorage.removeItem('relink_user');
-                
-                alert('Sesión cerrada correctamente');
-                window.location.href = '/login.html';
+                window.location.href = '/index.html';
             }
         });
 
     } else {
+        // Navbar para invitados (sin sesión) - También con sus clases CSS
         navbarContainer.innerHTML = `
-            <nav style="display: flex; justify-content: space-between; padding: 1rem; align-items: center;">
+            <nav class="navbar-relink">
                 <h2>ReLink</h2>
-                <div>
-                    <a href="/login.html">Iniciar Sesión</a>
-                    <a href="/register.html" style="margin-left: 10px;">Registrarse</a>
+                <div class="nav-menu">
+                    <a href="/login.html" class="nav-link">Iniciar Sesión</a>
+                    <a href="/register.html" class="btn-primary-outline">Registrarse</a>
                 </div>
             </nav>
         `;
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderNavbar();
+});

@@ -1,4 +1,4 @@
-import { renderNavbar } from '../../components/Navbar.js';
+import { renderNavbar } from '../../components/navBar.js';
 import { getCategorias, createCategoria, updateCategoria, deleteCategoria } from '../../services/categorias.js';
 import { verificarAccesoAdmin } from '../../services/auth.js';
 
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMsg.style.display = 'none';
 
         // Reactivar los botones de la tabla
-        let botonesTabla = document.querySelectorAll('.btn-editar, .btn-borrar');
+        let botonesTabla = document.querySelectorAll('.btn-edit, .btn-delete');
         botonesTabla.forEach(btn => {
             btn.disabled = false;
             btn.style.opacity = '1';
@@ -89,15 +89,15 @@ async function cargarTablaCategorias() {
                 <td>${categoria.nombre}</td>
                 <td>${categoria.descripcion || ''}</td>
                 <td>
-                    <button class="btn-editar" data-id="${categoria.id}" data-nombre="${categoria.nombre}" data-desc="${categoria.descripcion}">Editar</button>
-                    <button class="btn-borrar" data-id="${categoria.id}">Borrar</button>
+                    <button class="btn-edit" data-id="${categoria.id}" data-nombre="${categoria.nombre}" data-desc="${categoria.descripcion || ''}"><i class="fa-solid fa-pen"></i> Editar</button>
+                    <button class="btn-delete" data-id="${categoria.id}"><i class="fa-solid fa-trash"></i> Borrar</button>
                 </td>
             `;
             tbody.appendChild(tr);
         });
 
         // Botones de BORRAR
-        let botonesBorrar = document.querySelectorAll('.btn-borrar');
+        let botonesBorrar = document.querySelectorAll('.btn-delete');
         botonesBorrar.forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const id = e.target.getAttribute('data-id');
@@ -109,13 +109,13 @@ async function cargarTablaCategorias() {
         });
 
         // Botones de EDITAR
-        let botonesEditar = document.querySelectorAll('.btn-editar');
+        let botonesEditar = document.querySelectorAll('.btn-edit');
         botonesEditar.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const id = e.target.getAttribute('data-id');
                 const nombreActual = e.target.getAttribute('data-nombre');
                 const descActual = e.target.getAttribute('data-desc');
-
+                
                 const inputNombre = document.getElementById('nombreCategoria');
                 const inputDesc = document.getElementById('descCategoria');
                 inputNombre.value = nombreActual;
@@ -128,7 +128,7 @@ async function cargarTablaCategorias() {
                 document.getElementById('btnCancelar').style.display = 'inline-block';
                 
                 // Bloquear los demás botones de la tabla
-                let botonesTabla = document.querySelectorAll('.btn-editar, .btn-borrar');
+                let botonesTabla = document.querySelectorAll('.btn-edit, .btn-delete');
                 
                 botonesTabla.forEach(botonTabla => {
                     botonTabla.disabled = true;

@@ -1,0 +1,99 @@
+/* --- ESTILOS DE LA BARRA DE NAVEGACIÓN (navbar.css) --- */
+
+.navbar-relink {
+    display: flex; 
+    justify-content: space-between; 
+    padding: 1rem 2rem; 
+    align-items: center; 
+    background: white; 
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Esto hace que la barra se quede fija arriba al hacer scroll */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-relink h2 {
+    margin: 0;
+    color: #343a40;
+    font-size: 1.6rem;
+}
+
+/* El texto de "(Admin)" */
+.navbar-relink h2 span {
+    color: #007bff;
+    font-size: 1.2rem;
+}
+
+/* Contenedor de los enlaces y botones */
+.nav-menu {
+    display: flex; 
+    align-items: center;
+    gap: 20px; 
+}
+
+/* Enlaces normales (Inicio, Favoritos, Panel) */
+.nav-link { 
+    text-decoration: none; 
+    color: #495057; 
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover { 
+    color: #007bff; 
+}
+
+/* Botón Verde (Crear Anuncio) */
+.btn-nuevo-anuncio {
+    background-color: #28a745; 
+    color: white; 
+    border: 2px solid #28a745; 
+    padding: 8px 16px; 
+    border-radius: 6px; 
+    text-decoration: none; 
+    font-weight: bold;
+    transition: all 0.3s ease; 
+    display: inline-flex;
+    align-items: center; 
+    gap: 6px;
+}
+
+.btn-nuevo-anuncio:hover { 
+    background-color: transparent; 
+    color: #28a745; 
+}
+
+/* Botón Rojo (Cerrar Sesión) */
+.btn-logout {
+    background-color: white;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Botón Azul Contorneado (Registrarse) */
+.btn-primary-outline {
+    color: #007bff;
+    border: 2px solid #007bff;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-primary-outline:hover {
+    background-color: #007bff;
+    color: white;
+}

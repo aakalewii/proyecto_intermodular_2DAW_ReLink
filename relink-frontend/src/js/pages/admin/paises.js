@@ -1,4 +1,4 @@
-import { renderNavbar } from '../../components/Navbar.js';
+import { renderNavbar } from '../../components/navBar.js';
 import { getPaises, createPais, updatePais, deletePais } from '../../services/ubicaciones.js';
 import { verificarAccesoAdmin } from '../../services/auth.js';
 
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMsg.style.display = 'none';
 
         // Reactivamos TODOS los botones de la tabla
-        document.querySelectorAll('.btn-editar, .btn-borrar').forEach(btn => {
+        document.querySelectorAll('.btn-edit, .btn-delete').forEach(btn => {
             btn.disabled = false;
             btn.style.opacity = '1';
         });
@@ -80,15 +80,15 @@ async function cargarTablaPaises() {
             tr.innerHTML = `
                 <td>${pais.nombre}</td>
                 <td>
-                    <button class="btn-editar" data-id="${pais.id}" data-nombre="${pais.nombre}">Editar</button>
-                    <button class="btn-borrar" data-id="${pais.id}">Borrar</button>
+                    <button class="btn-edit" data-id="${pais.id}" data-nombre="${pais.nombre}">Editar</button>
+                    <button class="btn-delete" data-id="${pais.id}">Borrar</button>
                 </td>
             `;
             tbody.appendChild(tr);
         });
 
         // Botones de BORRAR
-        document.querySelectorAll('.btn-borrar').forEach(btn => {
+        document.querySelectorAll('.btn-delete').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const id = e.target.getAttribute('data-id');
                 if (confirm('¿Seguro que quieres borrar este país?')) {
@@ -99,7 +99,7 @@ async function cargarTablaPaises() {
         });
 
         // Botones de EDITAR
-        document.querySelectorAll('.btn-editar').forEach(btn => {
+        document.querySelectorAll('.btn-edit').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const id = e.target.getAttribute('data-id');
                 const nombreActual = e.target.getAttribute('data-nombre');
@@ -114,7 +114,7 @@ async function cargarTablaPaises() {
                 btnSubmit.textContent = 'Actualizar';
                 document.getElementById('btnCancelar').style.display = 'inline-block';
                 
-                document.querySelectorAll('.btn-editar, .btn-borrar').forEach(botonTabla => {
+                document.querySelectorAll('.btn-edit, .btn-delete').forEach(botonTabla => {
                     botonTabla.disabled = true;
                     botonTabla.style.opacity = '0.5';
                 });

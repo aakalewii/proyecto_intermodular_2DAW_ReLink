@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrativo - ReLink</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/src/css/admin/panel.css">
+    <link rel="stylesheet" href="/src/css/components/navBar.css">
+</head>
+<body>
+
+    <header id="navbar-container"></header>
+
+    <main class="container">
+        <div class="welcome-msg">
+            <h2>Gestión del Sistema</h2>
+            <p>Selecciona una categoría para gestionar los datos de la plataforma.</p>
+        </div>
+
+        <div class="admin-grid">
+            <a href="/admin/anuncios.html" class="crud-card">
+                <i class="fa-solid fa-bullhorn"></i>
+                <h3>Anuncios</h3>
+                <p>Moderar, activar o eliminar anuncios publicados.</p>
+            </a>
+
+            <a href="/admin/usuarios.html" class="crud-card">
+                <i class="fa-solid fa-users"></i>
+                <h3>Usuarios</h3>
+                <p>Gestionar cuentas, roles y permisos.</p>
+            </a>
+
+            <a href="/admin/paises.html" class="crud-card">
+                <i class="fa-solid fa-earth-americas"></i>
+                <h3>Países</h3>
+                <p>Configurar regiones internacionales.</p>
+            </a>
+
+            <a href="/admin/provincias.html" class="crud-card">
+                <i class="fa-solid fa-map-location-dot"></i>
+                <h3>Provincias</h3>
+                <p>Gestionar divisiones territoriales.</p>
+            </a>
+
+            <a href="/admin/municipios.html" class="crud-card">
+                <i class="fa-solid fa-city"></i>
+                <h3>Municipios</h3>
+                <p>Administrar ayuntamientos y zonas.</p>
+            </a>
+
+            <a href="/admin/localidades.html" class="crud-card">
+                <i class="fa-solid fa-house-chimney-window"></i>
+                <h3>Localidades</h3>
+                <p>Gestionar barrios y puntos específicos.</p>
+            </a>
+
+            <a href="/admin/categorias.html" class="crud-card">
+                <i class="fa-solid fa-tags"></i>
+                <h3>Categorías</h3>
+                <p>Organizar el árbol de categorías.</p>
+            </a>
+
+            <a href="/admin/subcategorias.html" class="crud-card">
+                <i class="fa-solid fa-tags"></i>
+                <h3>Subategorías</h3>
+                <p>Organizar el árbol de sucategorías.</p>
+            </a>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="/index.html" class="btn-volver">
+                <i class="fa-solid fa-arrow-left"></i> Volver a la web principal
+            </a>
+        </div>
+    </main>
+
+    <script type="module" src="../src/js/components/Navbar.js"></script>
+</body>
+</html>

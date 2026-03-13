@@ -3,32 +3,47 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Iniciar Sesión - ReLink</title>
+        <link rel="stylesheet" href="./src/css/components/navbar.css">
+        <link rel="stylesheet" href="./src/css/auth.css">
+        <title>Registro - ReLink</title>
     </head>
     <body>
-        <form id="registerForm">
-            <div>
-                <label for="name">Nombre</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-            <div>
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div>
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required minlength="8">
-            </div>
-            <div>
-                <label for="password_confirmation">Confirmar Password</label>
-                <input type="password" id="password_confirmation" name="password_confirmation" required minlength="8">
-            </div>
 
-            <div id="errorMessage" style="color: red; display: none;"></div>
-            
-            <button type="submit">Registrarme</button>
-        </form>
+        <header id="navbar-container"></header>
+
+        <div class="auth-wrapper">
+            <div class="auth-container">
+                <h1>Crea tu cuenta</h1>
+
+                <form id="registerForm">
+                    <div>
+                        <label for="name">Nombre</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div>
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div>
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required minlength="8">
+                    </div>
+                    <div>
+                        <label for="password_confirmation">Confirmar Password</label>
+                        <input type="password" id="password_confirmation" name="password_confirmation" required minlength="8">
+                    </div>
+
+                    <div id="errorMessage" style="display: none;"></div>
+                    
+                    <button type="submit">Registrarme</button>
+                </form>
+                
+                <p class="auth-links">¿Ya tienes cuenta? <a href="./login.html">Inicia sesión</a></p>
+            </div>
+        </div>
 
         <script type="module" src="./src/js/pages/register.js"></script>
+        <script type="module" src="./src/js/components/Navbar.js"></script>
+
     </body>
 </html>

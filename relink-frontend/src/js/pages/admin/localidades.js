@@ -1,4 +1,4 @@
-import { renderNavbar } from '../../components/Navbar.js';
+import { renderNavbar } from '../../components/navBar.js';
 import { getMunicipios, getLocalidades, createLocalidad, updateLocalidad, deleteLocalidad } from '../../services/ubicaciones.js';
 import { verificarAccesoAdmin } from '../../services/auth.js';
 
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMsg.style.display = 'none';
 
         // Reactivamos TODOS los botones de la tabla
-        document.querySelectorAll('.btn-editar, .btn-borrar').forEach(btn => {
+        document.querySelectorAll('.btn-edit, .btn-delete').forEach(btn => {
             btn.disabled = false;
             btn.style.opacity = '1'; // Les devolvemos su color normal
         });
@@ -104,15 +104,15 @@ async function cargarTablaLocalidades() {
                 <td>${localidad.nombre}</td>
                 <td>${nombreDelMunicipio}</td>
                 <td>
-                    <button class="btn-editar" data-id="${localidad.id}" data-nombre="${localidad.nombre}" data-muni-id="${localidad.municipio_id}">Editar</button>
-                    <button class="btn-borrar" data-id="${localidad.id}">Borrar</button>
+                    <button class="btn-edit" data-id="${localidad.id}" data-nombre="${localidad.nombre}" data-muni-id="${localidad.municipio_id}">Editar</button>
+                    <button class="btn-delete" data-id="${localidad.id}">Borrar</button>
                 </td>
             `;
             tbody.appendChild(tr);
         });
 
         // Darle vida a los botones de BORRAR
-        document.querySelectorAll('.btn-borrar').forEach(btn => {
+        document.querySelectorAll('.btn-delete').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const id = e.target.getAttribute('data-id');
                 if (confirm('¿Seguro que quieres borrar esta localidad?')) {
@@ -123,7 +123,7 @@ async function cargarTablaLocalidades() {
         });
 
         // Darle vida a los botones de EDITAR
-        document.querySelectorAll('.btn-editar').forEach(btn => {
+        document.querySelectorAll('.btn-edit').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const id = e.target.getAttribute('data-id');
                 const nombreActual = e.target.getAttribute('data-nombre');
@@ -141,7 +141,7 @@ async function cargarTablaLocalidades() {
                 btnSubmit.textContent = 'Actualizar';
                 document.getElementById('btnCancelar').style.display = 'inline-block';
                 
-                document.querySelectorAll('.btn-editar, .btn-borrar').forEach(botonTabla => {
+                document.querySelectorAll('.btn-edit, .btn-delete').forEach(botonTabla => {
                     botonTabla.disabled = true;
                     botonTabla.style.opacity = '0.5';
                 });

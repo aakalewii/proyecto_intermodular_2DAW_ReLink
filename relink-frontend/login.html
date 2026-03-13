@@ -3,29 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./src/css/components/navbar.css">
+    <link rel="stylesheet" href="./src/css/auth.css">
     <title>Iniciar Sesión - ReLink</title>
 </head>
 <body>
-    <div class="login-container">
-        <h1>Bienvenido de nuevo a ReLink</h1>
-        
-        <form id="loginForm">
-            <div>
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div>
-                <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" required>
-            </div>
 
-            <div id="errorMessage" style="color: red; display: none;"></div>
+    <header id="navbar-container"></header>
+
+    <div class="auth-wrapper">
+        
+        <div class="auth-container">
+            <h1>Bienvenido de nuevo a ReLink</h1>
             
-            <button type="submit">Entrar</button>
-        </form>
-        <p>¿No tienes cuenta? <a href="./register.html">Regístrate aquí</a></p>
+            <form id="loginForm">
+                <div>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div>
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <div id="errorMessage" style="display: none;"></div>
+                
+                <button type="submit">Entrar</button>
+            </form>
+            
+            <p class="auth-links">¿No tienes cuenta? <a href="./register.html">Regístrate aquí</a></p>
+        </div>
+
     </div>
 
     <script type="module" src="./src/js/pages/login.js"></script>
+    <script type="module" src="./src/js/components/Navbar.js"></script>
+
 </body>
 </html>

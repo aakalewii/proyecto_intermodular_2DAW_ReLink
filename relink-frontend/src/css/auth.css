@@ -1,0 +1,129 @@
+/* --- Variables globales --- */
+:root {
+    --primary-color: #343a40;
+    --accent-color: #007bff;
+    --bg-color: #f8f9fa;
+    --text-color: #333;
+    --border-color: #ced4da;
+    --card-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* --- Fondo y tipografía --- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    /* Hemos quitado el flexbox de aquí para que la barra de navegación se quede arriba */
+}
+
+/* --- Nuevo Envoltorio para centrar el login/registro --- */
+.auth-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Restamos 80px (altura aprox de la navbar) para centrar en el espacio restante */
+    min-height: calc(100vh - 80px); 
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* --- La Tarjeta Blanca --- */
+.auth-container {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.auth-container h1 {
+    color: var(--primary-color);
+    font-size: 1.6rem;
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+/* --- Formularios --- */
+.auth-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Separación entre cada bloque de input */
+    text-align: left;
+}
+
+.auth-container form div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Separación entre etiqueta e input */
+}
+
+.auth-container form label {
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.95rem;
+}
+
+.auth-container form input {
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.auth-container form input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+/* --- Botón Principal --- */
+.auth-container button[type="submit"] {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.auth-container button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* --- Mensaje de Error --- */
+#errorMessage {
+    display: none; /* Por defecto oculto */
+    background-color: #f8d7da;
+    color: #721c24 !important;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #f5c6cb;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* --- Enlaces inferiores --- */
+.auth-links {
+    margin-top: 25px;
+    font-size: 0.95rem;
+    color: #6c757d;
+}
+
+.auth-links a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-links a:hover {
+    text-decoration: underline;
+}
