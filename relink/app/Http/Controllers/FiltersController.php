@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\DAOs\AnuncioDAO;
-use App\Enums\AnuncioEstado;
+
 use App\Models\Anuncio;
-use App\Models\ImagenAnuncio;
-use Illuminate\Support\Facades\DB;
+
 
 
 class FiltersController extends Controller
@@ -20,5 +17,38 @@ class FiltersController extends Controller
         ->get();
         
         return response()->json($anuncios);
+    }
+
+    public function categoriaAnuncio(int $categoria_id)
+    {
+        $anuncios = Anuncio::with('imagenes')
+        ->where('subcategoria_id.categoria_id', $categoria_id)
+        ->where('estado', 'publicado')
+        ->get();
+        
+        return response()->json($anuncios);
+
+    }
+
+    public function subcategoriaAnuncio(int $subcategoria_id)
+    {
+        $anuncios = Anuncio::with('imagenes')
+        ->where('subcategoria_id.', $subcategoria_id)
+        ->where('estado', 'publicado')
+        ->get();
+        
+        return response()->json($anuncios);
+
+    }
+
+    public function localidadAnuncio(int $localidad_id)
+    {
+        $anuncios = Anuncio::with('imagenes')
+        ->where('localidad_id', $localidad_id)
+        ->where('estado', 'publicado')
+        ->get();
+        
+        return response()->json($anuncios);
+
     }
 }

@@ -189,7 +189,7 @@ ADD CONSTRAINT fk_user_localidad
 ALTER TABLE mensajes
 ADD COLUMN estado VARCHAR(20) NOT NULL DEFAULT 'enviado';
 
---Hacer que los anuncios puedan tener localidad null--
+-- Hacer que los anuncios puedan tener localidad null--
 -- Borramos la regla estricta actual
 ALTER TABLE anuncios DROP FOREIGN KEY fk_anuncio_localidad;
 
