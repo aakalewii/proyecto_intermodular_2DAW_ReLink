@@ -1,5 +1,5 @@
-import { renderNavbar } from '../components/Navbar.js';
-// Importamos la función para traer las localidades y categorias y subcategorias
+import { renderNavbar } from '../components/navBar.js';
+// Importamos la función para traer las localidades
 import { getLocalidades } from '../services/ubicaciones.js';
 import { createAnuncio } from '../services/anuncios.js';
 import { getCategorias, getSubcategoriasPorCategoria } from '../services/categorias.js';

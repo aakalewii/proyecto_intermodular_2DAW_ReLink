@@ -1,4 +1,4 @@
-import { renderNavbar } from '../components/Navbar.js';
+import { renderNavbar } from '../components/navBar.js';
 import { getAnuncioById } from '../services/anuncios.js';
 import { toggleFavorito, checkIfFavorito } from '../services/favoritos.js'; 
 
@@ -30,23 +30,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('ad-titulo').textContent = anuncio.titulo;
         document.getElementById('ad-precio').textContent = anuncio.precio;
         document.getElementById('ad-descripcion').textContent = anuncio.descripcion;
+        document.getElementById('ad-localidad').textContent = anuncio.localidad ? anuncio.localidad.nombre : 'Ubicación desconocida';
+        document.getElementById('ad-fecha').textContent = new Date(anuncio.fecha_publi).toLocaleDateString('es-ES');
+        document.getElementById('link-vendedor').textContent = anuncio.user ? anuncio.user.name : "Usuario Anónimo";
 
-        // Si Laravel nos devuelve las relaciones de categoría y localidad, las pintamos. Si no, ponemos algo por defecto.
-        document.getElementById('ad-categoria').textContent = anuncio.subcategoria ? anuncio.subcategoria.nombre : 'Sin subcategoría';
-        document.getElementById('ad-localidad').textContent = anuncio.localidad ? `${anuncio.localidad.nombre}` : 'Ubicación desconocida';
+        // --- LÓGICA DE CATEGORÍA Y SUBCATEGORÍA ---
+        const spanCategoria = document.getElementById('ad-categoria');
+        const spanSubcategoria = document.getElementById('ad-subcategoria');
 
-        // Formatear la fecha para que se vea bonita (Día/Mes/Año)
-        const fecha = new Date(anuncio.fecha_publi);
-        document.getElementById('ad-fecha').textContent = fecha.toLocaleDateString('es-ES');
-
-        // Poner el nombre del vendedor
-        if (anuncio.user) {
-            document.getElementById('link-vendedor').textContent = anuncio.user.name;
+        if (anuncio.subcategoria) {
+            spanSubcategoria.textContent = anuncio.subcategoria.nombre;
+            // Si tu backend devuelve la categoría anidada dentro de la subcategoría:
+            if (anuncio.subcategoria.categoria) {
+                spanCategoria.textContent = anuncio.subcategoria.categoria.nombre;
+            } else {
+                spanCategoria.textContent = 'Categoría Principal';
+            }
         } else {
-            document.getElementById('link-vendedor').textContent = "Usuario Anónimo";
+            spanSubcategoria.textContent = 'Sin subcategoría';
+            spanCategoria.textContent = 'Sin categoría';
         }
 
-        // --- LA LÓGICA DE LA GALERÍA DE FOTOS ---
+        // Galería de fotos
         const imgPrincipal = document.getElementById('img-principal');
         const galeriaMiniaturas = document.getElementById('galeria-miniaturas');
 
@@ -96,7 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         } else {
             // Si el anuncio se publicó sin fotos, ponemos una de relleno
-            imgPrincipal.src = URL_BACKEND_STORAGE + '/anucios/default.jpg';
+            imgPrincipal.src = URL_BACKEND_STORAGE + 'anuncios/default.jpg';
         }
 
         // --- LÓGICA DEL BOTÓN DE FAVORITOS ---

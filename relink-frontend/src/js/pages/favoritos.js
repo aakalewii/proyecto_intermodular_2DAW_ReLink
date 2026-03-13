@@ -1,4 +1,4 @@
-import { renderNavbar } from '../components/Navbar.js';
+import { renderNavbar } from '../components/navBar.js';
 import { getMisFavoritos } from '../services/favoritos.js';
 
 document.addEventListener('DOMContentLoaded', () => {

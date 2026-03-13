@@ -71,13 +71,22 @@ class AnuncioDAO
         // Le pasamos los datos de usuario, localidad, imagenes
         $anuncio->user = DB::selectOne('SELECT id, name FROM users WHERE id = ?', [$anuncio->user_id]);
         $anuncio->localidad = DB::selectOne('SELECT id, nombre FROM localidades WHERE id = ?', [$anuncio->localidad_id]);
-        $anuncio->subcategoria_id = DB::selectOne('SELECT id, nombre FROM subcategorias WHERE id = ?', [$anuncio->subcategoria_id]);
         $anuncio->imagenes = DB::select('SELECT id, url FROM imagenes_anuncio WHERE anuncio_id = ?', [$id]);
+
+        // Traer la subcategoría y su categoría padre
+        $anuncio->subcategoria = DB::selectOne('SELECT id, nombre, categoria_id FROM subcategorias WHERE id = ?', [$anuncio->subcategoria_id]);
+
+        if ($anuncio->subcategoria) {
+            // Lo guardamos tanto dentro de subcategoria como directo en el anuncio para que el JS lo encuentre a la primera
+            $categoria = DB::selectOne('SELECT id, nombre FROM categorias WHERE id = ?', [$anuncio->subcategoria->categoria_id]);
+            $anuncio->subcategoria->categoria = $categoria;
+            $anuncio->categoria = $categoria;
+        }
 
         return $anuncio;
     }
 
-    public function actualizarAnuncio(Request $request, $id, $datos)
+    public function actualizarAnuncio($id, $datos)
     {
         // Actualizamos los datos del anuncio con el id
         DB::update('UPDATE anuncios SET titulo = ?, descripcion = ?, precio = ?, localidad_id = ?, subcategoria_id = ? WHERE id = ?', [
