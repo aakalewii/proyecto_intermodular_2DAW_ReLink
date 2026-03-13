@@ -13,6 +13,8 @@ use App\Http\Controllers\PaisController;
 use App\Http\Controllers\ProvinciaController;
 use App\Http\Controllers\MunicipioController;
 use App\Http\Controllers\LocalidadController;
+use App\Http\Controllers\FiltersController;
+
 
 
 
@@ -32,6 +34,8 @@ Route::get('/paises', [PaisController::class, 'index']);
 Route::get('/provincias', [ProvinciaController::class, 'index']);
 Route::get('/municipios', [MunicipioController::class, 'index']);
 Route::get('/localidades', [LocalidadController::class, 'index']);
+
+Route::get('/anuncios/buscar/{titulo}', [FiltersController::class, 'tituloAnuncio']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AccessController::class, 'Logout']);

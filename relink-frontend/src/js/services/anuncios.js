@@ -133,3 +133,15 @@ export async function updateAnuncioCompleto(id, formData) {
     }
     return await response.json();
 }
+
+// Buscar anuncio por titulo
+export async function buscarAnunciosPorTitulo(titulo) {
+    // Asegúrate de que esta URL coincide con la ruta que hayas definido en tu api.php de Laravel
+    const response = await fetch(`${API_URL}/anuncios/buscar/${titulo}`);
+    
+    if (!response.ok) {
+        throw new Error('Error al buscar los anuncios');
+    }
+    
+    return await response.json();
+}

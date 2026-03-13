@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Anuncio;
+use Illuminate\Support\Facades\DB;
 
 
 
@@ -11,9 +12,16 @@ class FiltersController extends Controller
 {
     public function tituloAnuncio(String $titulo)
     {
-        $anuncios = Anuncio::with('imagenes')
+        $anuncios = DB::table('anuncios')
         ->where('titulo', 'like', '%' . $titulo . '%')
         ->where('estado', 'publicado')
+        ->select('anuncios.*')
+        ->addSelect(['foto_principal' => DB::table('imagenes_anuncio')
+            ->select('url')
+            ->whereColumn('anuncio_id', 'anuncios.id')
+            ->orderBy('id', 'asc')
+            ->limit(1)
+        ])
         ->get();
         
         return response()->json($anuncios);

@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Enviamos todo a tu nueva función en servicios
             await updateAnuncioCompleto(anuncioId, formData);
 
-            window.location.reload();
+            window.location.href = '/perfil.html';
 
         } catch (error) {
             mostrarError(error.message || 'Error al actualizar el anuncio. Revisa los datos.');
