@@ -10,10 +10,13 @@ use App\Enums\UserRole;
 
 class AccessController extends Controller
 {
+    // Este método se encarga de registrar a un nuevo usuario en la plataforma.
+    // Primero, utiliza el validador de Laravel para asegurar que el email sea único ('unique:users'),
+    // que la contraseña tenga mínimo 8 caracteres y que coincida con el campo de confirmación ('same:password').
+    // Si todo es correcto, crea el usuario en la base de datos, encriptando la contraseña con Hash::make por seguridad.
+    // Finalmente, le asigna el rol de CLIENTE por defecto usando un Enum y devuelve un código 201 (Creado).
     public function Register(Request $request)
     {
-
-
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -40,6 +43,12 @@ class AccessController extends Controller
         ], 201);
     }
 
+    // Este método procesa el inicio de sesión (Login) de los usuarios.
+    // Primero busca en la base de datos si existe algún usuario con el email introducido.
+    // Luego, usa Hash::check para comparar la contraseña escrita con la encriptada en la base de datos.
+    // Si la contraseña es correcta y la cuenta no está desactivada, cambia el estado a 'online' (= 1).
+    // usa Laravel Sanctum ($user->createToken) para generar un token de acceso seguro.
+    // Este token es la "llave" que el frontend guardará (en el localStorage) para poder hacer peticiones privadas después.
     public function Login(Request $request)
     {
         $request->validate([
@@ -62,6 +71,7 @@ class AccessController extends Controller
             ], 403);
         }
 
+        // Marcamos al usuario como conectado
         $user->update(['online'=>1]);
 
         // Crear token personal de acceso (Sanctum)
@@ -76,6 +86,11 @@ class AccessController extends Controller
 
     }
 
+    // Este método cierra la sesión del usuario de forma segura.
+    // Obtiene al usuario que está haciendo la petición gracias al token que manda en la cabecera.
+    // Actualiza su estado en la base de datos para ponerlo como desconectado ('online' = 0).
+    // Finalmente, destruye el token actual ($user->currentAccessToken()->delete()),
+    // lo que significa que esa llave ya no servirá para entrar, obligando a loguearse de nuevo en el futuro.
     public function Logout(Request $request)
     {
         $user = $request->user();
@@ -88,9 +103,10 @@ class AccessController extends Controller
 
         $user->update(['online'=>0]);
         $user->currentAccessToken()->delete();
+
         return response()->json([
             'message' => 'Sesión cerrada con éxito'
         ], 200);
-    } 
-    
+    }
+
 }
