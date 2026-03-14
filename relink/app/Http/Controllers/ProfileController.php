@@ -7,6 +7,10 @@ use App\Models\User;
 use App\Enums\AnuncioEstado;
 class ProfileController extends Controller
 {
+    // Este método devuelve la información del perfil personal del usuario que ha iniciado sesión.
+    // Recupera la ID del usuario a través del token ($request->user()->id).
+    // En lugar de traer todos los anuncios del usuario a lo bruto, filtramos
+    // la relación trayéndonos única y exclusivamente los anuncios que tengan el estado "PUBLICADO".
     public function mostrarPerfil(Request $request){
 
         $userId = $request->user()->id;
@@ -31,6 +35,12 @@ class ProfileController extends Controller
         ], 200);
     }
 
+    // Este método permite al usuario conectado modificar sus datos personales básicos.
+    // Primero, recupera al usuario directamente del request. Luego, valida los campos permitiendo
+    // que apellidos, teléfono y localidad puedan quedar vacíos ('nullable').
+    // Después actualiza el registro usando update().
+    // uso de $user->load('localidad') al final: sirve para "refrescar"
+    // la relación de la localidad que acabamos de cambiar.
     public function editarPerfil(Request $request){
 
         $user = $request->user();
@@ -49,6 +59,9 @@ class ProfileController extends Controller
         ], 200);
     }
 
+    // Este método sirve para ver el perfil público de otro usuario (por ejemplo, al hacer clic en el perfil de un vendedor).
+    // A diferencia de mostrarPerfil, este recibe un $id para cargar su localidad y solo sus anuncios publicados.
+    // Si no encuentra al usuario, devuelve un error 404. Si lo encuentra, devuelve un JSON mucho más restringido:
     public function verPerfil(int $id)
     {
         $user = User::with(['localidad', 'anuncios' => function ($query) {

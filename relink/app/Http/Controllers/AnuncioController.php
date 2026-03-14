@@ -14,25 +14,30 @@ class AnuncioController extends Controller
 {
     private $anuncioDAO;
 
+    // Este constructor recibe una instancia de AnuncioDAO y la guarda en una propiedad de la clase.
     public function __construct(AnuncioDAO $anuncioDAO)
     {
         $this->anuncioDAO = $anuncioDAO;
     }
 
+    // Este método devuelve la lista de anuncios que se van a mostrar en la página principal.
+    // como la página de inicio la puede ver cualquiera (esté logueado o no), usamos auth('sanctum')
+    // para intentar leer el token sin forzar a que el usuario exista. Si hay usuario, cogemos su ID; si no, es nulo.
+    // Luego le pedimos al DAO que nos traiga todos los anuncios publicados, enviándole el ID del usuario
     public function index(Request $request)
     {
-
-        // Como la ruta es publica usamos auth('sanctum) para forzar la lectura del token
         $user = auth('sanctum')->user();
-
-        // Si usuario existe cogemos su id, si no, vale null
         $userId = $user ? $user->id : null;
 
-        // Accedemos a la función del DAO
         $anuncios = $this->anuncioDAO->obtenerPublicados($userId);
         return response()->json($anuncios);
     }
 
+    // Este método se encarga de recibir los datos del formulario de "Crear Anuncio" y guardarlos.
+    // Primero, hace una validación estricta para asegurar que el título, precio, etc., vienen en el formato correcto.
+    // Después, abre una "Transacción de Base de Datos" (DB::transaction). Esto es clave: o se guarda el anuncio Y sus fotos,
+    // o si algo falla a medias, se cancela todo para no dejar anuncios "huérfanos".
+    // Si la transacción va bien, el DAO crea el anuncio en texto y luego guarda las fotos en la carpeta pública del servidor.
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -47,10 +52,8 @@ class AnuncioController extends Controller
 
         try {
             $anuncio = DB::transaction(function () use ($validated, $request) {
-                // Creamos el anuncio usando el DAO
                 $nuevoAnuncio = $this->anuncioDAO->crearAnuncio($validated, $request->user()->id, now());
 
-                // Si hay fotos, las guardamos físicamente y llamamos al DAO
                 if ($request->hasFile('imagenes')) {
                     foreach ($request->file('imagenes') as $foto) {
                         $ruta = $foto->store('anuncios', 'public');
@@ -73,6 +76,9 @@ class AnuncioController extends Controller
         }
     }
 
+    // Este método es el que carga los datos cuando entramos a la página de "Ver Detalle" de un anuncio.
+    // Simplemente recibe la ID de la URL y le pide al DAO que busque toda la información (usuario, fotos, categoría).
+    // Si el anuncio no existe (o ha sido borrado), devuelve un error 404 (No encontrado).
     public function show($id)
     {
         $anuncio = $this->anuncioDAO->obtenerDetalleAnuncio($id);
@@ -89,6 +95,11 @@ class AnuncioController extends Controller
         ], 200);
     }
 
+    // Este método atiende el formulario de "Editar Anuncio".
+    // Primero, comprueba por seguridad que el anuncio existe y que el usuario que intenta editarlo es su verdadero dueño (error 403 si no lo es).
+    // Luego, valida los datos igual que al crear, pero añade validaciones para las "nuevas_imagenes" y "imagenes_a_borrar".
+    // De nuevo, usa una Transacción: actualiza los textos, le dice al DAO que borre las fotos viejas marcadas por el usuario,
+    // y finalmente sube las fotos nuevas a la carpeta del servidor.
     public function update(Request $request, int $id)
     {
         $anuncio = $this->anuncioDAO->obtenerAnuncioPorId($id);
@@ -114,15 +125,12 @@ class AnuncioController extends Controller
 
         try {
             DB::transaction(function () use ($id, $validated, $request, $anuncio) {
-                // 1. Actualizamos los textos usando el DAO
                 $this->anuncioDAO->actualizarAnuncio($id, $validated);
 
-                // 2. Borramos las fotos marcadas usando el DAO (Él se encarga de borrar el archivo físico)
                 if (!empty($validated['imagenes_a_borrar'])) {
                     $this->anuncioDAO->eliminarImagenes($validated['imagenes_a_borrar'], $anuncio->id);
                 }
 
-                // 3. Subimos las fotos nuevas
                 if ($request->hasFile('nuevas_imagenes')) {
                     foreach ($request->file('nuevas_imagenes') as $foto) {
                         $ruta = $foto->store('anuncios', 'public');
@@ -145,6 +153,9 @@ class AnuncioController extends Controller
         }
     }
 
+    // Este método se dispara cuando el usuario le da al botón de la papelera en su perfil para borrar un anuncio suyo.
+    // Igual que al editar, hace un control de seguridad: ¿existe? ¿es del usuario?.
+    // Si todo está OK, le manda la orden de eliminar al DAO y devuelve un mensaje de éxito.
     public function destroy(Request $request, int $id)
     {
         $anuncio = $this->anuncioDAO->obtenerAnuncioPorId($id);
@@ -164,22 +175,26 @@ class AnuncioController extends Controller
         ], 200);
     }
 
-    // Las funciones extra de imágenes sueltas, usando también el DAO para la eliminación física
+    // Este método es un apoyo para borrar una sola foto suelta de un anuncio, sin tener que editar el anuncio entero.
+    // Busca la imagen por su ID, comprueba que el usuario dueño del anuncio sea el que está haciendo la petición,
+    // y usa el DAO para borrar ese archivo físico y su registro en la base de datos.
     public function eliminarImagen(Request $request, $id)
     {
         $imagen = ImagenAnuncio::findOrFail($id);
-
         $anuncio = Anuncio::findOrFail($imagen->anuncio_id);
+
         if ($anuncio->user_id !== $request->user()->id) {
             return response()->json(['message' => 'No tienes permiso'], 403);
         }
 
-        // Reutilizamos el DAO para hacer el borrado
         $this->anuncioDAO->eliminarImagenes([$id], $anuncio->id);
 
         return response()->json(['message' => 'Imagen borrada con éxito'], 200);
     }
 
+    // Este método es otro apoyo, esta vez para subir fotos sueltas a un anuncio ya creado.
+    // Valida que los archivos sean imágenes y no pesen demasiado. Luego, hace un bucle para guardar
+    // físicamente cada foto en la carpeta 'storage/app/public/anuncios' y llama al DAO para registrar la ruta en la tabla de imágenes.
     public function subirImagenes(Request $request, $anuncioId)
     {
         $request->validate([
@@ -193,7 +208,6 @@ class AnuncioController extends Controller
         if ($request->hasFile('imagenes')) {
             foreach ($request->file('imagenes') as $foto) {
                 $ruta = $foto->store('anuncios', 'public');
-                // Guardamos usando el DAO
                 $this->anuncioDAO->guardarImagen($anuncio->id, $ruta);
                 $rutasGuardadas[] = $ruta;
             }
