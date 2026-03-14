@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+// Esta clase es la encargada de gestionar toda la lógica relacionada con los anuncios que los usuarios guardan en su lista de favoritos. 
 class FavoritoController extends Controller
 {
+    // Este método funciona como un interruptor o "toggle" para el botón del corazón. 
+    // Recibe la petición del usuario y el ID del anuncio. Primero comprueba si ese anuncio ya está guardado por el usuario. 
+    // Si lo está, lo borra (quita el favorito). Si no lo encuentra en la base de datos, lo inserta (añade el favorito).
     public function handleFavorito(Request $request, int $anuncio_id)
     {
         $user = $request->user();
@@ -36,6 +40,9 @@ class FavoritoController extends Controller
         }
     }
 
+    // Este método devuelve la lista completa de anuncios que un usuario ha marcado como favoritos. 
+    // Para hacerlo más eficiente, hago un 'join' entre la tabla de anuncios y la de favoritos. 
+    // Además, uso una subconsulta (addSelect) para extraer únicamente la primera foto de cada anuncio.
     public function index(Request $request){
         
         $user = $request->user();
@@ -67,6 +74,7 @@ class FavoritoController extends Controller
 
     }
 
+    // Este método es una comprobación rápida que utilizamos en el Frontend cuando carga la página de un anuncio en concreto. 
     public function checkFavorito(Request $request, int $anuncio_id)
     {
         $user = $request->user();

@@ -124,8 +124,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Creamos la caja FormData para enviarlo todo junto
             const formData = new FormData();
             
-            // Truco de Laravel: Enviamos POST pero le decimos que internamente actúe como PUT
-            formData.append('_method', 'PUT');
 
             // Textos
             formData.append('titulo', document.getElementById('titulo').value);

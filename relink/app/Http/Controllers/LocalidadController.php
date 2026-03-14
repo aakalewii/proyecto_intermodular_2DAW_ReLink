@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Localidad;
 use Illuminate\Http\Request;
 
+// CRUD  de Localidades
 class LocalidadController extends Controller
 {
-    // GET /api/localidad (Listar todas, y de paso que traiga el nombre de su municipio)
+    // Este método va a la base de datos, y coge todos los registros de la tabla de localidades y los devuelve en formato JSON. 
     public function index()
     {
         // Usamos 'with' para que el JSON incluya los datos de la localidad asociada
@@ -15,6 +16,8 @@ class LocalidadController extends Controller
         return response()->json($localidad, 200);
     }
 
+    // Este método recibe los datos del formulario para registrar una nueva localidad. 
+    // Pasa una validación de seguridad y guardacel resgistro en la BD.
     public function store(Request $request)
     {
         $request->validate([
@@ -30,6 +33,9 @@ class LocalidadController extends Controller
         ], 201);
     }
 
+    // Este método busca una localidad concreta utilizando su ID. 
+    // Le añadimos el 'with' para que muestre el municipio.
+    // Si el ID que nos pasan no existe, devolvemos un error 404.
     public function show($id)
     {
         $localidad = Localidad::with('municipio')->find($id);
@@ -38,6 +44,8 @@ class LocalidadController extends Controller
         return response()->json($localidad, 200);
     }
 
+    // Este método actualiza la información de una localidad que ya tenemos guardado. 
+    // Primero busca que la localidad exista. Si está, lo valida y finalmente guarda los nuevos datos.
     public function update(Request $request, $id)
     {
         $localidad = Localidad::find($id);
@@ -56,6 +64,7 @@ class LocalidadController extends Controller
         ], 200);
     }
 
+    // Este método elimina una localidad. Busca el registro por su ID y, si lo encuentra, lo borra de la base de datos.
     public function destroy($id)
     {
         $localidad = Localidad::find($id);

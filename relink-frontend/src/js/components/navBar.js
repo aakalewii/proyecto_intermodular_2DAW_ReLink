@@ -31,19 +31,9 @@ export function renderNavbar() {
             `;
         }
 
-        // --- BUSCADOR ---
-        const buscadorHtml = `
-            <div class="navbar-search">
-            <button id="navbarSearchBtn" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
-                <input type="text" id="navbarSearchInput" placeholder="Buscar en Todas las categorías...">
-                <button id="navbarCancelBtn" aria-label="Buscar" style="display: none;"><i class="fa-solid fa-x"></i></button>
-            </div>
-        `;
-
         navbarContainer.innerHTML = `
             <nav class="navbar-relink">
                 ${logoHtml}
-                ${buscadorHtml}
                 <div class="nav-menu">
                     ${enlacesHtml}
                     <button id="btnLogout" class="btn-logout">Cerrar Sesión</button>
@@ -64,18 +54,6 @@ export function renderNavbar() {
                 localStorage.removeItem('relink_user');
                 window.location.href = '/index.html';
             }
-        });
-
-        const searchInput = document.getElementById('navbarSearchInput');
-
-        const ejecutarBusqueda = () => {
-            const termino = searchInput.value.trim();
-            // Redirigimos a la página de inicio pasándole la búsqueda por la URL
-            window.location.href = `/index.html?search=${encodeURIComponent(termino)}`;
-        };
-
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') ejecutarBusqueda();
         });
 
     } else {

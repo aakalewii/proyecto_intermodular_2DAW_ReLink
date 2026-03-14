@@ -56,7 +56,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/favoritos/check/{anuncio_id}', [FavoritoController::class, 'checkFavorito']);
 
     Route::post('/anuncios', [AnuncioController::class, 'store']);
-    Route::put('/anuncios/{id}', [AnuncioController::class, 'update']);
+    Route::post('/anuncios/{id}', [AnuncioController::class, 'update']);
     Route::delete('/anuncios/{id}', [AnuncioController::class, 'destroy']);
     Route::post('/anuncios/{id}/imagenes', [App\Http\Controllers\AnuncioController::class, 'subirImagenes']);
     Route::delete('/imagenes/{id}', [AnuncioController::class, 'eliminarImagen']);
