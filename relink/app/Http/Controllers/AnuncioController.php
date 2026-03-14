@@ -174,48 +174,4 @@ class AnuncioController extends Controller
             'message' => 'Anuncio eliminado con éxito'
         ], 200);
     }
-
-    // Este método es un apoyo para borrar una sola foto suelta de un anuncio, sin tener que editar el anuncio entero.
-    // Busca la imagen por su ID, comprueba que el usuario dueño del anuncio sea el que está haciendo la petición,
-    // y usa el DAO para borrar ese archivo físico y su registro en la base de datos.
-    public function eliminarImagen(Request $request, $id)
-    {
-        $imagen = ImagenAnuncio::findOrFail($id);
-        $anuncio = Anuncio::findOrFail($imagen->anuncio_id);
-
-        if ($anuncio->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'No tienes permiso'], 403);
-        }
-
-        $this->anuncioDAO->eliminarImagenes([$id], $anuncio->id);
-
-        return response()->json(['message' => 'Imagen borrada con éxito'], 200);
-    }
-
-    // Este método es otro apoyo, esta vez para subir fotos sueltas a un anuncio ya creado.
-    // Valida que los archivos sean imágenes y no pesen demasiado. Luego, hace un bucle para guardar
-    // físicamente cada foto en la carpeta 'storage/app/public/anuncios' y llama al DAO para registrar la ruta en la tabla de imágenes.
-    public function subirImagenes(Request $request, $anuncioId)
-    {
-        $request->validate([
-            'imagenes' => 'required|array',
-            'imagenes.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
-        ]);
-
-        $anuncio = Anuncio::findOrFail($anuncioId);
-        $rutasGuardadas = [];
-
-        if ($request->hasFile('imagenes')) {
-            foreach ($request->file('imagenes') as $foto) {
-                $ruta = $foto->store('anuncios', 'public');
-                $this->anuncioDAO->guardarImagen($anuncio->id, $ruta);
-                $rutasGuardadas[] = $ruta;
-            }
-        }
-
-        return response()->json([
-            'message' => 'Imágenes subidas correctamente',
-            'rutas' => $rutasGuardadas
-        ], 201);
-    }
 }
