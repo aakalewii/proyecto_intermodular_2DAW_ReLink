@@ -193,7 +193,7 @@ ADD COLUMN estado VARCHAR(20) NOT NULL DEFAULT 'enviado';
 -- Borramos la regla estricta actual
 ALTER TABLE anuncios DROP FOREIGN KEY fk_anuncio_localidad;
 
--- Permitimos que la columna acepte nulos (Asegúrate de que el tipo de dato coincide, normalmente es BIGINT UNSIGNED)
+-- Permitimos que la columna acepte nulos
 ALTER TABLE anuncios MODIFY localidad_id BIGINT UNSIGNED NULL;
 
 -- Creamos la nueva regla con "ON DELETE SET NULL"
