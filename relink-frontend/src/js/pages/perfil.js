@@ -1,34 +1,42 @@
 import { renderNavbar } from '../components/navBar.js';
 import { getMiPerfil, updatePerfil } from '../services/perfil.js';
 import { getLocalidades } from '../services/ubicaciones.js'; 
-// AÑADIDO: Importamos la función para borrar anuncios de tu servicio
 import { deleteAnuncio } from '../services/anuncios.js';
+
+/*
+   PANTALLA: MI PERFIL
+   Este script se encarga de mostrar los datos personales del usuario, permitirle editarlos,
+   y listar todos los anuncios que tiene activos, dándole la opción de borrarlos o ir a editarlos.
+*/
 
 document.addEventListener('DOMContentLoaded', async () => {
     
-    // Cargamos el navbar
+    // CARGA INICIAL Y SEGURIDAD
     renderNavbar();
 
-    // Comprobamos seguridad
+    // Comprobamos si hay un token. Si un visitante anónimo intenta entrar tecleando /perfil.html, lo echamos.
     const token = localStorage.getItem('relink_token');
     if (!token) {
         window.location.href = '/login.html';
         return; 
     }
 
-    // Variable global para guardar los datos que vienen de la base de datos
-    let datosUsuarioActual = null; 
+    // VARIABLE DE ESTADO GLOBAL:
+    // Aquí guardaremos todo lo que nos devuelva la base de datos para no tener que estar
+    // pidiendo los mismos datos al servidor cada vez que el usuario le dé a "Cancelar" o "Editar".
+    let datosUsuarioActual = null;
 
-    // Referencias a los bloques de lectura y edicion
+    // Referencias a los dos "modos" visuales de la pantalla (Lectura vs Edición)
     const bloqueLectura = document.getElementById('bloque-lectura');
     const formEditar = document.getElementById('form-editar');
 
     // --- CARGA INICIAL DE LA PÁGINA ---
     try {
+        // Llamamos al ProfileController del backend (que usa Eager Loading para traer los anuncios)
         const respuesta = await getMiPerfil();
         datosUsuarioActual = respuesta.datos;
         
-        // Pintamos la información
+        // Enviamos los datos a las funciones que se encargan de inyectar el HTML
         pintarDatosLectura(datosUsuarioActual);
         pintarMisAnuncios(datosUsuarioActual.anuncios);
 
@@ -37,41 +45,40 @@ document.addEventListener('DOMContentLoaded', async () => {
         alert("Hubo un problema al cargar tu perfil. Revisa la consola.");
     }
 
-    // --- LÓGICA DE LOS BOTONES ---
+    // --- LÓGICA DE LOS BOTONES DE INTERFAZ ---
 
-    // Al darle a "Editar Perfil"
+    // Evento: Al darle al botón "Editar Perfil"
     document.getElementById('btn-editar').addEventListener('click', async () => {
         
-        // Escondemos textos, mostramos formulario
+        // Cambiamos las "vistas": ocultamos el texto estático y mostramos el formulario
         bloqueLectura.style.display = 'none';
         formEditar.style.display = 'flex';
 
-        // Rellenar Nombre
+        // Rellenamos las cajas de texto con los datos que ya teníamos guardados en memoria
         document.getElementById('edit-nombre').value = datosUsuarioActual.nombre;
 
-        // Rellenar Apellidos
+        // Comprobamos los nulos para no pintar la palabra "null" literalmente en el input
         if (datosUsuarioActual.apellidos !== null) {
             document.getElementById('edit-apellidos').value = datosUsuarioActual.apellidos;
         } else {
             document.getElementById('edit-apellidos').value = "";
         }
 
-        // Rellenar Teléfono
         if (datosUsuarioActual.telefono !== null) {
             document.getElementById('edit-telefono').value = datosUsuarioActual.telefono;
         } else {
             document.getElementById('edit-telefono').value = "";
         }
 
-        // Cargar el desplegable de localidades
+        // Cargar el desplegable de localidades dinámicamente
         try {
             const resLocalidades = await getLocalidades();
             const selectLocalidad = document.getElementById('edit-localidad');
             
-            // Empezamos con la opción vacía
             selectLocalidad.innerHTML = '<option value="">Selecciona una localidad...</option>';
             
-            // Llenamos el desplegable usando un IF normal para marcar la seleccionada
+            // Recorremos las localidades y, si coincide con la del usuario, le añadimos 'selected'
+            // para que el desplegable ya aparezca marcado en su pueblo actual.
             resLocalidades.forEach(loc => {
                 let opcionSeleccionada = "";
                 
@@ -87,14 +94,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Al darle a "Cancelar"
+    // Evento: Al darle a "Cancelar" devolvemos todo a la vista de lectura sin guardar nada
     document.getElementById('btn-cancelar').addEventListener('click', () => {
         formEditar.style.display = 'none';
         bloqueLectura.style.display = 'block';
     });
 
 
-    // --- GUARDAR LOS CAMBIOS ---
+    // --- EVENTO PRINCIPAL: GUARDAR LOS CAMBIOS DEL PERFIL ---
     formEditar.addEventListener('submit', async (e) => {
         e.preventDefault(); 
 
@@ -102,14 +109,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         const localidadValue = document.getElementById('edit-localidad').value;
         let idLocalidadEnviar;
         
-        // Si no eligió nada, mandamos null, si no, mandamos el número
+        // Si el desplegable está vacío, enviamos un `null`
+        // Esto hace que la regla 'nullable' del backend de Laravel funcione perfectamente.
         if (localidadValue === "") {
             idLocalidadEnviar = null;
         } else {
             idLocalidadEnviar = localidadValue;
         }
 
-        // Preparar el paquete para Laravel
+        // Empaquetamos los datos en formato JSON para mandarlos a Laravel
         const nuevosDatos = {
             name: document.getElementById('edit-nombre').value,
             apellidos: document.getElementById('edit-apellidos').value,
@@ -118,15 +126,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
 
         try {
-            // Enviar los datos
+            // Llamamos a la API para hacer el UPDATE en la base de datos
             const respuestaActualizacion = await updatePerfil(nuevosDatos);
+            
+            // El backend nos devuelve el usuario ya actualizado
             const userActualizado = respuestaActualizacion.data;
             
-            // Guardar los datos nuevos en nuestra variable local
+            // Actualizamos nuestra variable local para que no se quede desfasada
             datosUsuarioActual.nombre = userActualizado.name;
             datosUsuarioActual.apellidos = userActualizado.apellidos;
             
-            // Para el nombre completo, revisamos si hay apellidos
+            // Reconstruimos el nombre completo
             if (userActualizado.apellidos !== null) {
                 datosUsuarioActual.nombre_completo = userActualizado.name + ' ' + userActualizado.apellidos;
             } else {
@@ -135,18 +145,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             datosUsuarioActual.telefono = userActualizado.telefono;
             
-            // Si Laravel nos devolvió la ciudad, la guardamos
+            // Si Laravel nos devolvió la relación de la localidad, la guardamos
             if (userActualizado.localidad) {
                 datosUsuarioActual.localidad_nombre = userActualizado.localidad.nombre;
                 datosUsuarioActual.localidad_id = userActualizado.localidad.id;
             }
 
-            // Repintar textos y ocultar formulario
+            // Ocultamos el formulario y volvemos a pintar los textos estáticos, ahora con los datos nuevos
             pintarDatosLectura(datosUsuarioActual);
             formEditar.style.display = 'none';
             bloqueLectura.style.display = 'block';
 
-            // Actualizar el navbar
+            // Actualizamos la "sesión" del navegador y repintamos la barra de arriba.
             localStorage.setItem('relink_user', JSON.stringify(userActualizado));
             renderNavbar();
 
@@ -156,20 +166,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
 
-    // --- FUNCIONES PARA PINTAR ---
+    // --- FUNCIONES PARA PINTAR EN PANTALLA ---
 
+    // Esta función inyecta los datos de texto en los <span> del bloque de lectura
     function pintarDatosLectura(user) {
         document.getElementById('perf-nombre').textContent = user.nombre_completo;
         document.getElementById('perf-email').textContent = user.email;
         
-        // Pintar teléfono
         if (user.telefono !== null) {
             document.getElementById('perf-telefono').textContent = user.telefono;
         } else {
             document.getElementById('perf-telefono').textContent = "No especificado";
         }
 
-        // Pintar localidad
         if (user.localidad_nombre) {
             document.getElementById('perf-localidad').textContent = user.localidad_nombre;
         } else {
@@ -177,6 +186,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // Esta función genera las "tarjetas" (cards) de los anuncios del usuario
     function pintarMisAnuncios(anuncios) {
         const listaAnuncios = document.getElementById('mis-anuncios-lista');
         listaAnuncios.innerHTML = ''; 
@@ -187,11 +197,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         anuncios.forEach(anuncio => {
+            // Creamos la caja del anuncio dinámicamente
             const card = document.createElement('div');
             card.style.border = "1px solid #eee";
             card.style.padding = "10px";
             card.style.borderRadius = "5px";
 
+            // Inyectamos el HTML interno con los enlaces dinámicos (pasando la ID por la URL)
             card.innerHTML = `
                 <h4 style="margin: 0 0 5px 0;">${anuncio.titulo}</h4>
                 <p style="margin: 0 0 10px 0;">Precio: <strong>${anuncio.precio}€</strong></p>
@@ -209,31 +221,38 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             `;
             
-            // --- LÓGICA DEL BOTÓN DE BORRAR ---
+            // --- LÓGICA DEL BOTÓN DE BORRAR ANUNCIO ---
+            // Le añadimos el escuchador de eventos al botón de la basura específico de esta tarjeta
             const btnBorrar = card.querySelector('.btn-borrar'); 
             
             btnBorrar.addEventListener('click', async () => {
+                // Confirmación nativa de seguridad
                 if (confirm(`¿Seguro que quieres borrar el anuncio "${anuncio.titulo}"?`)) {
                     try {
+                        // Feedback visual mientras contactamos con la API
                         btnBorrar.innerHTML = "Borrando...";
                         btnBorrar.disabled = true;
 
+                        // Llamada de borrado al backend
                         await deleteAnuncio(anuncio.id);
                         
+                        // Si el backend borra con éxito (HTTP 200), destruimos la tarjeta del DOM
+                        // sin tener que recargar la página entera.
                         card.remove();
 
+                        // Si al borrar esta tarjeta, la lista se queda vacía, mostramos el mensaje de "No hay anuncios"
                         if (listaAnuncios.children.length === 0) {
                             listaAnuncios.innerHTML = '<p>Aún no has publicado ningún anuncio.</p>';
                         }
 
                     } catch (error) {
                         alert("No se pudo borrar el anuncio: " + error.message);
+                        // Si falla, restauramos el botón a la normalidad
                         btnBorrar.innerHTML = `<i class="fa-solid fa-trash"></i> Borrar`;
                         btnBorrar.disabled = false;
                     }
                 }
             });
-            // ----------------------------------
 
             listaAnuncios.appendChild(card);
         });

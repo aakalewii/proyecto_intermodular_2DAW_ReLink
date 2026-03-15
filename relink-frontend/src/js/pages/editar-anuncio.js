@@ -1,12 +1,24 @@
 import { renderNavbar } from '../components/navBar.js';
 import { getLocalidades } from '../services/ubicaciones.js';
 import { getCategorias, getSubcategoriasPorCategoria } from '../services/categorias.js';
-// Importamos la nueva función updateAnuncioCompleto
+// Importamos la función que se comunica con el backend (la que usa el FormData)
 import { getAnuncioById, updateAnuncioCompleto } from '../services/anuncios.js';
 
+/*
+   PANTALLA: EDITAR ANUNCIO
+   
+   La misión de este script es:
+   1. Leer la base de datos para rellenar el formulario con los datos que ya tenía el anuncio.
+   2. Recoger los cambios (textos nuevos, fotos a borrar y fotos a subir) y empaquetarlos
+      todos en una única petición al backend.
+*/
+
 document.addEventListener('DOMContentLoaded', async () => {
+    // Cargamos la barra de arriba
     renderNavbar();
 
+    // SEGURIDAD BÁSICA: ¿Estás logueado?
+    // Miramos el localStorage. Si no hay token, fuera de aquí.
     const token = localStorage.getItem('relink_token');
     if (!token) {
         alert("Debes iniciar sesión para editar un anuncio.");
@@ -14,6 +26,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    // RECUPERAR EL ID DEL ANUNCIO DE LA URL
+    // Usamos URLSearchParams. Si la URL es "/editar-anuncio.html?id=5", esto saca el "5".
     const urlParams = new URLSearchParams(window.location.search);
     const anuncioId = urlParams.get('id');
 
@@ -23,6 +37,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    // CAZAR LOS ELEMENTOS DEL HTML (DOM)
+    // Guardamos las cajas del formulario en variables para manejarlas luego.
     const form = document.getElementById('formEditarAnuncio');
     const errorMessageDiv = document.getElementById('errorMsg');
     const submitButton = form.querySelector('button[type="submit"]');
@@ -33,65 +49,77 @@ document.addEventListener('DOMContentLoaded', async () => {
     const divImagenesActuales = document.getElementById('contenedorImagenesActuales');
     const inputNuevasFotos = document.getElementById('nuevas_imagenes');
 
-    // AQUÍ GUARDAMOS LOS IDs DE LAS FOTOS QUE EL USUARIO QUIERE BORRAR
+    // Aquí iremos metiendo los IDs de las fotos que el usuario pinche en "Eliminar".
+    // No las borramos al momento de la BD, solo apuntamos su id para borrarlas al darle a Guardar.
     let imagenesParaBorrar = [];
 
     if(submitButton) submitButton.textContent = 'Guardar Cambios';
 
+    // Rellenamos los combos de los selects ANTES de traer los datos del anuncio
     await cargarSelectCategorias();
     await cargarSelectLocalidades();
 
-    // PEDIMOS LOS DATOS DEL ANUNCIO
+    // TRAER LOS DATOS DEL ANUNCIO VIEJO Y PINTARLOS
     try {
         const response = await getAnuncioById(anuncioId);
         const anuncio = response.datos; 
 
+        // Recuperamos el usuario que está navegando para compararlo
         const miUsuarioString = localStorage.getItem('relink_user');
-
         const miUsuario = JSON.parse(miUsuarioString);
 
+        // SEGURIDAD: ¿El anuncio es tuyo?
+        // Si el user_id del anuncio no coincide con su ID, lo echamos.
         if (anuncio.user_id != miUsuario.id) {
             alert("No tienes permiso para editar un anuncio que no es tuyo.");
-            window.location.href = '/index.html'; // hacer pa un futuro una pagina html de Acceso denegado
+            window.location.href = '/index.html'; 
             return;
         }
 
+        // Si es suyo, empezamos a rellenar las cajas de texto con la información de la BD
         document.getElementById('titulo').value = anuncio.titulo;
         document.getElementById('descripcion').value = anuncio.descripcion;
         document.getElementById('precio').value = anuncio.precio;
         selectLocalidad.value = anuncio.localidad_id;
 
-        // Rellenar categorías
+        // SELECTS EN CASCADA:
+        // Si el anuncio ya tenía una subcategoría, primero seleccionamos la Categoría Padre.
+        // Luego hacemos la petición a la API para cargar las opciones de ese hijo, y finalmente seleccionamos el hijo.
         if (anuncio.subcategoria_id && anuncio.subcategoria && anuncio.subcategoria.categoria_id) {
             selectCategoria.value = anuncio.subcategoria.categoria_id;
             await cargarSubcategorias(anuncio.subcategoria.categoria_id);
             selectSubcategoria.value = anuncio.subcategoria_id;
         }
 
-        // PINTAR IMÁGENES ACTUALES
+        // GESTIÓN VISUAL DE LAS FOTOS
         divImagenesActuales.innerHTML = '';
         if (anuncio.imagenes && anuncio.imagenes.length > 0) {
+            // Si tiene fotos, creamos un mini-contenedor para cada una con JavaScript
             anuncio.imagenes.forEach(img => {
                 const imgContainer = document.createElement('div');
                 imgContainer.style.display = 'inline-block';
                 imgContainer.style.margin = '10px';
                 imgContainer.style.textAlign = 'center';
 
+                // Creamos la etiqueta de la imagen para que se vea
                 const imgElement = document.createElement('img');
                 imgElement.src = `http://localhost:5500/storage/${img.url}`; 
                 imgElement.width = 120; 
                 
+                // Creamos un botón "Eliminar" debajo de la foto
                 const btnBorrar = document.createElement('button');
                 btnBorrar.textContent = "Eliminar";
                 btnBorrar.type = "button";
                 btnBorrar.style.display = "block";
                 btnBorrar.style.margin = "5px auto";
                 
-                // Evento para marcar la foto para borrar
+                // ¿Qué pasa al darle a Eliminar?
                 btnBorrar.addEventListener('click', () => {
                     if (confirm('¿Seguro que quieres borrar esta foto? Se eliminará definitivamente al guardar los cambios.')) {
-                        imagenesParaBorrar.push(img.id); // Guardamos el ID en el array
-                        imgContainer.remove(); // La ocultamos de la pantalla
+                        // metemos la ID de la foto en nuestro array
+                        imagenesParaBorrar.push(img.id); 
+                        // Y borramos el DIV entero del HTML para que el usuario sepa que se ha borrado
+                        imgContainer.remove(); 
                     }
                 });
 
@@ -104,49 +132,54 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
     } catch (error) {
+        // Si el anuncio no existe o el backend falla, lo devolvemos a la pagina principal
         alert("No se pudo cargar el anuncio. ¿Seguro que existe o es tuyo?");
         window.location.href = '/index.html';
         return;
     }
 
-    // CAMBIO DE CATEGORÍA
+    // EVENTO: CAMBIAR DE CATEGORÍA
+    // Si el usuario decide cambiar el anuncio de categoría a mitad de la edición,
+    // recargamos el select de las subcategorías.
     selectCategoria.addEventListener('change', async (e) => {
         await cargarSubcategorias(e.target.value);
     });
 
-    // GUARDAR LOS CAMBIOS
+    // EVENTO BOTÓN DE GUARDAR
     form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Evitamos que la página se recargue a lo loco
         limpiarErrores();
         cargando(true);
 
         try {
-            // Creamos la caja FormData para enviarlo todo junto
+            // Como vamos a enviar fotos, usamos FormData en vez de un JSON
             const formData = new FormData();
             
-
-            // Textos
+            // Metemos los textos actualizados en el paquete
             formData.append('titulo', document.getElementById('titulo').value);
             formData.append('descripcion', document.getElementById('descripcion').value);
             formData.append('precio', document.getElementById('precio').value);
             formData.append('subcategoria_id', document.getElementById('subcategoria_id').value);
             formData.append('localidad_id', document.getElementById('localidad_id').value);
 
-            // Añadimos la lista de imágenes a borrar
+            // Metemos EL ARRAY de las fotos que queremos eliminar en el backend
+            // El backend iterará sobre esto y las borrará de su carpeta.
             imagenesParaBorrar.forEach(id => {
                 formData.append('imagenes_a_borrar[]', id);
             });
 
-            // Si hay fotos nuevas añadimos
+            // Procesamos las fotos nuevas si el usuario ha seleccionado alguna en el explorador de archivos
             if (inputNuevasFotos && inputNuevasFotos.files.length > 0) {
                 for (let i = 0; i < inputNuevasFotos.files.length; i++) {
+                    // Metemos cada archivo físico en el FormData usando [] para indicarle a Laravel que es un array
                     formData.append('nuevas_imagenes[]', inputNuevasFotos.files[i]);
                 }
             }
 
-            // Enviamos todo a tu nueva función en servicios
+            // Enviamos el "paquete" gigante al backend a través del servicio
             await updateAnuncioCompleto(anuncioId, formData);
 
+            // Si todo ha ido bien, le devolvemos a su perfil
             window.location.href = '/perfil.html';
 
         } catch (error) {
@@ -156,7 +189,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // FUNCIONES PARA LLENAR DESPLEGABLES
+    // --- FUNCIONES AUXILIARES (Para cargar selects) ---
+    // (Iguales que en crear-anuncio, piden a la API y pintan <options>)
+    
     async function cargarSelectCategorias() {
         try {
             const categorias = await getCategorias();
