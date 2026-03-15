@@ -2,6 +2,12 @@ import { renderNavbar } from '../../components/navBar.js';
 import { getMunicipios, getLocalidades, createLocalidad, updateLocalidad, deleteLocalidad } from '../../services/ubicaciones.js';
 import { verificarAccesoAdmin } from '../../services/auth.js';
 
+/*
+   PANEL DE ADMINISTRACIÓN: LOCALIDADES
+
+   Este script controla la vista de gestión de Localidades. Sigue el mismo patrón lógico que el de Provincias y Municipios.
+*/
+
 let localidadIdEditando = null;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -98,7 +104,7 @@ async function cargarTablaLocalidades() {
 
         localidades.forEach(localidad => {
             const tr = document.createElement('tr');
-            // Aquí sacamos el nombre del municipio gracias al "with('municipio')" de tu Laravel
+            // Sacamos el nombre del municipio.
             const nombreDelMunicipio = localidad.municipio ? localidad.municipio.nombre : 'Sin municipio';
             tr.innerHTML = `
                 <td>${localidad.nombre}</td>

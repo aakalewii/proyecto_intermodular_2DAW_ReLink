@@ -1,6 +1,17 @@
 import { API_URL, getAuthHeaders} from './auth.js';
 
-// 1. Leer Anuncios
+/*
+   SERVICIOS DE ANUNCIOS (API FETCH)
+
+   Este archivo gestiona toda la comunicación con el backend referente a los 
+   productos de la plataforma. Como los anuncios incluyen subida de imágenes, 
+   veremos que algunas funciones usan 'FormData' en lugar de simples JSON.
+*/
+
+// Esta función se encarga de traer el tablón principal de anuncios. 
+// Comprueba si el usuario está logueado leyendo el token. Si lo está, envía el token al backend para que Laravel 
+// pueda filtrar y no mostrarle al usuario sus propios anuncios en la pantalla principal. 
+// Si no hay token, simplemente trae todos los anuncios públicos.
 export async function getAnuncios() {
     try {
 
@@ -31,7 +42,9 @@ export async function getAnuncios() {
     }
 }
 
-// 2. Crear Anuncio
+// Esta función envía al servidor toda la información de un anuncio nuevo. 
+// A diferencia de otros servicios, aquí recibimos un objeto 'FormData' porque necesitamos enviar archivos físicos (las fotos). 
+// Por eso, no usamos JSON.stringify ni ponemos el header 'Content-Type', dejando que el navegador configure automáticamente el envío de archivos.
 export async function createAnuncio(formData) {
     try {
         const token = localStorage.getItem('relink_token');
@@ -52,22 +65,9 @@ export async function createAnuncio(formData) {
     }
 }
 
-// 3. Actualizar Anuncio (La antigua, enviando JSON)
-export async function updateAnuncio(id, anuncioData) {
-    try {
-        const response = await fetch(`${API_URL}/anuncios/${id}`, {
-            method: 'PUT',
-            headers: getAuthHeaders(),
-            body: JSON.stringify(anuncioData)
-        });
-        if (!response.ok) throw new Error('Error al actualizar el anuncio');
-        return await response.json();
-    } catch (error) {
-        throw error;
-    }
-}
-
-// 4. Ver anuncio especifico
+// Esta función es de acceso totalmente público. 
+// Su trabajo es pedirle a la base de datos toda la información detallada de un anuncio concreto usando su ID. 
+// No necesita token de seguridad porque cualquiera puede ver el detalle de un producto.
 export async function getAnuncioById(id) {
     const response = await fetch(`${API_URL}/anuncios/${id}`, {
         // Es una ruta pública, así que solo necesitamos el Accept
@@ -80,7 +80,8 @@ export async function getAnuncioById(id) {
     return await response.json();
 }
 
-// 5. Borrar Anuncio
+// Esta función procesa el borrado de un anuncio. Exige estar autenticado (getAuthHeaders), ya que el backend comprobará 
+// estrictamente que el anuncio que intentas borrar te pertenece a ti y no a otro usuario.
 export async function deleteAnuncio(id) {
     try {
         const response = await fetch(`${API_URL}/anuncios/${id}`, {
@@ -96,25 +97,8 @@ export async function deleteAnuncio(id) {
     }
 }
 
-// --- FUNCIÓN PARA SUBIR FOTOS ---
-export async function uploadImagenes(anuncioId, formData) {
-    const token = localStorage.getItem('relink_token');
-    
-    const response = await fetch(`${API_URL}/anuncios/${anuncioId}/imagenes`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-        body: formData
-    });
-
-    if (!response.ok){
-        throw new Error('Error al subir las imágenes del anuncio');
-    }
-    
-    return await response.json();
-}
-
+// Esta es la función para editar un anuncio de forma completa. 
+// Usamos el método POST en lugar de PUT porque PHP/Laravel no procesa bien la subida de archivos (FormData) mediante peticiones PUT nativas.
 export async function updateAnuncioCompleto(id, formData) {
     const token = localStorage.getItem('relink_token');
     

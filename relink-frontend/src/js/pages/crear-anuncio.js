@@ -1,8 +1,18 @@
 import { renderNavbar } from '../components/navBar.js';
-// Importamos la función para traer las localidades
 import { getLocalidades } from '../services/ubicaciones.js';
 import { createAnuncio } from '../services/anuncios.js';
 import { getCategorias, getSubcategoriasPorCategoria } from '../services/categorias.js';
+
+/*
+   PANTALLA: CREAR ANUNCIO
+
+   Este script controla el formulario donde los usuarios publican nuevos productos.
+   Sus responsabilidades principales son: 
+   1. Validar que el usuario esté logueado.
+   2. Cargar los desplegables dinámicos (Categorías -> Subcategorías y Localidades).
+   3. Empaquetar los datos de texto junto con las FOTOS usando FormData para 
+      enviárselos al backend.
+*/
 
 document.addEventListener('DOMContentLoaded', () => {
     // Renderizamos la barra de navegación
@@ -11,7 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarSelectCategorias();
     cargarSelectLocalidades();
 
-    // Comprobamos si el usuario está logueado
+    // Leemos el localStorage. Si no hay token, el usuario es anónimo y lo 
+    // redirigimos inmediatamente a la página de login para que no pueda ver el formulario.
     const token = localStorage.getItem('relink_token');
     if (!token) {
         alert("Debes iniciar sesión para publicar un anuncio.");
@@ -19,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Cuestionario para la creación del anuncio
+    // --- CAPTURA DE ELEMENTOS DEL DOM ---
     const form = document.getElementById('formCrearAnuncio');
     const errorMessageDiv = document.getElementById('errorMsg');
     const submitButton = form.querySelector('button[type="submit"]');
@@ -27,10 +38,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectCategoria = document.getElementById('categoria_id');
     const selectSubcategoria = document.getElementById('subcategoria_id');
 
+    // EVENTO DE DESPLEGABLES (Selects en cascada)
+    // Cuando el usuario elige una Categoría principal, este 
+    // evento salta, bloquea el segundo select temporalmente y pide a la API 
+    // las subcategorías correspondientes.
     selectCategoria.addEventListener('change', async (e) => {
         const categoriaSeleccionadaId = e.target.value;
         
-        // Bloqueamos y mostramos "Cargando..." en las subcategorías
+        // Bloqueo visual mientras carga para evitar que el usuario elija datos erróneos
         selectSubcategoria.innerHTML = '<option value="" disabled selected>Cargando subcategorías...</option>';
         selectSubcategoria.disabled = true;
 
@@ -45,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return; // Cortamos aquí si no hay datos
             }
 
-            // Rellenamos las opciones
+            // Inyectamos las subcategorías recibidas
             subcategoriasFiltradas.forEach(sub => {
                 const option = document.createElement('option');
                 option.value = sub.id;
@@ -61,47 +76,55 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Escuchamos cuando el usuario le da a enviar
+    // EVENTO PRINCIPAL: ENVÍO DEL FORMULARIO
    form.addEventListener('submit', async (e) => {
         e.preventDefault();
         limpiarErrores();
         cargando(true);
 
         try {
-            // Creamos la caja vacía
+            // Utilizamos 'FormData' en lugar de JSON porque necesitamos enviar 
+            // archivos binarios (fotos) al servidor.
             const formData = new FormData();
 
-            // Metemos los textos sacándolos directamente del HTML
+            // Añadimos los datos de texto e IDs de las relaciones
             formData.append('titulo', document.getElementById('titulo').value);
             formData.append('descripcion', document.getElementById('descripcion').value);
             formData.append('precio', document.getElementById('precio').value);
             formData.append('subcategoria_id', document.getElementById('subcategoria_id').value);
             formData.append('localidad_id', document.getElementById('localidad_id').value);
 
-            // Buscamos el input de las fotos
+            // PROCESAMIENTO DE LAS FOTOS
             const inputArchivos = document.getElementById('imagenes');
             
-            // Si el input existe y el usuario ha seleccionado al menos una foto...
+            // Si el input existe en el HTML y el usuario ha seleccionado alguna foto...
             if (inputArchivos && inputArchivos.files.length > 0) {
-                // Recorremos las fotos y las metemos en la caja
+                // Entramos en un bucle porque el usuario puede elegir múltiples fotos a la vez
                 for (let i = 0; i < inputArchivos.files.length; i++) {
-                    // El 'imagenes[]' con corchetes le dice a Laravel que es una lista de fotos
+                    // Aádimos el Array de fotos.
                     formData.append('imagenes[]', inputArchivos.files[i]); 
                 }
             }
 
-            // Se lo mandamos TODO de golpe a nuestra función del servicio
+            // Enviamos el paquete completo al backend
             await createAnuncio(formData);
 
+            // Si Laravel responde con éxito (Status 201), mandamos al usuario a su perfil 
+            // para que pueda ver su nuevo anuncio publicado.
             window.location.href = '/perfil.html'; 
 
         } catch (error) {
+            // Si Laravel nos devuelve un error (ej. faltan datos o la foto pesa mucho)
             mostrarError(error.message || 'Error al publicar el anuncio. Revisa los datos.');
         } finally {
+            // Independientemente de si hay éxito o error, devolvemos el botón a la normalidad
             cargando(false);
         }
     });
 
+    // --- FUNCIONES AUXILIARES ---
+
+    // Pide la lista general de categorías a la API
     async function cargarSelectCategorias() {
         const selectCat = document.getElementById('categoria_id');
         try {
@@ -119,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- FUNCIÓN PARA LLENAR EL DESPLEGABLE DE LOCALIDADES ---
+    // Pide la lista de localidades y le concatena el nombre del municipio para dar más contexto
     async function cargarSelectLocalidades() {
     const selectLocalidad = document.getElementById('localidad_id');
     try {
@@ -141,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 }
 
-    // --- FUNCIONES AUXILIARES ---
+    // Funciones genéricas para el manejo de la interfaz
     function mostrarError(message) {
         if (errorMessageDiv) {
             errorMessageDiv.textContent = message;
@@ -158,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Gestiona el estado del botón principal para evitar múltiples clics
     function cargando(isLoading) {
         if (isLoading === true) {
             submitButton.disabled = true;

@@ -1,27 +1,37 @@
 import { renderNavbar } from '../components/navBar.js';
 import { getAnuncios } from '../services/anuncios.js';
 
+/*
+   PANTALLA: TABLÓN PRINCIPAL (HOME)
+
+   Este script es el punto de entrada de la aplicación. Se encarga de cargar 
+   el menú de navegación y pedir al backend todos los anuncios públicos para 
+   mostrarlos en forma de cuadrícula dinámica de tarjetas.
+*/
+
 document.addEventListener('DOMContentLoaded', () => {
     // Pintamos el menú superior
     renderNavbar();
+    // Disparamos la petición a la base de datos para cargar el catálogo
     cargarAnuncios();
     
 });
 
 async function cargarAnuncios() {
-    // Busca un contenedor en tu index.html que se llame id="lista-anuncios"
+
+// Buscamos el contenedor vacío que dejamos preparado en el HTML
     const contenedor = document.getElementById('lista-anuncios');
 
     contenedor.innerHTML = '<p>Cargando anuncios...</p>';
 
     try {
-        // Llamamos a nuestra API
+        // Llamamos a nuestra API a través del servicio
         const anuncios = await getAnuncios();
         
         // Limpiamos el texto de "Cargando..."
         contenedor.innerHTML = '';
 
-        // Si no hay anuncios
+        // Si el array está vacío, avisamos al usuario amigablemente
         if (anuncios.length === 0) {
             contenedor.innerHTML = '<p>No hay anuncios publicados todavía.</p>';
             return;
@@ -29,7 +39,8 @@ async function cargarAnuncios() {
 
         const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
 
-        // Recorremos los anuncios y creamos el HTML de cada tarjeta
+        // RENDERIZADO DEL CATÁLOGO
+        // Recorremos el array de anuncios que nos devolvió Laravel
         anuncios.forEach(anuncio => {
             // Solo mostramos los que estén publicados
             if (anuncio.estado === 'publicado') {
@@ -37,15 +48,18 @@ async function cargarAnuncios() {
                 tarjeta.className = 'anuncio-card';
                 tarjeta.style = 'border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 8px;';
 
+                // Evento click: Convertimos toda la tarjeta en un enlace hacia la vista detalle
                 tarjeta.onclick = () => {
                     window.location.href = `ver-anuncio.html?id=${anuncio.id}`;
                 };
 
                 let rutaImagen;
 
+                // Lógica de fallback: Si no tiene foto, le asignamos la imagen por defecto
                 if (!anuncio.foto_principal) {
                     rutaImagen = `${URL_BACKEND_STORAGE}anuncios/default1.jpg`;
                 } else {
+                    // Si tiene, construimos la ruta absoluta hacia el storage de Laravel
                     rutaImagen = `${URL_BACKEND_STORAGE}${anuncio.foto_principal}`;
                 }
 

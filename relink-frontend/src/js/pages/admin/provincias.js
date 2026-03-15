@@ -2,10 +2,19 @@ import { renderNavbar } from '../../components/navBar.js';
 import { getPaises, getProvincias, createProvincia, updateProvincia, deleteProvincia } from '../../services/ubicaciones.js';
 import { verificarAccesoAdmin } from '../../services/auth.js';
 
+/*
+   PANEL DE ADMINISTRACIÓN: PROVINCIAS
+
+   Este script controla la vista de gestión de Provincias. Sigue el mismo patrón 
+   que el de Países, pero añade cargar una lista de los países disponibles en un menú desplegable (select).
+*/
+
+// Variable de estado: Guarda el ID si estamos editando, o 'null' si estamos creando.
 let provinciaIdEditando = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     
+    // 1. Control de seguridad: Expulsar a quien no sea administrador
     if (!verificarAccesoAdmin()) {
         return; 
     }
@@ -14,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarSelectPaises(); // Select de países
     cargarTablaProvincias(); // Pedimos los datos al backend
 
-    // --- LÓGICA DEL FORMULARIO DE AÑADIR ---
+  // --- CAPTURA DE ELEMENTOS DEL FORMULARIO ---
     const formAddProvincia = document.getElementById('formAddProvincia');
     const errorMsg = document.getElementById('errorMsg');
     const inputNombre = document.getElementById('nombreProvincia');
@@ -22,14 +31,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnSubmit = formAddProvincia.querySelector('button');
     const btnCancelar = document.getElementById('btnCancelar');
 
+    // Botón para cancelar la edición y volver al modo de creación
     btnCancelar.addEventListener('click', () => {
         resetFormulario();
     });
 
+    // --- PROCESAMIENTO DEL FORMULARIO ---
     formAddProvincia.addEventListener('submit', async (e) => {
         e.preventDefault();
         errorMsg.style.display = 'none';
 
+        // Capturamos el texto y convertimos el ID del select a número entero
         const nombre = inputNombre.value;
         const pais_id = parseInt(selectPais.value);
 
@@ -42,14 +54,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 await updateProvincia(provinciaIdEditando, { nombre: nombre, pais_id: pais_id });
             }
             
+            // Limpiamos la pantalla y refrescamos la tabla con el nuevo dato
             resetFormulario();
             cargarTablaProvincias();
         } catch (error) {
+            // Error devuelto por la API
             errorMsg.textContent = error.message;
             errorMsg.style.display = 'block';
         }
     });
 
+    // FUNCIÓN AUXILIAR: Devuelve el formulario a su estado por defecto
     function resetFormulario() {
         provinciaIdEditando = null;
         inputNombre.value = '';
@@ -58,15 +73,16 @@ document.addEventListener('DOMContentLoaded', () => {
         btnCancelar.style.display = 'none';
         errorMsg.style.display = 'none';
 
-        // Reactivamos TODOS los botones de la tabla
         document.querySelectorAll('.btn-edit, .btn-delete').forEach(btn => {
             btn.disabled = false;
-            btn.style.opacity = '1'; // Les devolvemos su color normal
+            btn.style.opacity = '1';
         });
     }
 });
 
-// --- FUNCIÓN PARA LLENAR EL DESPLEGABLE ---
+// --- FUNCIÓN PARA LLENAR EL DESPLEGABLE DE PAÍSES ---
+// Pide a la API la lista de países y crea dinámicamente 
+// etiquetas <option> para inyectarlas en el select del formulario HTML.
 async function cargarSelectPaises() {
     const selectPais = document.getElementById('paisProvincia');
     try {
@@ -84,12 +100,12 @@ async function cargarSelectPaises() {
     }
 }
 
+// --- FUNCIÓN PARA RENDERIZAR LA TABLA DE PROVINCIAS ---
 async function cargarTablaProvincias() {
     const tbody = document.getElementById('tablaProvincias');
     
     try {
         const provincias = await getProvincias();
-        const paises = await getPaises();
         tbody.innerHTML = ''; 
 
         if (provincias.length === 0) {
@@ -99,6 +115,7 @@ async function cargarTablaProvincias() {
 
         provincias.forEach(provincia => {
             const tr = document.createElement('tr');
+            // Leemos el objeto anidado 'pais' que nos mandó Laravel.
             const nombreDelPais = provincia.pais ? provincia.pais.nombre : 'Sin país';
             tr.innerHTML = `
                 <td>${provincia.nombre}</td>
@@ -111,7 +128,7 @@ async function cargarTablaProvincias() {
             tbody.appendChild(tr);
         });
 
-        // Darle vida a los botones de BORRAR
+        // ASIGNACIÓN DE EVENTO: BORRAR
         document.querySelectorAll('.btn-delete').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const id = e.target.getAttribute('data-id');
@@ -122,25 +139,29 @@ async function cargarTablaProvincias() {
             });
         });
 
-        // Darle vida a los botones de EDITAR
+        // ASIGNACIÓN DE EVENTO: EDITAR
         document.querySelectorAll('.btn-edit').forEach(btn => {
             btn.addEventListener('click', async (e) => {
+                // Leemos los tres datos guardados en el botón
                 const id = e.target.getAttribute('data-id');
                 const nombreActual = e.target.getAttribute('data-nombre');
                 const paisIdActual = e.target.getAttribute('data-pais-id');
-                
+
+                // Rellenamos el formulario
                 const inputNombre = document.getElementById('nombreProvincia');
                 const selectPais = document.getElementById('paisProvincia');
                 
                 inputNombre.value = nombreActual;
                 selectPais.value = paisIdActual;
 
+                // Activamos el modo Edición
                 provinciaIdEditando = id;
 
                 const btnSubmit = document.querySelector('#formAddProvincia button[type="submit"]');
                 btnSubmit.textContent = 'Actualizar';
                 document.getElementById('btnCancelar').style.display = 'inline-block';
                 
+                // Bloqueamos el resto de botones de la tabla por seguridad
                 document.querySelectorAll('.btn-edit, .btn-delete').forEach(botonTabla => {
                     botonTabla.disabled = true;
                     botonTabla.style.opacity = '0.5';

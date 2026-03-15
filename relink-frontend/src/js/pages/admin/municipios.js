@@ -2,6 +2,12 @@ import { renderNavbar } from '../../components/navBar.js';
 import { getProvincias, getMunicipios, createMunicipio, updateMunicipio, deleteMunicipio } from '../../services/ubicaciones.js';
 import { verificarAccesoAdmin } from '../../services/auth.js';
 
+/*
+   PANEL DE ADMINISTRACIÓN: MUNICIPIOS
+
+   Este script controla la vista de gestión de Provincias. Sigue el mismo patrón lógico que el de Provincias.
+*/
+
 let municipioIdEditando = null;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -98,7 +104,7 @@ async function cargarTablaMunicipios() {
 
         municipios.forEach(municipio => {
             const tr = document.createElement('tr');
-            // Aquí sacamos el nombre de la provincia gracias al "with('provincia')"
+            // Sacamos el nombe de la provincia
             const nombreDeLaProvincia = municipio.provincia ? municipio.provincia.nombre : 'Sin provincia';
             tr.innerHTML = `
                 <td>${municipio.nombre}</td>
