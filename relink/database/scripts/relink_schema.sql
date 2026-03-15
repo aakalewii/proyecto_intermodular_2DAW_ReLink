@@ -41,10 +41,10 @@ CREATE TABLE anuncios (
   fecha_publi DATETIME NULL,
 
   user_id BIGINT UNSIGNED NOT NULL,
-  subcategoria_id BIGINT UNSIGNED NOT NULL,
+  subcategoria_id BIGINT UNSIGNED NULL,
 
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (subcategoria_id) REFERENCES subcategorias(id)
+  FOREIGN KEY (subcategoria_id) REFERENCES subcategorias(id) ON DELETE SET NULL
 );
 
 -- 5) IMAGENES DEL ANUNCIO

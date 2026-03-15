@@ -12,8 +12,7 @@ export function getAuthHeaders() {
     };
 }
 
-// Este método actúa como un "Guardián de Rutas" en el frontend.
-// Se usa en las páginas de administración para asegurar que nadie se cuele.
+// Este método se usa en las páginas de administración para asegurar que nadie se cuele.
 export function verificarAccesoAdmin() {
     const token = localStorage.getItem('relink_token');
     const userString = localStorage.getItem('relink_user');
@@ -97,7 +96,7 @@ export async function loginUser(credentials) {
 }
 
 // Este método avisa a Laravel de que queremos destruir la sesión.
-// A diferencia del login y register, fíjate que aquí usamos getAuthHeaders() porque
+// A diferencia del login y register, aquí usamos getAuthHeaders() porque
 // esta es una "Ruta Protegida": Laravel necesita saber QUÉ token queremos destruir.
 export async function logoutUser() {
     const token = localStorage.getItem('relink_token');

@@ -1,7 +1,6 @@
 import { renderNavbar } from '../components/navBar.js';
 import { getLocalidades } from '../services/ubicaciones.js';
 import { getCategorias, getSubcategoriasPorCategoria } from '../services/categorias.js';
-// Importamos la función que se comunica con el backend (la que usa el FormData)
 import { getAnuncioById, updateAnuncioCompleto } from '../services/anuncios.js';
 
 /*
@@ -17,8 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Cargamos la barra de arriba
     renderNavbar();
 
-    // SEGURIDAD BÁSICA: ¿Estás logueado?
-    // Miramos el localStorage. Si no hay token, fuera de aquí.
+    // Miramos el localStorage. Si no hay token, acabamos la operación.
     const token = localStorage.getItem('relink_token');
     if (!token) {
         alert("Debes iniciar sesión para editar un anuncio.");
@@ -176,7 +174,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
 
-            // Enviamos el "paquete" gigante al backend a través del servicio
+            // Enviamos el paquete al backend a través del servicio
             await updateAnuncioCompleto(anuncioId, formData);
 
             // Si todo ha ido bien, le devolvemos a su perfil
