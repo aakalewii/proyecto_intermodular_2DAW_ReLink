@@ -107,22 +107,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Leer la localidad elegida
         const localidadValue = document.getElementById('edit-localidad').value;
-        let idLocalidadEnviar;
-        
-        // Si el desplegable está vacío, enviamos un `null`
-        // Esto hace que la regla 'nullable' del backend de Laravel funcione perfectamente.
-        if (localidadValue === "") {
-            idLocalidadEnviar = null;
-        } else {
-            idLocalidadEnviar = localidadValue;
-        }
 
         // Empaquetamos los datos en formato JSON para mandarlos a Laravel
         const nuevosDatos = {
             name: document.getElementById('edit-nombre').value,
             apellidos: document.getElementById('edit-apellidos').value,
             telefono: document.getElementById('edit-telefono').value,
-            localidad_id: idLocalidadEnviar
+            localidad_id: localidadValue
         };
 
         try {
