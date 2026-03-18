@@ -41,9 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await loginUser(credenciales);
 
             // Recibiendo el token
-            // Extraemos el token. (Ponemos data.token || data.access_token por precaución,
-            // dependiendo de cómo lo haya devuelto exactamente nuestro AccessController).
-            const token = data.token || data.access_token;
+            // Extraemos el token.
+            const token = data.token;
             
             if (token) {
                 // Guardamos el token en la memoria persistente del navegador
