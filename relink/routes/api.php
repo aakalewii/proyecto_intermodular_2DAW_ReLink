@@ -15,8 +15,31 @@ use App\Http\Controllers\MunicipioController;
 use App\Http\Controllers\LocalidadController;
 use App\Http\Controllers\FiltersController;
 
+use App\Models\User;
+use Illuminate\Http\Request; 
 
+Route::get('/email/verify/{id}/{hash}', function (Request $request) {
+    // 1. Buscamos al usuario por el ID que viene en la URL
+    $user = User::findOrFail($request->route('id'));
 
+    // 2. Verificamos que el hash del email coincida (Seguridad)
+    if (! hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
+        return redirect('http://localhost:5173/email-enlace-invalido');
+    }
+
+    // 3. Si ya estaba verificado, avisamos
+    if ($user->hasVerifiedEmail()) {
+        return redirect('http://localhost:5173/email-ya-verificado');
+    }
+
+    // 4. Marcamos como verificado
+    $user->markEmailAsVerified();
+
+    // 5. Disparamos el evento de Laravel por si acaso
+    event(new \Illuminate\Auth\Events\Verified($user));
+
+    return redirect('http://localhost:5173/email-verificado');
+})->middleware(['signed'])->name('verification.verify');
 
 // Rutas públicas para el acceso
 Route::post('/register', [AccessController::class, 'Register']);
@@ -37,7 +60,7 @@ Route::get('/localidades', [LocalidadController::class, 'index']);
 
 Route::get('/anuncios/buscar/{titulo}', [FiltersController::class, 'tituloAnuncio']);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::post('/logout', [AccessController::class, 'Logout']);
     Route::get('/perfil',  [ProfileController::class, 'mostrarPerfil']);
     Route::put('/perfil', [ProfileController::class, 'editarPerfil']);
@@ -60,7 +83,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/anuncios/{id}', [AnuncioController::class, 'destroy']);
 });
 
-Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+Route::middleware(['auth:sanctum', 'admin', 'verified'])->group(function () {
     Route::post('/categorias', [CategoriaController::class, 'store']);
     Route::put('/categorias/{id}', [CategoriaController::class, 'update']);
     Route::delete('/categorias/{id}', [CategoriaController::class, 'destroy']);

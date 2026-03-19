@@ -1,0 +1,56 @@
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            flex-direction: column; /* Cambiado a column para que el navbar se quede arriba */
+            align-items: center;
+        }
+
+        /* --- AQUÍ IRÍA EL CSS DE TU NAVBAR SI NO LO TIENES EXTERNO --- */
+
+        /* Contenedor centralizado para la tarjeta */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .denied-card {
+            background-color: #ffffff;
+            padding: 50px 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .icon { font-size: 70px; color: #ef4444; margin-bottom: 20px; }
+        h1 { color: #1f2937; font-size: 26px; margin: 0 0 15px 0; }
+        p { color: #6b7280; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0; }
+        
+        .btn-login {
+            display: inline-block;
+            background-color: #3b82f6;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn-login:hover { background-color: #2563eb; }
+        .btn-login:active { transform: scale(0.98); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }

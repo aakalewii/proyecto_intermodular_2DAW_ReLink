@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Enums\UserRole;
+use Illuminate\Auth\Events\Registered;
 
 
 class AccessController extends Controller
@@ -36,6 +37,8 @@ class AccessController extends Controller
             'localidad_id' => $request->localidad_id,
             'rol'       => UserRole::CLIENTE,
         ]);
+
+        event(new Registered($user));
 
         return response()->json([
             'message' => 'Usuario registrado con éxito',

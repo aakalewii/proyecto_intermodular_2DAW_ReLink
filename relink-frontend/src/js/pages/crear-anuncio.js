@@ -2,6 +2,7 @@ import { renderNavbar } from '../components/navBar.js';
 import { getLocalidades } from '../services/ubicaciones.js';
 import { createAnuncio } from '../services/anuncios.js';
 import { getCategorias, getSubcategoriasPorCategoria } from '../services/categorias.js';
+import { forzarCierreSesion } from '../services/auth.js';
 
 /*
    PANTALLA: CREAR ANUNCIO
@@ -25,8 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // redirigimos inmediatamente a la página de login para que no pueda ver el formulario.
     const token = localStorage.getItem('relink_token');
     if (!token) {
-        alert("Debes iniciar sesión para publicar un anuncio.");
-        window.location.href = '/login.html';
+        forzarCierreSesion();
         return;
     }
 
@@ -114,6 +114,12 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = '/perfil.html'; 
 
         } catch (error) {
+
+            if (error.message.includes('401')) {
+                forzarCierreSesion();
+                return; // Cortamos la ejecución al instante
+            }
+
             // Si Laravel nos devuelve un error (ej. faltan datos o la foto pesa mucho)
             mostrarError(error.message || 'Error al publicar el anuncio. Revisa los datos.');
         } finally {

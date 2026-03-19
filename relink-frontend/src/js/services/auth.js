@@ -27,21 +27,20 @@ export function verificarAccesoAdmin() {
 
     // Si está logueado pero su rol NO es de administrador
     if (user.rol !== 'admin') {
-        // En lugar de redirigirlo a otra página HTML de error,
-        // destruimos todo el contenido actual del <body> y le inyectamos una pantalla
-        // de Error 403 (Acceso Denegado) generada con HTML y CSS en línea.
-        document.body.innerHTML = `
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; background-color: #f8f9fa;">
-                <h1 style="font-size: 5rem; margin: 0; color: #dc3545;">403</h1>
-                <h2 style="color: #333;">Acceso Denegado</h2>
-                <p style="color: #666; margin-bottom: 20px;">No tienes los permisos necesarios para acceder a esta zona.</p>
-                <a href="/index.html" style="padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">Volver al Inicio</a>
-            </div>
-        `;
+        window.location.href = '/acceso-denegado.html';
         return false;
     }
 
     return true;
+}
+
+export function forzarCierreSesion() {
+    // Destruimos el token falso o caducado
+    localStorage.removeItem('relink_token');
+    localStorage.removeItem('relink_user'); 
+    
+    // Redirigimos a la vista
+    window.location.href = '/acceso-denegado.html';
 }
 
 // Este método se encarga de enviar los datos del nuevo usuario al backend mediante una petición POST.

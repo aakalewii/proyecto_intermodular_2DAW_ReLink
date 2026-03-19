@@ -199,3 +199,39 @@ ALTER TABLE anuncios MODIFY localidad_id BIGINT UNSIGNED NULL;
 -- Creamos la nueva regla con "ON DELETE SET NULL"
 ALTER TABLE anuncios ADD CONSTRAINT fk_anuncio_localidad
 FOREIGN KEY (localidad_id) REFERENCES localidades(id) ON DELETE SET NULL;
+
+
+/* PARA EL FUTURO, NUEVOS DATOS
+
+-- Enum para el estado físico del producto
+ALTER TABLE anuncios
+ADD COLUMN estado_producto ENUM(
+  'nuevo',
+  'como_nuevo',
+  'buen_estado',
+  'aceptable',
+  'mal_estado'
+) NOT NULL DEFAULT 'buen_estado';
+
+-- Enum para sexo/género al que va dirigido el producto
+ALTER TABLE anuncios
+ADD COLUMN sexo ENUM(
+  'hombre',
+  'mujer',
+  'unisex',
+  'niño',
+  'niña'
+) NULL;
+
+ALTER TABLE users
+ADD COLUMN foto_perfil VARCHAR(255) NULL,
+ADD COLUMN bio TEXT NULL,
+ADD COLUMN fecha_nacimiento DATE NULL,
+ADD COLUMN valoracion_media DECIMAL(3,2) DEFAULT 0,
+ADD COLUMN email_verificado TINYINT(1) DEFAULT 0;
+
+ALTER TABLE anuncios
+ADD COLUMN precio_negociable TINYINT(1) DEFAULT 0,
+ADD COLUMN envio_disponible TINYINT(1) DEFAULT 0,
+ADD COLUMN destacado TINYINT(1) DEFAULT 0,
+ADD COLUMN motivo_baja VARCHAR(100) NULL; */

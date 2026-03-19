@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Denegado - ReLink</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="src/css/acceso-denegado.css">
+    <link rel="stylesheet" href="src/css/components/navBar.css">
+
+</head>
+<body>
+
+    <div id="navbar-container"></div> 
+
+    <main class="main-content">
+        <div class="denied-card">
+            <i class="fa-solid fa-lock icon"></i>
+            <h1>Acceso Denegado</h1>
+            <p>Parece que tu sesión ha caducado, el token no es válido o no tienes permisos para ver esta página.</p>
+            <a href="/login.html" class="btn-login">Volver al Login</a>
+        </div>
+    </main>
+
+    <script type="module">
+        // Importamos la función exacta que ya tienes creada
+        // (Ajusta la ruta '../src/components/navBar.js' a donde esté realmente tu archivo)
+        import { renderNavbar } from './src/js/components/navBar.js';
+
+    </script>
+</body>
+</html>

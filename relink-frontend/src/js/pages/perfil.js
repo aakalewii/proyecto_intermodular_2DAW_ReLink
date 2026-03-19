@@ -2,6 +2,8 @@ import { renderNavbar } from '../components/navBar.js';
 import { getMiPerfil, updatePerfil } from '../services/perfil.js';
 import { getLocalidades } from '../services/ubicaciones.js'; 
 import { deleteAnuncio } from '../services/anuncios.js';
+import { forzarCierreSesion } from '../services/auth.js';
+
 
 /*
    PANTALLA: MI PERFIL
@@ -34,6 +36,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         // Llamamos al ProfileController del backend (que usa Eager Loading para traer los anuncios)
         const respuesta = await getMiPerfil();
+
+        if (respuesta.status === 401) {
+            forzarCierreSesion();
+            return; 
+        }
+
         datosUsuarioActual = respuesta.datos;
         
         // Enviamos los datos a las funciones que se encargan de inyectar el HTML
@@ -42,7 +50,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (error) {
         console.error("Error al cargar perfil:", error);
-        alert("Hubo un problema al cargar tu perfil. Revisa la consola.");
+        
+        forzarCierreSesion(); 
     }
 
     // --- LÓGICA DE LOS BOTONES DE INTERFAZ ---
@@ -152,7 +161,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             renderNavbar();
 
         } catch (error) {
-            alert("Hubo un error al guardar los datos: " + error.message);
+            if (error.message.includes('401')) {
+                forzarCierreSesion();
+                return;
+            } else {
+                alert("Hubo un error al guardar los datos: " + error.message);
+            }
         }
     });
 
@@ -237,6 +251,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }
 
                     } catch (error) {
+
+                        if (error.message.includes('401')) {
+                            forzarCierreSesion();
+                            return;
+                        }
+
                         alert("No se pudo borrar el anuncio: " + error.message);
                         // Si falla, restauramos el botón a la normalidad
                         btnBorrar.innerHTML = `<i class="fa-solid fa-trash"></i> Borrar`;

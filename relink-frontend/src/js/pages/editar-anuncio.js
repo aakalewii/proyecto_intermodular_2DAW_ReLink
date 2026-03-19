@@ -2,6 +2,7 @@ import { renderNavbar } from '../components/navBar.js';
 import { getLocalidades } from '../services/ubicaciones.js';
 import { getCategorias, getSubcategoriasPorCategoria } from '../services/categorias.js';
 import { getAnuncioById, updateAnuncioCompleto } from '../services/anuncios.js';
+import { forzarCierreSesion } from '../services/auth.js';
 
 /*
    PANTALLA: EDITAR ANUNCIO
@@ -19,8 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Miramos el localStorage. Si no hay token, acabamos la operación.
     const token = localStorage.getItem('relink_token');
     if (!token) {
-        alert("Debes iniciar sesión para editar un anuncio.");
-        window.location.href = '/login.html';
+        forzarCierreSesion();
         return;
     }
 
@@ -130,10 +130,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
     } catch (error) {
-        // Si el anuncio no existe o el backend falla, lo devolvemos a la pagina principal
-        alert("No se pudo cargar el anuncio. ¿Seguro que existe o es tuyo?");
-        window.location.href = '/index.html';
-        return;
+        if (error.message.includes('401') || error.message.includes('Unauthenticated')) {
+            forzarCierreSesion();
+            return;
+        }
     }
 
     // EVENTO: CAMBIAR DE CATEGORÍA
@@ -181,6 +181,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             window.location.href = '/perfil.html';
 
         } catch (error) {
+
+            if (error.message.includes('401')) {
+                forzarCierreSesion();
+                return;
+            }
+
             mostrarError(error.message || 'Error al actualizar el anuncio. Revisa los datos.');
         } finally {
             cargando(false);

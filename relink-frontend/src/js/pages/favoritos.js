@@ -1,5 +1,6 @@
 import { renderNavbar } from '../components/navBar.js';
 import { getMisFavoritos } from '../services/favoritos.js';
+import { forzarCierreSesion } from '../services/auth.js';
 
 /*
    PANTALLA: MIS FAVORITOS
@@ -30,6 +31,11 @@ async function cargarFavoritos() {
     try {
         // Pedimos al backend la lista de anuncios que este usuario tiene guardados
         const respuesta = await getMisFavoritos();
+
+        if (respuesta.status === 401) {
+            forzarCierreSesion();
+           return; 
+        }
         
         // Extraemos el array de anuncios que viene dentro de 'datos'
         const anuncios = respuesta.datos;
@@ -80,7 +86,7 @@ async function cargarFavoritos() {
         });
 
     } catch (error) {
-        // Si hay un fallo de red o el token caducó, informamos al usuario
-        contenedor.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+        console.error("Error crítico capturado en favoritos:", error);
+        forzarCierreSesion();
     }
 }
