@@ -13,7 +13,7 @@ export function getAuthHeaders() {
 }
 
 // Este método se usa en las páginas de administración para asegurar que nadie se cuele.
-export function verificarAccesoAdmin() {
+export async function verificarAccesoAdmin() {
     const token = localStorage.getItem('relink_token');
     const userString = localStorage.getItem('relink_user');
 
@@ -23,11 +23,23 @@ export function verificarAccesoAdmin() {
         return false;
     }
 
-    const user = JSON.parse(userString);
+    try {
 
-    // Si está logueado pero su rol NO es de administrador
-    if (user.rol !== 'admin') {
-        window.location.href = '/acceso-denegado.html';
+        // Comprobammos el rol del user
+        const user = await misDatos();
+
+        // Si no es adin forzamos cierre eliminando el token
+        if (user.rol !== 'Admin') {
+                forzarCierreSesion();
+                return false;
+            }
+
+        // Si llega aquí, es porque tiene token y su rol es ADMIN
+        return true;
+
+    } catch (error) {
+        // Si misDatos() lanza un error (ej. token caducado o falso)
+        forzarCierreSesion();
         return false;
     }
 
@@ -37,10 +49,29 @@ export function verificarAccesoAdmin() {
 export function forzarCierreSesion() {
     // Destruimos el token falso o caducado
     localStorage.removeItem('relink_token');
-    localStorage.removeItem('relink_user'); 
     
     // Redirigimos a la vista
     window.location.href = '/acceso-denegado.html';
+}
+
+// Método para recibir los datos del usuario desde el token y no tener que subir el user al LocalStorage
+export async function misDatos(){
+
+    const token = localStorage.getItem('relink_token');
+    const response = await fetch(`${API_URL}/me`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/json'
+            }
+        });
+
+    if (!response.ok) {
+            throw new Error('Token inválido');
+        }
+
+    const user = await response.json();
+    return user;
 }
 
 // Este método se encarga de enviar los datos del nuevo usuario al backend mediante una petición POST.

@@ -21,15 +21,9 @@ class AnuncioController extends Controller
     }
 
     // Este método devuelve la lista de anuncios que se van a mostrar en la página principal.
-    // como la página de inicio la puede ver cualquiera (esté logueado o no), usamos auth('sanctum')
-    // para intentar leer el token sin forzar a que el usuario exista. Si hay usuario, cogemos su ID; si no, es nulo.
-    // Luego le pedimos al DAO que nos traiga todos los anuncios publicados, enviándole el ID del usuario
-    public function index(Request $request)
+    public function index()
     {
-        $user = auth('sanctum')->user();
-        $userId = $user ? $user->id : null;
-
-        $anuncios = $this->anuncioDAO->obtenerPublicados($userId);
+        $anuncios = $this->anuncioDAO->obtenerPublicados();
         return response()->json($anuncios);
     }
 

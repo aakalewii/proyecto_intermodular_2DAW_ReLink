@@ -23,7 +23,8 @@ class UserSeeder extends Seeder
             'password' => Hash::make('12345678'), 
             'rol'      => UserRole::ADMIN->value, 
             'activo'   => 1,
-            'online'   => 0
+            'online'   => 0,
+            'email_verified_at' => now()
         ]);
 
         // Seeder cliente 1
@@ -33,7 +34,8 @@ class UserSeeder extends Seeder
             'password' => Hash::make('12345678'),
             'rol'      => UserRole::CLIENTE->value,
             'activo'   => 1,
-            'online'   => 0
+            'online'   => 0,
+            'email_verified_at' => now()
         ]);
 
         // Seeder cliente 2
@@ -43,7 +45,8 @@ class UserSeeder extends Seeder
             'password' => Hash::make('12345678'),
             'rol'      => UserRole::CLIENTE->value,
             'activo'   => 1,
-            'online'   => 0
+            'online'   => 0,
+            'email_verified_at' => now()
         ]);
     }
 }

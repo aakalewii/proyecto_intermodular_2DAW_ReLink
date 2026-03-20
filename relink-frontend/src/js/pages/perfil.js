@@ -42,6 +42,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             return; 
         }
 
+        if (respuesta.status === 403) {
+            // Lo mandamos a la pantalla amistosa SIN borrarle el token de su navegador
+            window.location.href = '/email-revisar-bandeja.html';
+            return;
+        }
+
         datosUsuarioActual = respuesta.datos;
         
         // Enviamos los datos a las funciones que se encargan de inyectar el HTML

@@ -47,13 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (token) {
                 // Guardamos el token en la memoria persistente del navegador
                 localStorage.setItem('relink_token', token);
-                
-                // Guardamos también los datos del usuario (nombre, rol, id) para no tener que
-                // pedírselos al servidor cada vez que queramos pintar su nombre en el Navbar.
-                // Como localStorage solo guarda texto, lo convertimos con JSON.stringify.
-                if (data.user) {
-                    localStorage.setItem('relink_user', JSON.stringify(data.user));
-                }
 
                 // Redirigimos al usuario a la página principal ya logueado
                 window.location.href = '/index.html';

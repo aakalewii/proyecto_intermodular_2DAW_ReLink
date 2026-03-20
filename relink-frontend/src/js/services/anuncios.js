@@ -15,16 +15,9 @@ import { API_URL, getAuthHeaders} from './auth.js';
 export async function getAnuncios() {
     try {
 
-        const token = localStorage.getItem('relink_token');
-
         const headersConfig = { 
             'Accept': 'application/json' 
         };
-
-        if (token) {
-            headersConfig['Authorization'] = `Bearer ${token}`;
-        }
-
 
         const response = await fetch(`${API_URL}/anuncios`, {
             method: 'GET',

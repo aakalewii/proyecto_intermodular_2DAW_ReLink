@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UtilitysController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccessController;
 use App\Http\Controllers\CategoriaController;
@@ -60,8 +61,12 @@ Route::get('/localidades', [LocalidadController::class, 'index']);
 
 Route::get('/anuncios/buscar/{titulo}', [FiltersController::class, 'tituloAnuncio']);
 
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/me', [UtilitysController::class, 'misDatos']);
     Route::post('/logout', [AccessController::class, 'Logout']);
+});
+
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/perfil',  [ProfileController::class, 'mostrarPerfil']);
     Route::put('/perfil', [ProfileController::class, 'editarPerfil']);
 

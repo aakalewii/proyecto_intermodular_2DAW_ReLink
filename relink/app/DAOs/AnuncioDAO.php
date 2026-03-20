@@ -33,28 +33,16 @@ class AnuncioDAO
         return $this->obtenerAnuncioPorId($nuevoId);
     }
 
-    // Este método extrae el listado general de anuncios visibles. Si no recibe un usuario, trae absolutamente todos los anuncios públicos.
-    // Si recibe el ID de un usuario logueado, filtra los resultados para no mostrarle sus propios anuncios.
+    // Este método extrae el listado general de anuncios visibles. Trae absolutamente todos los anuncios públicos.
     // Además, incorpora una subconsulta para inyectar la URL de la primera imagen de cada anuncio.
-    public function obtenerPublicados($user = null)
+    public function obtenerPublicados()
     {
-        if ($user == null) {
-            return DB::select('SELECT anuncios.*,
-                (SELECT url FROM imagenes_anuncio WHERE anuncio_id = anuncios.id LIMIT 1) as foto_principal
-                FROM anuncios
-                WHERE estado = ?
-            ', [
-            AnuncioEstado::PUBLICADO->value
-            ]);
-        }
-
         return DB::select('SELECT anuncios.*,
             (SELECT url FROM imagenes_anuncio WHERE anuncio_id = anuncios.id LIMIT 1) as foto_principal
             FROM anuncios
-            WHERE estado = ? AND user_id != ?
+            WHERE estado = ?
         ', [
-            AnuncioEstado::PUBLICADO->value,
-            $user
+        AnuncioEstado::PUBLICADO->value
         ]);
 
     }
