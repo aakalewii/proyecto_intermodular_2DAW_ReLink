@@ -12,13 +12,31 @@ export function getAuthHeaders() {
     };
 }
 
+export async function verificarAccesoUsuario() {
+    const token = localStorage.getItem('relink_token');
+    if (!token) return false;
+
+    try {
+        const user = await misDatos();
+
+        if (user.email_verified_at === null) {
+            window.location.href = '/email-revisar-bandeja.html'; 
+            return false;
+        }
+        return true; 
+        
+    } catch (error) {
+        forzarCierreSesion();
+        return false;
+    }
+}
+
 // Este método se usa en las páginas de administración para asegurar que nadie se cuele.
 export async function verificarAccesoAdmin() {
     const token = localStorage.getItem('relink_token');
-    const userString = localStorage.getItem('relink_user');
 
     // Si ni siquiera está logueado, lo mandamos al login
-    if (!token || !userString) {
+    if (!token) {
         window.location.href = '/login.html';
         return false;
     }
@@ -29,7 +47,7 @@ export async function verificarAccesoAdmin() {
         const user = await misDatos();
 
         // Si no es adin forzamos cierre eliminando el token
-        if (user.rol !== 'Admin') {
+        if (user.rol !== 'admin') {
                 forzarCierreSesion();
                 return false;
             }

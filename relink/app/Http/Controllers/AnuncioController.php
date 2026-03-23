@@ -168,4 +168,24 @@ class AnuncioController extends Controller
             'message' => 'Anuncio eliminado con éxito'
         ], 200);
     }
+
+    public function vendido(Request $request, int $idAnuncio)
+    {
+        $anuncio = $this->anuncioDAO->obtenerAnuncioPorId($idAnuncio);
+
+        if ($anuncio == null || $anuncio->estado === AnuncioEstado::ELIMINADO->value) {
+            return response()->json(['message' => 'Anuncio no encontrado'], 404);
+        }
+
+        if ($anuncio->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'No tienes permiso para acceder a este anuncio'], 403);
+        }
+
+        $anuncio->estado = AnuncioEstado::VENDIDO->value;
+        $anuncio->save();
+
+        return response()->json([
+            'message' => 'Anuncio vendido con éxito'
+        ], 200);
+    }
 }

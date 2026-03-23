@@ -1,129 +1,198 @@
-/* --- Variables globales --- */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap');
+
+/* --- Variables --- */
 :root {
-    --primary-color: #343a40;
-    --accent-color: #007bff;
-    --bg-color: #f8f9fa;
-    --text-color: #333;
-    --border-color: #ced4da;
-    --card-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    --primary:      #1a1a1a;
+    --accent:       #2d9b6f;
+    --accent-light: #e8f5ee;
+    --accent-dark:  #1a6647;
+    --danger:       #e03c2e;
+    --danger-light: #fdecea;
+    --bg:           #f6f4f0;
+    --surface:      #ffffff;
+    --muted:        #6b7280;
+    --border:       #e5e7eb;
+    --border-hover: #d1d5db;
 }
 
-/* --- Fondo y tipografía --- */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
+/* --- Base --- */
+*, *::before, *::after {
+    box-sizing: border-box;
     margin: 0;
-    /* Hemos quitado el flexbox de aquí para que la barra de navegación se quede arriba */
+    padding: 0;
 }
 
-/* --- Nuevo Envoltorio para centrar el login/registro --- */
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--primary);
+    line-height: 1.6;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 15% 50%, rgba(45,155,111,0.06) 0%, transparent 50%),
+        radial-gradient(circle at 85% 30%, rgba(45,155,111,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* --- Wrapper --- */
 .auth-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Restamos 80px (altura aprox de la navbar) para centrar en el espacio restante */
-    min-height: calc(100vh - 80px); 
-    padding: 20px;
-    box-sizing: border-box;
+    min-height: calc(100vh - 60px);
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
 }
 
-/* --- La Tarjeta Blanca --- */
+/* --- Tarjeta --- */
 .auth-container {
-    background: white;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: var(--card-shadow);
+    background: var(--surface);
+    padding: 2.5rem;
+    border-radius: 24px;
+    border: 1px solid var(--border);
     width: 100%;
     max-width: 400px;
     text-align: center;
-    box-sizing: border-box;
+    animation: rise 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Logo dentro de la tarjeta */
+.auth-container .auth-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
+    color: var(--primary);
+    opacity: 0.45;
+    margin-bottom: 1.75rem;
+    display: block;
 }
 
 .auth-container h1 {
-    color: var(--primary-color);
-    font-size: 1.6rem;
-    margin-top: 0;
-    margin-bottom: 30px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.9rem;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    color: var(--primary);
+    margin-bottom: 1.75rem;
+    line-height: 1.15;
 }
 
-/* --- Formularios --- */
+/* --- Formulario --- */
 .auth-container form {
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Separación entre cada bloque de input */
+    gap: 16px;
     text-align: left;
 }
 
 .auth-container form div {
     display: flex;
     flex-direction: column;
-    gap: 8px; /* Separación entre etiqueta e input */
+    gap: 6px;
 }
 
 .auth-container form label {
-    font-weight: 600;
-    color: #495057;
-    font-size: 0.95rem;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.01em;
 }
 
 .auth-container form input {
-    padding: 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-size: 1rem;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--primary);
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.auth-container form input::placeholder {
+    color: #b0b7c0;
 }
 
 .auth-container form input:focus {
     outline: none;
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(45, 155, 111, 0.12);
 }
 
-/* --- Botón Principal --- */
+/* --- Botón submit --- */
 .auth-container button[type="submit"] {
-    background-color: var(--accent-color);
-    color: white;
+    width: 100%;
+    padding: 13px;
+    background: var(--primary);
+    color: #fff;
     border: none;
-    padding: 14px;
-    border-radius: 6px;
-    font-size: 1.1rem;
-    font-weight: bold;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.3s;
-    margin-top: 10px;
+    margin-top: 6px;
+    letter-spacing: -0.01em;
+    transition: opacity 0.2s, transform 0.15s;
 }
 
 .auth-container button[type="submit"]:hover {
-    background-color: #0056b3;
+    opacity: 0.85;
+    transform: translateY(-1px);
 }
 
-/* --- Mensaje de Error --- */
+.auth-container button[type="submit"]:active {
+    transform: translateY(0);
+}
+
+/* --- Mensaje de error --- */
 #errorMessage {
-    display: none; /* Por defecto oculto */
-    background-color: #f8d7da;
-    color: #721c24 !important;
-    padding: 12px;
-    border-radius: 6px;
-    border: 1px solid #f5c6cb;
-    font-size: 0.9rem;
+    display: none;
+    background: var(--danger-light);
+    color: var(--danger);
+    border: 1px solid #f5c1be;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13px;
     font-weight: 500;
+    text-align: left;
 }
 
-/* --- Enlaces inferiores --- */
+/* --- Divisor --- */
+.auth-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0;
+}
+
+/* --- Links inferiores --- */
 .auth-links {
-    margin-top: 25px;
-    font-size: 0.95rem;
-    color: #6c757d;
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--muted);
 }
 
 .auth-links a {
-    color: var(--accent-color);
-    text-decoration: none;
-    font-weight: 600;
+    color: var(--primary);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: opacity 0.2s;
 }
 
 .auth-links a:hover {
-    text-decoration: underline;
+    opacity: 0.65;
 }

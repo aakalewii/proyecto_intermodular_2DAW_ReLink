@@ -2,7 +2,7 @@ import { renderNavbar } from '../components/navBar.js';
 import { getLocalidades } from '../services/ubicaciones.js';
 import { createAnuncio } from '../services/anuncios.js';
 import { getCategorias, getSubcategoriasPorCategoria } from '../services/categorias.js';
-import { forzarCierreSesion } from '../services/auth.js';
+import { forzarCierreSesion, verificarAccesoUsuario } from '../services/auth.js';
 
 /*
    PANTALLA: CREAR ANUNCIO
@@ -15,118 +15,123 @@ import { forzarCierreSesion } from '../services/auth.js';
       enviárselos al backend.
 */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // Renderizamos la barra de navegación
     renderNavbar();
 
-    cargarSelectCategorias();
-    cargarSelectLocalidades();
-
-    // Leemos el localStorage. Si no hay token, el usuario es anónimo y lo 
-    // redirigimos inmediatamente a la página de login para que no pueda ver el formulario.
-    const token = localStorage.getItem('relink_token');
-    if (!token) {
-        forzarCierreSesion();
-        return;
-    }
-
     // --- CAPTURA DE ELEMENTOS DEL DOM ---
-    const form = document.getElementById('formCrearAnuncio');
-    const errorMessageDiv = document.getElementById('errorMsg');
-    const submitButton = form.querySelector('button[type="submit"]');
+        const form = document.getElementById('formCrearAnuncio');
+        const errorMessageDiv = document.getElementById('errorMsg');
+        const submitButton = form.querySelector('button[type="submit"]');
 
-    const selectCategoria = document.getElementById('categoria_id');
-    const selectSubcategoria = document.getElementById('subcategoria_id');
-
-    // EVENTO DE DESPLEGABLES (Selects en cascada)
-    // Cuando el usuario elige una Categoría principal, este 
-    // evento salta, bloquea el segundo select temporalmente y pide a la API 
-    // las subcategorías correspondientes.
-    selectCategoria.addEventListener('change', async (e) => {
-        const categoriaSeleccionadaId = e.target.value;
+        const selectCategoria = document.getElementById('categoria_id');
+        const selectSubcategoria = document.getElementById('subcategoria_id');
         
-        // Bloqueo visual mientras carga para evitar que el usuario elija datos erróneos
-        selectSubcategoria.innerHTML = '<option value="" disabled selected>Cargando subcategorías...</option>';
-        selectSubcategoria.disabled = true;
+    const puedePasar = await verificarAccesoUsuario();
 
-        try {
-            // Cargamos las subcategorías de la categoria seleccionada
-            const subcategoriasFiltradas = await getSubcategoriasPorCategoria(categoriaSeleccionadaId);
+    if (puedePasar) {
+        
+        cargarSelectCategorias();
+        cargarSelectLocalidades();
 
-            selectSubcategoria.innerHTML = '<option value="" disabled selected>Selecciona una subcategoría...</option>';
-            
-            if (subcategoriasFiltradas.length === 0) {
-                selectSubcategoria.innerHTML = '<option value="" disabled>No hay subcategorías en esta categoría</option>';
-                return; // Cortamos aquí si no hay datos
-            }
-
-            // Inyectamos las subcategorías recibidas
-            subcategoriasFiltradas.forEach(sub => {
-                const option = document.createElement('option');
-                option.value = sub.id;
-                option.textContent = sub.nombre;
-                selectSubcategoria.appendChild(option);
-            });
-
-            // Desbloqueamos para que el usuario pueda elegir
-            selectSubcategoria.disabled = false;
-
-        } catch (error) {
-            selectSubcategoria.innerHTML = '<option value="" disabled>Error al cargar subcategorías</option>';
+        // Leemos el localStorage. Si no hay token, el usuario es anónimo y lo 
+        // redirigimos inmediatamente a la página de login para que no pueda ver el formulario.
+        const token = localStorage.getItem('relink_token');
+        if (!token) {
+            forzarCierreSesion();
+            return;
         }
-    });
 
-    // EVENTO PRINCIPAL: ENVÍO DEL FORMULARIO
-   form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        limpiarErrores();
-        cargando(true);
-
-        try {
-            // Utilizamos 'FormData' en lugar de JSON porque necesitamos enviar 
-            // archivos binarios (fotos) al servidor.
-            const formData = new FormData();
-
-            // Añadimos los datos de texto e IDs de las relaciones
-            formData.append('titulo', document.getElementById('titulo').value);
-            formData.append('descripcion', document.getElementById('descripcion').value);
-            formData.append('precio', document.getElementById('precio').value);
-            formData.append('subcategoria_id', document.getElementById('subcategoria_id').value);
-            formData.append('localidad_id', document.getElementById('localidad_id').value);
-
-            // PROCESAMIENTO DE LAS FOTOS
-            const inputArchivos = document.getElementById('imagenes');
+        // EVENTO DE DESPLEGABLES (Selects en cascada)
+        // Cuando el usuario elige una Categoría principal, este 
+        // evento salta, bloquea el segundo select temporalmente y pide a la API 
+        // las subcategorías correspondientes.
+        selectCategoria.addEventListener('change', async (e) => {
+            const categoriaSeleccionadaId = e.target.value;
             
-            // Si el input existe en el HTML y el usuario ha seleccionado alguna foto...
-            if (inputArchivos && inputArchivos.files.length > 0) {
-                // Entramos en un bucle porque el usuario puede elegir múltiples fotos a la vez
-                for (let i = 0; i < inputArchivos.files.length; i++) {
-                    // Aádimos el Array de fotos.
-                    formData.append('imagenes[]', inputArchivos.files[i]); 
+            // Bloqueo visual mientras carga para evitar que el usuario elija datos erróneos
+            selectSubcategoria.innerHTML = '<option value="" disabled selected>Cargando subcategorías...</option>';
+            selectSubcategoria.disabled = true;
+
+            try {
+                // Cargamos las subcategorías de la categoria seleccionada
+                const subcategoriasFiltradas = await getSubcategoriasPorCategoria(categoriaSeleccionadaId);
+
+                selectSubcategoria.innerHTML = '<option value="" disabled selected>Selecciona una subcategoría...</option>';
+                
+                if (subcategoriasFiltradas.length === 0) {
+                    selectSubcategoria.innerHTML = '<option value="" disabled>No hay subcategorías en esta categoría</option>';
+                    return; // Cortamos aquí si no hay datos
                 }
+
+                // Inyectamos las subcategorías recibidas
+                subcategoriasFiltradas.forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub.id;
+                    option.textContent = sub.nombre;
+                    selectSubcategoria.appendChild(option);
+                });
+
+                // Desbloqueamos para que el usuario pueda elegir
+                selectSubcategoria.disabled = false;
+
+            } catch (error) {
+                selectSubcategoria.innerHTML = '<option value="" disabled>Error al cargar subcategorías</option>';
             }
+        });
 
-            // Enviamos el paquete completo al backend
-            await createAnuncio(formData);
+        // EVENTO PRINCIPAL: ENVÍO DEL FORMULARIO
+    form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            limpiarErrores();
+            cargando(true);
 
-            // Si Laravel responde con éxito (Status 201), mandamos al usuario a su perfil 
-            // para que pueda ver su nuevo anuncio publicado.
-            window.location.href = '/perfil.html'; 
+            try {
+                // Utilizamos 'FormData' en lugar de JSON porque necesitamos enviar 
+                // archivos binarios (fotos) al servidor.
+                const formData = new FormData();
 
-        } catch (error) {
+                // Añadimos los datos de texto e IDs de las relaciones
+                formData.append('titulo', document.getElementById('titulo').value);
+                formData.append('descripcion', document.getElementById('descripcion').value);
+                formData.append('precio', document.getElementById('precio').value);
+                formData.append('subcategoria_id', document.getElementById('subcategoria_id').value);
+                formData.append('localidad_id', document.getElementById('localidad_id').value);
 
-            if (error.message.includes('401')) {
-                forzarCierreSesion();
-                return; // Cortamos la ejecución al instante
+                // PROCESAMIENTO DE LAS FOTOS
+                const inputArchivos = document.getElementById('imagenes');
+                
+                // Si el input existe en el HTML y el usuario ha seleccionado alguna foto...
+                if (inputArchivos && inputArchivos.files.length > 0) {
+                    // Entramos en un bucle porque el usuario puede elegir múltiples fotos a la vez
+                    for (let i = 0; i < inputArchivos.files.length; i++) {
+                        // Aádimos el Array de fotos.
+                        formData.append('imagenes[]', inputArchivos.files[i]); 
+                    }
+                }
+
+                // Enviamos el paquete completo al backend
+                await createAnuncio(formData);
+
+                // Si Laravel responde con éxito (Status 201), mandamos al usuario a su perfil 
+                // para que pueda ver su nuevo anuncio publicado.
+                window.location.href = '/perfil.html'; 
+
+            } catch (error) {
+
+                if (error.message.includes('401')) {
+                    forzarCierreSesion();
+                    return; // Cortamos la ejecución al instante
+                }
+
+                // Si Laravel nos devuelve un error (ej. faltan datos o la foto pesa mucho)
+                mostrarError(error.message || 'Error al publicar el anuncio. Revisa los datos.');
+            } finally {
+                // Independientemente de si hay éxito o error, devolvemos el botón a la normalidad
+                cargando(false);
             }
-
-            // Si Laravel nos devuelve un error (ej. faltan datos o la foto pesa mucho)
-            mostrarError(error.message || 'Error al publicar el anuncio. Revisa los datos.');
-        } finally {
-            // Independientemente de si hay éxito o error, devolvemos el botón a la normalidad
-            cargando(false);
-        }
-    });
+        });
+    }
 
     // --- FUNCIONES AUXILIARES ---
 

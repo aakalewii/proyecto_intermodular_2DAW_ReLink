@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Enums\UserRole;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Http;
 
 
 class AccessController extends Controller
@@ -57,7 +58,24 @@ class AccessController extends Controller
         $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
+            'recaptcha_token' => 'required'
         ]);
+
+        // Preguntamos a los servidores de Google si el token es real
+        $googleResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+        'secret' => env('RECAPTCHA_SECRET_KEY'),
+        'response' => $request->recaptcha_token,
+        'remoteip' => $request->ip() // Opcional, pero ayuda a Google a detectar fraudes
+        ]);
+
+        $body = $googleResponse->json();
+
+        // Si Google dice que es falso o caducó, bloqueamos el login
+        if (!$body['success']) {
+            return response()->json([
+                'message' => 'La validación del Captcha ha fallado. Inténtalo de nuevo.'
+            ], 400);
+        }
 
         $user = User::where('email', $request->email)->first();
 

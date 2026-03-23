@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./src/css/components/navbar.css">
     <link rel="stylesheet" href="./src/css/auth.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <title>Iniciar Sesión - ReLink</title>
 </head>
 <body>
@@ -25,6 +26,8 @@
                     <label for="password">Contraseña</label>
                     <input type="password" id="password" name="password" required>
                 </div>
+
+                <div class="g-recaptcha" data-sitekey="6Lcw1pQsAAAAAFGs5a71rmrZuQTkyzsSovIPbIIO"></div>
 
                 <div id="errorMessage" style="display: none;"></div>
                 

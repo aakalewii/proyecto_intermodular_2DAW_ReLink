@@ -60,7 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Si Laravel nos devuelve un 201 (Creado), le mostramos una alerta de éxito
             // y lo mandamos directamente a la pantalla de Login para que entre.
-            alert('¡Cuenta creada con éxito en ReLink!');
             window.location.href = '/login.html';
 
         } catch (error) {

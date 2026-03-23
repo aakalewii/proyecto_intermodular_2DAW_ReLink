@@ -2,7 +2,7 @@ import { renderNavbar } from '../components/navBar.js';
 import { getLocalidades } from '../services/ubicaciones.js';
 import { getCategorias, getSubcategoriasPorCategoria } from '../services/categorias.js';
 import { getAnuncioById, updateAnuncioCompleto } from '../services/anuncios.js';
-import { forzarCierreSesion } from '../services/auth.js';
+import { forzarCierreSesion, verificarAccesoUsuario, misDatos } from '../services/auth.js';
 
 /*
    PANTALLA: EDITAR ANUNCIO
@@ -16,6 +16,10 @@ import { forzarCierreSesion } from '../services/auth.js';
 document.addEventListener('DOMContentLoaded', async () => {
     // Cargamos la barra de arriba
     renderNavbar();
+
+    const puedePasar = await verificarAccesoUsuario();
+
+    if (puedePasar) {
 
     // Miramos el localStorage. Si no hay token, acabamos la operación.
     const token = localStorage.getItem('relink_token');
@@ -63,8 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const anuncio = response.datos; 
 
         // Recuperamos el usuario que está navegando para compararlo
-        const miUsuarioString = localStorage.getItem('relink_user');
-        const miUsuario = JSON.parse(miUsuarioString);
+        const miUsuario = await misDatos();
 
         // SEGURIDAD: ¿El anuncio es tuyo?
         // Si el user_id del anuncio no coincide con su ID, lo echamos.
@@ -130,11 +133,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
     } catch (error) {
-        if (error.message.includes('401') || error.message.includes('Unauthenticated')) {
-            forzarCierreSesion();
-            return;
+            // 4. ¡AÑADIMOS ESTO PARA NO VOLVER A TENER ERRORES SILENCIOSOS!
+            console.error("Error al cargar la vista de edición:", error);
+
+            if (error.message.includes('401') || error.message.includes('Unauthenticated')) {
+                forzarCierreSesion();
+                return;
+            }
         }
-    }
 
     // EVENTO: CAMBIAR DE CATEGORÍA
     // Si el usuario decide cambiar el anuncio de categoría a mitad de la edición,
@@ -276,4 +282,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             submitButton.style.opacity = isLoading ? '0.7' : '1';
         }
     }
+
+}
 });

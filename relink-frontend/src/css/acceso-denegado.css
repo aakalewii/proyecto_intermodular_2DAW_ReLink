@@ -1,56 +1,200 @@
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f3f4f6;
-            display: flex;
-            flex-direction: column; /* Cambiado a column para que el navbar se quede arriba */
-            align-items: center;
-        }
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap');
 
-        /* --- AQUÍ IRÍA EL CSS DE TU NAVBAR SI NO LO TIENES EXTERNO --- */
+/* --- Variables --- */
+:root {
+    --primary:      #1a1a1a;
+    --danger:       #e03c2e;
+    --danger-light: #fdecea;
+    --bg:           #f6f4f0;
+    --surface:      #ffffff;
+    --muted:        #6b7280;
+    --border:       #e5e7eb;
+}
 
-        /* Contenedor centralizado para la tarjeta */
-        .main-content {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-        }
+/* --- Base --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        .denied-card {
-            background-color: #ffffff;
-            padding: 50px 40px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            max-width: 420px;
-            width: 90%;
-            text-align: center;
-            animation: fadeIn 0.5s ease-out;
-        }
+body, html {
+    height: 100%;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-        .icon { font-size: 70px; color: #ef4444; margin-bottom: 20px; }
-        h1 { color: #1f2937; font-size: 26px; margin: 0 0 15px 0; }
-        p { color: #6b7280; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0; }
-        
-        .btn-login {
-            display: inline-block;
-            background-color: #3b82f6;
-            color: #ffffff;
-            text-decoration: none;
-            padding: 12px 28px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            transition: background-color 0.2s, transform 0.1s;
-        }
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 15% 50%, rgba(224,60,46,0.05) 0%, transparent 50%),
+        radial-gradient(circle at 85% 30%, rgba(224,60,46,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
 
-        .btn-login:hover { background-color: #2563eb; }
-        .btn-login:active { transform: scale(0.98); }
+/* --- Contenedor central --- */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+/* --- Tarjeta --- */
+.denied-card {
+    background: var(--surface);
+    padding: 3rem 2.5rem;
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    animation: rise 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Línea roja superior */
+.denied-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 10%; right: 10%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--danger), transparent);
+    border-radius: 0 0 4px 4px;
+}
+
+@keyframes rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Logo */
+.denied-card .auth-logo {
+    display: block;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+    color: var(--primary);
+    opacity: 0.4;
+    margin-bottom: 1.75rem;
+}
+
+/* Icono */
+.icon-wrap {
+    width: 72px;
+    height: 72px;
+    background: var(--danger-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    animation: pop 0.4s 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes pop {
+    from { transform: scale(0.5); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+}
+
+.icon-wrap i,
+.icon {
+    font-size: 1.75rem;
+    color: var(--danger);
+}
+
+/* Badge */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--danger-light);
+    color: #8b1a10;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 1.25rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.badge-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--danger);
+}
+
+h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.9rem;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+    line-height: 1.15;
+}
+
+p {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 2rem;
+}
+
+/* Divisor */
+.divider {
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 1.75rem;
+}
+
+/* Botón */
+.btn-login {
+    display: block;
+    width: 100%;
+    background: var(--primary);
+    color: #fff;
+    text-decoration: none;
+    padding: 13px;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-login:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+.btn-login:active {
+    transform: translateY(0);
+}
+
+/* Footer */
+.footer-note {
+    margin-top: 1.5rem;
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+.footer-note a {
+    color: var(--muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}

@@ -1,94 +1,163 @@
-/* --- Variables Globales --- */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap');
+
+/* --- Variables --- */
 :root {
-    --primary-color: #343a40;
-    --accent-color: #007bff;
-    --bg-color: #f8f9fa;
-    --text-color: #333;
-    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --primary:      #1a1a1a;
+    --accent:       #2d9b6f;
+    --accent-light: #e8f5ee;
+    --accent-dark:  #1a6647;
+    --bg:           #f6f4f0;
+    --surface:      #ffffff;
+    --muted:        #6b7280;
+    --border:       #e5e7eb;
+    --border-hover: #d1d5db;
 }
 
-/* --- Estilos Base --- */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg-color);
+/* --- Base --- */
+*, *::before, *::after {
+    box-sizing: border-box;
     margin: 0;
-    color: var(--text-color);
+    padding: 0;
 }
 
-/* --- Layout del Panel --- */
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--primary);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* --- Header --- */
 .header {
-    background-color: var(--primary-color);
-    color: white;
+    background: var(--primary);
+    color: #fff;
     padding: 1rem 2rem;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
+.header-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
+}
+
+.header-badge {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: rgba(255,255,255,0.12);
+    padding: 3px 10px;
+    border-radius: 100px;
+    color: rgba(255,255,255,0.7);
+}
+
+/* --- Contenedor --- */
 .container {
     max-width: 1100px;
-    margin: 40px auto;
-    padding: 0 20px;
+    margin: 48px auto;
+    padding: 0 24px;
 }
 
+/* --- Mensaje de bienvenida --- */
 .welcome-msg {
-    margin-bottom: 30px;
     text-align: center;
+    margin-bottom: 40px;
 }
 
-/* --- Cuadrícula de CRUDs (Grid System) --- */
+.welcome-msg h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+}
+
+.welcome-msg p {
+    font-size: 15px;
+    color: var(--muted);
+}
+
+/* --- Grid de CRUDs --- */
 .admin-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
 }
 
-/* --- Estilo de las Tarjetas (Cards) --- */
+/* --- Tarjetas --- */
 .crud-card {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
+    background: var(--surface);
+    padding: 28px 24px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
     text-align: center;
     text-decoration: none;
-    color: var(--text-color);
-    box-shadow: var(--card-shadow);
-    transition: all 0.3s ease;
+    color: var(--primary);
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: 1px solid #eee;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .crud-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
-    border-color: var(--accent-color);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.07);
+    border-color: var(--border-hover);
 }
 
-/* Iconos dentro de las tarjetas */
-.crud-card i {
-    font-size: 3rem;
-    color: var(--accent-color);
-    margin-bottom: 15px;
+/* Icono con fondo verde suave */
+.crud-card-icon {
+    width: 56px;
+    height: 56px;
+    background: var(--accent-light);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.crud-card-icon i {
+    font-size: 1.5rem;
+    color: var(--accent);
 }
 
 .crud-card h3 {
-    margin: 10px 0 5px 0;
-    font-size: 1.25rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--primary);
 }
 
 .crud-card p {
-    font-size: 0.9rem;
-    color: #666;
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.5;
 }
 
-/* --- Botón de Volver --- */
+/* --- Botón volver --- */
 .btn-volver {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     margin-top: 40px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
     text-decoration: none;
-    color: var(--accent-color);
-    font-weight: bold;
+    transition: color 0.2s;
 }
 
 .btn-volver:hover {
-    text-decoration: underline;
+    color: var(--primary);
+}
+
+.btn-volver::before {
+    font-size: 16px;
 }

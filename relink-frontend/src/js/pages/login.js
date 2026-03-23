@@ -23,6 +23,21 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         limpiarErrores();
 
+        // Extraemos la respuesta del widget de Google
+        // Si grecaptcha no está definido (por si falla el script de Google), evitamos que rompa todo
+        if (typeof grecaptcha === 'undefined') {
+            mostrarError("Error al cargar el sistema de seguridad. Recarga la página.");
+            return;
+        }
+
+        const recaptchaResponse = grecaptcha.getResponse();
+
+        // Comprobamos si el usuario se ha saltado la casilla
+        if (recaptchaResponse.length === 0) {
+            mostrarError("Por favor, verifica que no eres un robot marcando la casilla.");
+            return; // Cortamos la ejecución, no hacemos la petición al servidor
+        }
+
         // Extraemos lo que el usuario ha escrito
         const emailValue = document.getElementById('email').value;
         const passwordValue = document.getElementById('password').value;
@@ -31,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const credenciales = {
             email: emailValue,
             password: passwordValue,
+            recaptcha_token: recaptchaResponse
         };
 
         // Damos feedback visual deshabilitando el botón mientras esperamos al servidor
@@ -59,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Si Laravel nos dio un error 401 (Credenciales inválidas) o 403 (Usuario inactivo),
             // lo capturamos aquí y lo pintamos de rojo en la pantalla.
             mostrarError(error.message || 'Error al iniciar sesión.');
+            grecaptcha.reset();
         } finally {
             // Haya funcionado o fallado, volvemos a habilitar el botón
             cargando(false);

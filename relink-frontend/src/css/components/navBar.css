@@ -1,141 +1,195 @@
-/* --- ESTILOS DE LA BARRA DE NAVEGACIÓN (navbar.css) --- */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap');
 
+/* --- Variables --- */
+:root {
+    --primary:      #1a1a1a;
+    --accent:       #2d9b6f;
+    --accent-light: #e8f5ee;
+    --danger:       #e03c2e;
+    --danger-light: #fdecea;
+    --bg:           #f6f4f0;
+    --surface:      #ffffff;
+    --muted:        #6b7280;
+    --border:       #e5e7eb;
+    --border-hover: #d1d5db;
+}
+
+/* --- Navbar --- */
 .navbar-relink {
-    display: flex; 
-    justify-content: space-between; 
-    padding: 1rem 2rem; 
-    align-items: center; 
-    background: white; 
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    /* Esto hace que la barra se quede fija arriba al hacer scroll */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 2rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    font-family: 'DM Sans', sans-serif;
     position: sticky;
     top: 0;
     z-index: 1000;
 }
 
+/* Logo */
 .navbar-relink h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    color: var(--primary);
     margin: 0;
-    color: #343a40;
-    font-size: 1.6rem;
 }
 
-/* El texto de "(Admin)" */
 .navbar-relink h2 span {
-    color: #007bff;
-    font-size: 1.2rem;
-}
-
-/* Contenedor de los enlaces y botones */
-.nav-menu {
-    display: flex; 
-    align-items: center;
-    gap: 20px; 
-}
-
-/* Enlaces normales (Inicio, Favoritos, Panel) */
-.nav-link { 
-    text-decoration: none; 
-    color: #495057; 
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
     font-weight: 500;
-    transition: color 0.3s ease;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 100px;
+    vertical-align: middle;
+    margin-left: 8px;
 }
 
-.nav-link:hover { 
-    color: #007bff; 
+/* Menú */
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-/* Botón Verde (Crear Anuncio) */
+/* Links normales */
+.nav-link {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 7px 12px;
+    border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+}
+
+.nav-link:hover {
+    color: var(--primary);
+    background: var(--bg);
+}
+
+/* Botón crear anuncio */
 .btn-nuevo-anuncio {
-    background-color: #28a745; 
-    color: white; 
-    border: 2px solid #28a745; 
-    padding: 8px 16px; 
-    border-radius: 6px; 
-    text-decoration: none; 
-    font-weight: bold;
-    transition: all 0.3s ease; 
     display: inline-flex;
-    align-items: center; 
+    align-items: center;
     gap: 6px;
-}
-
-.btn-nuevo-anuncio:hover { 
-    background-color: transparent; 
-    color: #28a745; 
-}
-
-/* Botón Rojo (Cerrar Sesión) */
-.btn-logout {
-    background-color: white;
-    color: #dc3545;
-    border: 1px solid #dc3545;
+    background: var(--primary);
+    color: #fff;
+    border: none;
     padding: 8px 16px;
-    border-radius: 6px;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.15s;
     cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s ease;
+}
+
+.btn-nuevo-anuncio:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+.btn-nuevo-anuncio:active {
+    transform: translateY(0);
+}
+
+/* Botón cerrar sesión */
+.btn-logout {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--danger-light);
+    color: var(--danger);
+    border: 1px solid #f5c1be;
+    padding: 7px 14px;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
 }
 
 .btn-logout:hover {
-    background-color: #dc3545;
-    color: white;
+    opacity: 0.75;
 }
 
-/* Botón Azul Contorneado (Registrarse) */
+/* Botón registrarse */
 .btn-primary-outline {
-    color: #007bff;
-    border: 2px solid #007bff;
-    padding: 8px 16px;
-    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid var(--border);
+    padding: 7px 14px;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
     text-decoration: none;
-    font-weight: bold;
-    transition: all 0.3s ease;
+    transition: background 0.2s, border-color 0.2s;
 }
 
 .btn-primary-outline:hover {
-    background-color: #007bff;
-    color: white;
+    background: var(--bg);
+    border-color: var(--border-hover);
 }
 
-/* --- BUSCADOR CENTRAL --- */
+/* --- Buscador --- */
 .navbar-search {
-    flex-grow: 1; /* Hace que el buscador ocupe el espacio libre del medio */
-    max-width: 600px; /* Para que no sea gigante en pantallas enormes */
+    flex-grow: 1;
+    max-width: 520px;
     margin: 0 20px;
     display: flex;
     align-items: center;
-    border: 1px solid #ced4da;
-    border-radius: 25px; /* Forma de píldora redondeada */
-    background: white;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
     overflow: hidden;
-    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* Efecto al hacer clic en el buscador */
 .navbar-search:focus-within {
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(45, 155, 111, 0.12);
+    background: var(--surface);
 }
 
 .navbar-search input {
     flex-grow: 1;
     border: none;
-    padding: 12px 20px;
-    font-size: 1rem;
-    outline: none; /* Quitamos el borde azul por defecto */
+    background: transparent;
+    padding: 10px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--primary);
+    outline: none;
+}
+
+.navbar-search input::placeholder {
+    color: #b0b7c0;
 }
 
 .navbar-search button {
     background: none;
     border: none;
-    padding: 0 20px;
+    padding: 0 16px;
     cursor: pointer;
-    color: #6c757d;
-    font-size: 1.1rem;
-    transition: color 0.3s;
+    color: var(--muted);
+    font-size: 15px;
+    transition: color 0.2s;
 }
 
 .navbar-search button:hover {
-    color: #007bff;
+    color: var(--primary);
 }

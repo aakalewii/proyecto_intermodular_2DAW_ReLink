@@ -2,7 +2,7 @@ import { renderNavbar } from '../components/navBar.js';
 import { getMiPerfil, updatePerfil } from '../services/perfil.js';
 import { getLocalidades } from '../services/ubicaciones.js'; 
 import { deleteAnuncio } from '../services/anuncios.js';
-import { forzarCierreSesion } from '../services/auth.js';
+import { forzarCierreSesion, verificarAccesoUsuario } from '../services/auth.js';
 
 
 /*
@@ -32,32 +32,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     const bloqueLectura = document.getElementById('bloque-lectura');
     const formEditar = document.getElementById('form-editar');
 
+    const puedePasar = await verificarAccesoUsuario();
+
     // --- CARGA INICIAL DE LA PÁGINA ---
-    try {
-        // Llamamos al ProfileController del backend (que usa Eager Loading para traer los anuncios)
-        const respuesta = await getMiPerfil();
-
-        if (respuesta.status === 401) {
-            forzarCierreSesion();
-            return; 
-        }
-
-        if (respuesta.status === 403) {
-            // Lo mandamos a la pantalla amistosa SIN borrarle el token de su navegador
-            window.location.href = '/email-revisar-bandeja.html';
-            return;
-        }
-
-        datosUsuarioActual = respuesta.datos;
+    if (puedePasar) {
         
-        // Enviamos los datos a las funciones que se encargan de inyectar el HTML
-        pintarDatosLectura(datosUsuarioActual);
-        pintarMisAnuncios(datosUsuarioActual.anuncios);
+        try {
+            // Llamamos al ProfileController del backend (que usa Eager Loading para traer los anuncios)
+            const respuesta = await getMiPerfil();
 
-    } catch (error) {
-        console.error("Error al cargar perfil:", error);
-        
-        forzarCierreSesion(); 
+            if (respuesta.status === 401) {
+                forzarCierreSesion();
+                return; 
+            }
+
+            if (respuesta.status === 403) {
+                // Lo mandamos a la pantalla amistosa SIN borrarle el token de su navegador
+                window.location.href = '/email-revisar-bandeja.html';
+                return;
+            }
+
+            datosUsuarioActual = respuesta.datos;
+            
+            // Enviamos los datos a las funciones que se encargan de inyectar el HTML
+            pintarDatosLectura(datosUsuarioActual);
+            pintarMisAnuncios(datosUsuarioActual.anuncios);
+
+        } catch (error) {
+            console.error("Error al cargar perfil:", error);
+            
+            forzarCierreSesion(); 
+        }
     }
 
     // --- LÓGICA DE LOS BOTONES DE INTERFAZ ---
@@ -210,9 +215,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         anuncios.forEach(anuncio => {
             // Creamos la caja del anuncio dinámicamente
             const card = document.createElement('div');
-            card.style.border = "1px solid #eee";
-            card.style.padding = "10px";
-            card.style.borderRadius = "5px";
+            card.className = 'anuncio-card-perfil';
 
             // Inyectamos el HTML interno con los enlaces dinámicos (pasando la ID por la URL)
             card.innerHTML = `

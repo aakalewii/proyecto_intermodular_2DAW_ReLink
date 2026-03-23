@@ -146,9 +146,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     // Evaluamos la respuesta del backend para cambiar el texto e icono
                     if (respuesta.message === 'Añadido a favoritos') {
                         btnFavorito.innerHTML = '<i class="fa-solid fa-heart"></i> Quitar de Favoritos';
+                        btnFavorito.classList.add('favorito-activo');
                     } 
                     else {
                         btnFavorito.innerHTML = '<i class="fa-regular fa-heart"></i> Guardar en Favoritos';
+                        btnFavorito.classList.remove('favorito-activo');
                     }
 
                     btnFavorito.disabled = false;
