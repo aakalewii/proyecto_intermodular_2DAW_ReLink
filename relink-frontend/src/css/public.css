@@ -458,3 +458,10 @@ a {
     opacity: 0.65;
 }
 
+/* Para que los anuncios del perfil se vean de 3 en 3*/
+.lista-anuncios-perfil {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+

@@ -1,6 +1,7 @@
 import { renderNavbar } from '../components/navBar.js';
 import { getAnuncioById } from '../services/anuncios.js';
 import { toggleFavorito, checkIfFavorito } from '../services/favoritos.js'; 
+import { misDatos } from '../services/auth.js';
 
 /* 
    PANTALLA: VER DETALLE DEL ANUNCIO
@@ -109,62 +110,84 @@ document.addEventListener('DOMContentLoaded', async () => {
             imgPrincipal.src = URL_BACKEND_STORAGE + 'anuncios/default.jpg';
         }
 
-        // LÓGICA DEL BOTÓN DE FAVORITOS
+        // --- LÓGICA DE BOTONES ---
+        const btnContactar = document.getElementById('btn-contactar');
         const btnFavorito = document.getElementById('btn-favorito');
         const token = localStorage.getItem('relink_token');
+        
+        let esMiAnuncio = false;
+        let esAdmin = false;
 
-        // Si el usuario es anónimo, el botón funciona como un acceso directo al Login
-        if (!token) {
-            btnFavorito.innerHTML = '<i class="fa-regular fa-heart"></i> Inicia sesión para guardar';
-            btnFavorito.addEventListener('click', () => {
-                window.location.href = '/login.html';
-            });
-        } 
-        else {
-            
-            // SI ESTÁ LOGUEADO: 
-            // Primero le preguntamos a la API si ya tenía este anuncio guardado 
-            // para pintar el corazón relleno o vacío desde el minuto cero.
+        // Comprobamos si el usuario actual es el dueño del anuncio
+        if (token) {
             try {
-                const respuesta = await checkIfFavorito(anuncioId);
+                const usuarioActual = await misDatos();
+                if (anuncio.user && usuarioActual.id === anuncio.user.id) {
+                    esMiAnuncio = true;
+                }
 
-                if (respuesta.is_favorito === true) {
-                    btnFavorito.innerHTML = '<i class="fa-solid fa-heart"></i> Quitar de Favoritos';
+                if (usuarioActual.rol && String(usuarioActual.rol).toUpperCase() === 'ADMIN') {
+                    esAdmin = true;
                 }
             } catch (error) {
-                console.error("No se pudo comprobar el estado del favorito:", error);
+                console.error("Error al verificar la identidad:", error);
             }
-
-            // Evento del Toggle (Interruptor)
-            btnFavorito.addEventListener('click', async () => {
-                try {
-                    btnFavorito.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
-                    btnFavorito.disabled = true;
-
-                    const respuesta = await toggleFavorito(anuncioId);
-
-                    // Evaluamos la respuesta del backend para cambiar el texto e icono
-                    if (respuesta.message === 'Añadido a favoritos') {
-                        btnFavorito.innerHTML = '<i class="fa-solid fa-heart"></i> Quitar de Favoritos';
-                        btnFavorito.classList.add('favorito-activo');
-                    } 
-                    else {
-                        btnFavorito.innerHTML = '<i class="fa-regular fa-heart"></i> Guardar en Favoritos';
-                        btnFavorito.classList.remove('favorito-activo');
-                    }
-
-                    btnFavorito.disabled = false;
-
-                } catch (error) {
-                    console.error(error);
-                    alert("Hubo un problema al guardar el favorito.");
-                    btnFavorito.disabled = false;
-                }
-            });
         }
 
-    } catch (error) {
-        // Error global 404: Si el ID de la URL no existe o el anuncio ha sido borrado
+        if (esMiAnuncio || esAdmin) {
+            // Si es mi anuncio, ocultar los botones
+            btnContactar.style.display = 'none';
+            btnFavorito.style.display = 'none';
+
+        } else {
+            // Si el usuario es anónimo, el botón funciona como un acceso directo al Login
+            if (!token) {
+                btnFavorito.innerHTML = '<i class="fa-regular fa-heart"></i> Inicia sesión para guardar';
+                btnFavorito.addEventListener('click', () => {
+                    window.location.href = '/login.html';
+                });
+            } 
+            else {
+                // SI ESTÁ LOGUEADO:
+                try {
+                    const respuesta = await checkIfFavorito(anuncioId);
+
+                    if (respuesta.is_favorito === true) {
+                        btnFavorito.innerHTML = '<i class="fa-solid fa-heart"></i> Quitar de Favoritos';
+                    }
+                } catch (error) {
+                    console.error("No se pudo comprobar el estado del favorito:", error);
+                }
+
+                // Evento del Toggle (Interruptor)
+                btnFavorito.addEventListener('click', async () => {
+                    try {
+                        btnFavorito.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+                        btnFavorito.disabled = true;
+
+                        const respuesta = await toggleFavorito(anuncioId);
+
+                        if (respuesta.message === 'Añadido a favoritos') {
+                            btnFavorito.innerHTML = '<i class="fa-solid fa-heart"></i> Quitar de Favoritos';
+                            btnFavorito.classList.add('favorito-activo');
+                        } 
+                        else {
+                            btnFavorito.innerHTML = '<i class="fa-regular fa-heart"></i> Guardar en Favoritos';
+                            btnFavorito.classList.remove('favorito-activo');
+                        }
+
+                        btnFavorito.disabled = false;
+
+                    } catch (error) {
+                        console.error(error);
+                        alert("Hubo un problema al guardar el favorito.");
+                        btnFavorito.disabled = false;
+                    }
+                });
+            }
+        } // <-- AQUI SE CIERRA EL ELSE DE esMiAnuncio
+
+    } catch (error) { // <-- AQUI EMPIEZA EL CATCH DEL TRY PRINCIPAL (Línea 26)
         console.error("Error al cargar el anuncio:", error);
         document.getElementById('mensaje-estado').innerHTML = '<span style="color: red;">El anuncio no existe o ha sido borrado.</span>';
     }

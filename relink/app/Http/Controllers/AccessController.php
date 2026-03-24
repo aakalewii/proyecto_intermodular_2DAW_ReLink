@@ -62,7 +62,7 @@ class AccessController extends Controller
         ]);
 
         // Preguntamos a los servidores de Google si el token es real
-        $googleResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+        $googleResponse = Http::withoutVerifying()->asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
         'secret' => env('RECAPTCHA_SECRET_KEY'),
         'response' => $request->recaptcha_token,
         'remoteip' => $request->ip() // Opcional, pero ayuda a Google a detectar fraudes

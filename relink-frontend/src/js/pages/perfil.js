@@ -212,21 +212,41 @@ document.addEventListener('DOMContentLoaded', async () => {
             return; 
         }
 
-        anuncios.forEach(anuncio => {
-            // Creamos la caja del anuncio dinámicamente
-            const card = document.createElement('div');
-            card.className = 'anuncio-card-perfil';
+        // Recuperamos la ruta base de las imágenes igual que en el index
+        const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
 
-            // Inyectamos el HTML interno con los enlaces dinámicos (pasando la ID por la URL)
+        anuncios.forEach(anuncio => {
+            const card = document.createElement('div');
+            
+            // Usamos la misma clase y estilos en línea que en el index
+            card.className = 'anuncio-card';
+            card.style = 'border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; flex-direction: column; justify-content: space-between;';
+
+            // Lógica de fallback de la imagen
+            let rutaImagen;
+            if (anuncio.imagenes && anuncio.imagenes.length > 0) {
+                rutaImagen = `${URL_BACKEND_STORAGE}${anuncio.imagenes[0].url}`;
+            } else {
+                rutaImagen = `${URL_BACKEND_STORAGE}anuncios/default1.jpg`;
+            }
+
+            // Si la fecha viene nula por algún motivo, usamos un fallback a la fecha de creación
+            const fecha = anuncio.fecha_publi ? anuncio.fecha_publi : anuncio.created_at;
+
+            // Inyectamos el diseño
             card.innerHTML = `
-                <h4 style="margin: 0 0 5px 0;">${anuncio.titulo}</h4>
-                <p style="margin: 0 0 10px 0;">Precio: <strong>${anuncio.precio}€</strong></p>
+                <div style="cursor: pointer;" onclick="window.location.href='/ver-anuncio.html?id=${anuncio.id}'">
+                    <div>
+                        <img src="${rutaImagen}" alt="${anuncio.titulo}" style="max-width: 100%; border-radius: 4px;"/>
+                    </div>
+                    <h3 style="margin: 10px 0 5px 0;">${anuncio.titulo}</h3>
+                    <p style="margin: 0 0 5px 0;"><strong>${anuncio.precio} €</strong></p>
+                    <small>Publicado el: ${new Date(fecha).toLocaleDateString()}</small>
+                </div>
                 
-                <div style="display: flex; gap: 15px; align-items: center;">
-                    <a href="/ver-anuncio.html?id=${anuncio.id}" style="color: #007bff; text-decoration: none;">Ver detalle</a>
-                    
+                <div style="display: flex; gap: 15px; align-items: center; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
                     <a href="/editar-anuncio.html?id=${anuncio.id}" style="color: #28a745; text-decoration: none;">
-                        <i class="fa-solid fa-pen"></i> Editar Anuncio
+                        <i class="fa-solid fa-pen"></i> Editar
                     </a>
                     
                     <button class="btn-borrar" style="color: red; cursor: pointer; background: none; border: none; padding: 0; font-size: 16px;">
@@ -236,38 +256,32 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
             
             // --- LÓGICA DEL BOTÓN DE BORRAR ANUNCIO ---
-            // Le añadimos el escuchador de eventos al botón de la basura específico de esta tarjeta
             const btnBorrar = card.querySelector('.btn-borrar'); 
             
-            btnBorrar.addEventListener('click', async () => {
-                // Confirmación nativa de seguridad
+            btnBorrar.addEventListener('click', async (e) => {
+                // Evitamos que el clic en borrar dispare algún otro evento por accidente
+                e.stopPropagation();
+
                 if (confirm(`¿Seguro que quieres borrar el anuncio "${anuncio.titulo}"?`)) {
                     try {
-                        // Feedback visual mientras contactamos con la API
                         btnBorrar.innerHTML = "Borrando...";
                         btnBorrar.disabled = true;
 
-                        // Llamada de borrado al backend
                         await deleteAnuncio(anuncio.id);
                         
-                        // Si el backend borra con éxito (HTTP 200), destruimos la tarjeta del DOM
-                        // sin tener que recargar la página entera.
                         card.remove();
 
-                        // Si al borrar esta tarjeta, la lista se queda vacía, mostramos el mensaje de "No hay anuncios"
                         if (listaAnuncios.children.length === 0) {
                             listaAnuncios.innerHTML = '<p>Aún no has publicado ningún anuncio.</p>';
                         }
 
                     } catch (error) {
-
                         if (error.message.includes('401')) {
                             forzarCierreSesion();
                             return;
                         }
 
                         alert("No se pudo borrar el anuncio: " + error.message);
-                        // Si falla, restauramos el botón a la normalidad
                         btnBorrar.innerHTML = `<i class="fa-solid fa-trash"></i> Borrar`;
                         btnBorrar.disabled = false;
                     }

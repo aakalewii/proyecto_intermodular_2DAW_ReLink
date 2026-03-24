@@ -200,6 +200,15 @@ ALTER TABLE anuncios MODIFY localidad_id BIGINT UNSIGNED NULL;
 ALTER TABLE anuncios ADD CONSTRAINT fk_anuncio_localidad
 FOREIGN KEY (localidad_id) REFERENCES localidades(id) ON DELETE SET NULL;
 
+CREATE TABLE dislikes (
+    user_id BIGINT UNSIGNED NOT NULL,
+    anuncio_id BIGINT UNSIGNED NOT NULL,
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL,
+    PRIMARY KEY (user_id, anuncio_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (anuncio_id) REFERENCES anuncios(id) ON DELETE CASCADE
+);
 
 /* PARA EL FUTURO, NUEVOS DATOS
 
