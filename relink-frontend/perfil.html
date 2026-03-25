@@ -28,7 +28,7 @@
                 </button>
             </div>
 
-            <form id="form-editar" class="formulario-publico" style="display: none; padding: 0; border: none; max-width: 400px;">
+            <form id="form-editar" class="formulario-publico formulario-perfil">
 
                 <div class="form-group">
                     <label>Nombre:</label>
@@ -52,7 +52,7 @@
                     </select>
                 </div>
 
-                <div style="display: flex; gap: 10px; margin-top: 4px;">
+                <div class="form-botones">
                     <button type="submit" class="btn-primary" style="width: auto; padding: 10px 20px;">
                         <i class="fa-solid fa-floppy-disk"></i> Guardar
                     </button>
@@ -65,7 +65,14 @@
         </section>
 
         <section class="seccion-perfil">
-            <h2>Mis anuncios publicados</h2>
+            <h2>Mis anuncios</h2>
+            
+            <div class="tabs-anuncios">
+                <button id="tab-publicados" class="tab-btn activo">Publicados</button>
+                <button id="tab-vendidos" class="tab-btn">Vendidos</button>
+                <button id="tab-historial" class="tab-btn">Historial</button>
+            </div>
+
             <div id="mis-anuncios-lista" class="lista-anuncios-perfil">
                 <p class="texto-vacio">Cargando anuncios...</p>
             </div>

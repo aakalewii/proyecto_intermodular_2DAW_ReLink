@@ -1,7 +1,7 @@
 import { renderNavbar } from '../components/navBar.js';
 import { getMiPerfil, updatePerfil } from '../services/perfil.js';
 import { getLocalidades } from '../services/ubicaciones.js'; 
-import { deleteAnuncio } from '../services/anuncios.js';
+import { deleteAnuncio, marcarComoVendido } from '../services/anuncios.js';
 import { forzarCierreSesion, verificarAccesoUsuario } from '../services/auth.js';
 
 
@@ -32,6 +32,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const bloqueLectura = document.getElementById('bloque-lectura');
     const formEditar = document.getElementById('form-editar');
 
+    const tabPublicados = document.getElementById('tab-publicados');
+    const tabVendidos = document.getElementById('tab-vendidos');
+    const tabHistorial = document.getElementById('tab-historial');
+
     const puedePasar = await verificarAccesoUsuario();
 
     // --- CARGA INICIAL DE LA PÁGINA ---
@@ -54,9 +58,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             datosUsuarioActual = respuesta.datos;
             
+            console.log(datosUsuarioActual.anuncios)
             // Enviamos los datos a las funciones que se encargan de inyectar el HTML
             pintarDatosLectura(datosUsuarioActual);
-            pintarMisAnuncios(datosUsuarioActual.anuncios);
+            filtrarYPintarPestana('publicados');
 
         } catch (error) {
             console.error("Error al cargar perfil:", error);
@@ -72,7 +77,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // Cambiamos las "vistas": ocultamos el texto estático y mostramos el formulario
         bloqueLectura.style.display = 'none';
-        formEditar.style.display = 'flex';
+        formEditar.style.display = 'block';
 
         // Rellenamos las cajas de texto con los datos que ya teníamos guardados en memoria
         document.getElementById('edit-nombre').value = datosUsuarioActual.nombre;
@@ -218,9 +223,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         anuncios.forEach(anuncio => {
             const card = document.createElement('div');
             
-            // Usamos la misma clase y estilos en línea que en el index
+            // Usamos la misma clase en línea que en el index
             card.className = 'anuncio-card';
-            card.style = 'border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; flex-direction: column; justify-content: space-between;';
+
+            // Comprobamos si el anuncio ya está vendido
+            const estaVendido = anuncio.estado === 'vendido';
+            const backgroundStyle = estaVendido ? 'background-color: #f8f9fa; opacity: 0.8;' : '';
+
+            card.style = `border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; flex-direction: column; justify-content: space-between; ${backgroundStyle}`;
 
             // Lógica de fallback de la imagen
             let rutaImagen;
@@ -233,6 +243,62 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Si la fecha viene nula por algún motivo, usamos un fallback a la fecha de creación
             const fecha = anuncio.fecha_publi ? anuncio.fecha_publi : anuncio.created_at;
 
+            // Preparamos el HTML del botón de vendido o el texto si ya está vendido
+            const htmlBotonVendido = estaVendido
+            ? `<span style="
+                display: inline-flex; align-items: center; gap: 5px;
+                padding: 5px 12px;
+                background: #e8f5ee; color: #1a6647;
+                border: 1px solid #b6dece;
+                border-radius: 8px;
+                font-size: 12px; font-weight: 500;
+                margin-left: auto;
+               ">
+                <i class="fa-solid fa-circle-check"></i> Vendido
+               </span>`
+            : `<button class="btn-vendido" style="
+                display: inline-flex; align-items: center; gap: 5px;
+                padding: 5px 12px;
+                background: #fff8ee; color: #92580a;
+                border: 1px solid #f5d9a8;
+                border-radius: 8px;
+                font-family: 'DM Sans', sans-serif;
+                font-size: 12px; font-weight: 500;
+                cursor: pointer; margin-left: auto;
+                transition: opacity 0.2s;
+               ">
+                <i class="fa-solid fa-handshake"></i> Marcar como vendido
+               </button>`;
+
+
+               let htmlBotones = '';
+
+            if (anuncio.estado === 'publicado') {
+                htmlBotones = `
+                    <a href="/editar-anuncio.html?id=${anuncio.id}" style="color: #28a745; text-decoration: none;">
+                        <i class="fa-solid fa-pen"></i> Editar
+                    </a>
+                    
+                    <button class="btn-borrar" style="color: red; cursor: pointer; background: none; border: none; padding: 0; font-size: 16px;">
+                        <i class="fa-solid fa-trash"></i> Borrar
+                    </button>
+
+                    ${htmlBotonVendido}
+                `;
+            } else if (anuncio.estado === 'vendido') {
+                // Si está vendido, NO hay botón de borrar ni editar. Solo la etiqueta.
+                htmlBotones = `
+                    ${htmlBotonVendido}
+                `;
+            } else if (anuncio.estado === 'eliminado') {
+                // Si está eliminado, le ponemos una etiqueta roja (o lo que tú prefieras aquí)
+                htmlBotones = `
+                    <span style="display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; background: #ffe6e6; color: #cc0000; border: 1px solid #ffb3b3; border-radius: 8px; font-size: 12px; font-weight: 500; margin-left: auto;">
+                        <i class="fa-solid fa-trash-can"></i> Eliminado
+                    </span>
+                `;
+            }
+
             // Inyectamos el diseño
             card.innerHTML = `
                 <div style="cursor: pointer;" onclick="window.location.href='/ver-anuncio.html?id=${anuncio.id}'">
@@ -244,23 +310,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <small>Publicado el: ${new Date(fecha).toLocaleDateString()}</small>
                 </div>
                 
-                <div style="display: flex; gap: 15px; align-items: center; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
-                    <a href="/editar-anuncio.html?id=${anuncio.id}" style="color: #28a745; text-decoration: none;">
-                        <i class="fa-solid fa-pen"></i> Editar
-                    </a>
-                    
-                    <button class="btn-borrar" style="color: red; cursor: pointer; background: none; border: none; padding: 0; font-size: 16px;">
-                        <i class="fa-solid fa-trash"></i> Borrar
-                    </button>
+                <div class="contenedor-acciones" style="display: flex; gap: 15px; align-items: center; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
+                    ${htmlBotones}
                 </div>
             `;
             
             // --- LÓGICA DEL BOTÓN DE BORRAR ANUNCIO ---
             const btnBorrar = card.querySelector('.btn-borrar'); 
             
-            btnBorrar.addEventListener('click', async (e) => {
-                // Evitamos que el clic en borrar dispare algún otro evento por accidente
-                e.stopPropagation();
+            if (btnBorrar) {
+                btnBorrar.addEventListener('click', async (e) => {
 
                 if (confirm(`¿Seguro que quieres borrar el anuncio "${anuncio.titulo}"?`)) {
                     try {
@@ -287,8 +346,84 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 }
             });
+            }
+
+            const btnVendido = card.querySelector('.btn-vendido');
+            if (btnVendido) {
+                btnVendido.addEventListener('click', async (e) => {
+                    e.stopPropagation(); 
+
+                    if (confirm(`¡Enhorabuena! ¿Seguro que quieres marcar "${anuncio.titulo}" como vendido? Esta acción no se puede deshacer.`)) {
+                        try {
+                            btnVendido.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Procesando...`;
+                            btnVendido.disabled = true;
+
+                            // Llamamos a la base de datos
+                            await marcarComoVendido(anuncio.id);
+                            
+                            // Efectos visuales de que ya está vendido
+                            card.style.backgroundColor = '#f8f9fa';
+                            card.style.opacity = '0.8';
+                            
+                            // Buscamos el contenedor, borramos el botón y ponemos tu NUEVO span verde
+                            const contenedorAcciones = card.querySelector('.contenedor-acciones');
+                            btnVendido.remove();
+                            
+                            contenedorAcciones.innerHTML += `
+                                <span style="display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; background: #e8f5ee; color: #1a6647; border: 1px solid #b6dece; border-radius: 8px; font-size: 12px; font-weight: 500; margin-left: auto;">
+                                    <i class="fa-solid fa-circle-check"></i> Vendido
+                                </span>
+                            `;
+
+                        } catch (error) {
+                            if (error.message.includes('401')) {
+                                forzarCierreSesion();
+                                return;
+                            }
+                            alert("Hubo un error al vender: " + error.message);
+                            btnVendido.innerHTML = `<i class="fa-solid fa-handshake"></i> Marcar como vendido`;
+                            btnVendido.disabled = false;
+                        }
+                    }
+                });
+            }
 
             listaAnuncios.appendChild(card);
         });
     }
+
+    // Función que filtra el array de anuncios y lo manda a la funcionde pintar
+    function filtrarYPintarPestana(filtro) {
+        // Le quitamos el color verde a todos los botones
+        tabPublicados.classList.remove('activo');
+        tabVendidos.classList.remove('activo');
+        tabHistorial.classList.remove('activo');
+
+        let anunciosFiltrados = [];
+
+        // Filtramos y pintamos el botón seleccionado
+        if (filtro === 'publicados') {
+            tabPublicados.classList.add('activo');
+            // Nos quedamos con los publicados
+            anunciosFiltrados = datosUsuarioActual.anuncios.filter(a => a.estado ==='publicado');
+        
+        } else if (filtro === 'vendidos') {
+            tabVendidos.classList.add('activo');
+            // Nos quedamos solo con los vendidos
+            anunciosFiltrados = datosUsuarioActual.anuncios.filter(a => a.estado === 'vendido');
+        
+        } else if (filtro === 'historial') {
+            tabHistorial.classList.add('activo');
+            // Nos quedamos con los eliminados
+            anunciosFiltrados = datosUsuarioActual.anuncios.filter(a => a.estado === 'eliminado');
+        }
+
+        // Llamamos a tu función de siempre, pero pasándole un parámetro extra ("filtro")
+        // para que sepa qué botones tiene que ocultar.
+        pintarMisAnuncios(anunciosFiltrados, filtro);
+    }
+
+    tabPublicados.addEventListener('click', () => filtrarYPintarPestana('publicados'));
+    tabVendidos.addEventListener('click', () => filtrarYPintarPestana('vendidos'));
+    tabHistorial.addEventListener('click', () => filtrarYPintarPestana('historial'));
 });

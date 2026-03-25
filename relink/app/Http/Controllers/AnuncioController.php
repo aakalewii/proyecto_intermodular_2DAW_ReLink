@@ -169,16 +169,23 @@ class AnuncioController extends Controller
         ], 200);
     }
 
-    public function vendido(Request $request, int $idAnuncio)
+    // Método para marcar como vendido
+    public function vendido(Request $request, int $id)
     {
-        $anuncio = $this->anuncioDAO->obtenerAnuncioPorId($idAnuncio);
+        $anuncio = Anuncio::findOrFail($id);
 
-        if ($anuncio == null || $anuncio->estado === AnuncioEstado::ELIMINADO->value) {
+        $usuario = $request->user();
+
+        if ($anuncio->estado === AnuncioEstado::ELIMINADO->value) {
             return response()->json(['message' => 'Anuncio no encontrado'], 404);
         }
 
-        if ($anuncio->user_id !== $request->user()->id) {
+        if ($anuncio->user_id !== $usuario->id) {
             return response()->json(['message' => 'No tienes permiso para acceder a este anuncio'], 403);
+        }
+
+        if ($anuncio->estado === AnuncioEstado::VENDIDO->value) {
+            return response()->json(['message' => 'El anuncio ya estaba marcado como vendido'], 200);
         }
 
         $anuncio->estado = AnuncioEstado::VENDIDO->value;

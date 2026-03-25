@@ -465,3 +465,47 @@ a {
     gap: 20px;
 }
 
+.form-botones {
+    display: flex;
+    flex-direction: row !important;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.formulario-perfil {
+    padding: 0;
+    border: none;
+    max-width: 400px;
+    margin: 0;
+    display: none;
+}
+
+.tabs-anuncios {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+    background-color: #f0f0f0;
+}
+
+/* Esta clase es la que se pone de color cuando la pestaña está seleccionada */
+.tab-btn.activo {
+    background-color: #28a745; /* Tu color verde */
+    color: white;
+}

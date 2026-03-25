@@ -16,7 +16,7 @@ class ProfileController extends Controller
         $userId = $request->user()->id;
 
         $user = User::with(['localidad', 'anuncios' => function ($query) {
-            $query->where('estado', AnuncioEstado::PUBLICADO->value)->with('imagenes');
+            $query->with('imagenes');
         }])->find($userId);
 
         return response()->json([

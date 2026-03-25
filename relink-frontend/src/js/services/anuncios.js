@@ -110,3 +110,26 @@ export async function updateAnuncioCompleto(id, formData) {
     }
     return await response.json();
 }
+
+// Esta función cambia el estado de un anuncio a "VENDIDO".
+// Usamos el método PUT para actualizar el recurso y exigimos estar autenticados (getAuthHeaders)
+// para que el backend valide que somos los dueños del anuncio.
+export async function marcarComoVendido(id) {
+    try {
+        const response = await fetch(`${API_URL}/anuncios/${id}/vendido`, {
+            method: 'PATCH',
+            headers: getAuthHeaders() 
+        });
+
+        if (!response.ok) {
+            // Intentamos capturar el mensaje exacto que nos manda Laravel (ej. "El anuncio ya estaba vendido")
+            const errorData = await response.json(); 
+            throw new Error(errorData.message || 'Error al marcar el anuncio como vendido');
+        }
+
+        return await response.json();
+        
+    } catch (error) {
+        throw error;
+    }
+}
