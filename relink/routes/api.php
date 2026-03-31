@@ -17,7 +17,7 @@ use App\Http\Controllers\LocalidadController;
 use App\Http\Controllers\FiltersController;
 
 use App\Models\User;
-use Illuminate\Http\Request; 
+use Illuminate\Http\Request;
 
 Route::get('/email/verify/{id}/{hash}', function (Request $request) {
     // 1. Buscamos al usuario por el ID que viene en la URL
