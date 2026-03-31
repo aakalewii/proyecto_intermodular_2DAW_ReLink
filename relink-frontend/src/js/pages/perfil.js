@@ -1,7 +1,7 @@
 import { renderNavbar } from '../components/navBar.js';
 import { getMiPerfil, updatePerfil, updateFotoPerfil } from '../services/perfil.js';
 import { getLocalidades } from '../services/ubicaciones.js'; 
-import { deleteAnuncio, marcarComoVendido } from '../services/anuncios.js';
+import { deleteAnuncio, marcarComoVendido, recuperarAnuncio } from '../services/anuncios.js';
 import { forzarCierreSesion, verificarAccesoUsuario } from '../services/auth.js';
 
 
@@ -376,8 +376,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     ${htmlBotonVendido}
                 `;
             } else if (anuncio.estado === 'eliminado') {
-                // Si está eliminado, le ponemos una etiqueta roja (o lo que tú prefieras aquí)
+                // Si está eliminado, le ponemos una etiqueta roja
                 htmlBotones = `
+                    <button class="btn-recuperar" style="color: #28a745; cursor: pointer; background: none; border: none; padding: 0; font-size: 16px; font-weight: bold;">
+                            <i class="fa-solid fa-rotate-left"></i> Recuperar Anuncio
+                    </button>
                     <span style="display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; background: #ffe6e6; color: #cc0000; border: 1px solid #ffb3b3; border-radius: 8px; font-size: 12px; font-weight: 500; margin-left: auto;">
                         <i class="fa-solid fa-trash-can"></i> Eliminado
                     </span>
@@ -413,6 +416,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                         await deleteAnuncio(anuncio.id);
                         
+                        anuncio.estado = 'eliminado';
                         card.remove();
 
                         if (listaAnuncios.children.length === 0) {
@@ -431,6 +435,34 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 }
             });
+            }
+            
+            // --- LÓGICA DEL BOTÓN DE RECUPERAR ---
+            const btnRecuperar = card.querySelector('.btn-recuperar');
+            if (btnRecuperar) {
+                btnRecuperar.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    if (confirm(`¿Quieres volver a publicar el anuncio "${anuncio.titulo}"?`)) {
+                        try {
+                            btnRecuperar.innerHTML = "Recuperando...";
+                            btnRecuperar.disabled = true;
+                            
+                            await recuperarAnuncio(anuncio.id);
+                            
+                            // Cambiamos el estado en memoria y borramos la tarjeta de la pestaña historial
+                            anuncio.estado = 'publicado';
+                            card.remove();
+
+                            if (listaAnuncios.children.length === 0) {
+                                listaAnuncios.innerHTML = `<p class="texto-vacio">No hay anuncios en la pestaña de ${filtro}.</p>`;
+                            }
+                        } catch(error) {
+                            alert("No se pudo recuperar el anuncio: " + error.message);
+                            btnRecuperar.innerHTML = `<i class="fa-solid fa-rotate-left"></i> Recuperar Anuncio`;
+                            btnRecuperar.disabled = false;
+                        }
+                    }
+                });
             }
 
             const btnVendido = card.querySelector('.btn-vendido');

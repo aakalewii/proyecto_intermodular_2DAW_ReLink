@@ -89,6 +89,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::post('/anuncios/{id}', [AnuncioController::class, 'update']);
     Route::delete('/anuncios/{id}', [AnuncioController::class, 'destroy']);
     Route::patch('/anuncios/{idAnuncio}/vendido', [AnuncioController::class, 'vendido']);
+    Route::patch('/anuncios/{id}/recuperar', [AnuncioController::class, 'recuperar']);
 });
 
 Route::middleware(['auth:sanctum', 'admin', 'verified'])->group(function () {

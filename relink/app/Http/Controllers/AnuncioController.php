@@ -195,4 +195,27 @@ class AnuncioController extends Controller
             'message' => 'Anuncio vendido con éxito'
         ], 200);
     }
+
+    // Método para recuperar un anuncio eliminado
+    public function recuperar(Request $request, int $id)
+    {
+        $anuncio = Anuncio::findOrFail($id);
+
+        $usuario = $request->user();
+
+        if ($anuncio->user_id !== $usuario->id) {
+            return response()->json(['message' => 'No tienes permiso para acceder a este anuncio'], 403);
+        }
+
+        if ($anuncio->estado === AnuncioEstado::PUBLICADO->value) {
+            return response()->json(['message' => 'El anuncio ya estaba publicado'], 200);
+        }
+
+        $anuncio->estado = AnuncioEstado::PUBLICADO->value;
+        $anuncio->save();
+
+        return response()->json([
+            'message' => 'Anuncio recuperado con éxito'
+        ], 200);
+    }
 }

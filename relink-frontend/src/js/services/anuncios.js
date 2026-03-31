@@ -133,3 +133,24 @@ export async function marcarComoVendido(id) {
         throw error;
     }
 }
+
+// Método para recuperar un anuncio eliminado
+export async function recuperarAnuncio(id) {
+    try {
+        const response = await fetch(`${API_URL}/anuncios/${id}/recuperar`, {
+            method: 'PATCH',
+            headers: getAuthHeaders() 
+        });
+
+        if (!response.ok) {
+            // Intentamos capturar el mensaje exacto que nos manda Laravel (ej. "No tienes permiso")
+            const errorData = await response.json(); 
+            throw new Error(errorData.message || 'Error al recuperar el anuncio');
+        }
+
+        return await response.json();
+        
+    } catch (error) {
+        throw error;
+    }
+}
