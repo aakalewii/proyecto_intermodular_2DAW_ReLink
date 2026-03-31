@@ -30,7 +30,8 @@ class ProfileController extends Controller
                 'telefono' => $user->telefono,
                 'localidad_id' => $user->localidad_id,
                 'localidad_nombre' => $user->localidad ? $user->localidad->nombre : 'No definida',
-                'anuncios' => $user->anuncios
+                'anuncios' => $user->anuncios,
+                'url' => $user->url,
             ]
         ], 200);
     }
@@ -80,6 +81,27 @@ class ProfileController extends Controller
                 'localidad' => $user->localidad ? $user->localidad->nombre : 'No definida',
                 'anuncios' => $user->anuncios,
             ]
+        ], 200);
+    }
+
+    public function actualizarFoto(Request $request)
+    {
+        // Validamos que nos envíen la url de la foto
+        $request->validate([
+            'url_foto' => ['required', 'string']
+        ]);
+
+        // Sacamos al usuario de la sesión
+        $user = $request->user();
+
+        // Actualizamos SOLO la columna 'url'
+        $user->url = $request->url_foto;
+        $user->save();
+
+        // Devolvemos éxito
+        return response()->json([
+            'message' => 'Foto de perfil actualizada correctamente',
+            'url' => $user->url
         ], 200);
     }
 }

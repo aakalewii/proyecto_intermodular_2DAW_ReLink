@@ -44,3 +44,18 @@ export async function getPerfilUsuario(userId) {
     
     return await response.json();
 }
+
+// Función para actualizar foto de perfil
+export async function updateFotoPerfil(urlFoto) {
+    // Al ser una ruta protegida en Laravel, usamos getAuthHeaders() para el token.
+    // Como vamos a enviar datos, usamos el método PATCH y empaquetamos la URL en el body.
+    const response = await fetch(`${API_URL}/perfil/foto`, { 
+        method: 'PATCH',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ url_foto: urlFoto })
+    });
+    
+    if (!response.ok) throw new Error('No se pudo actualizar la foto de perfil');
+    
+    return await response.json();
+}

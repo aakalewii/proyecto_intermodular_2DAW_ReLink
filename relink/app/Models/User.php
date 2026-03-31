@@ -28,6 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'activo',
         'online',
         'localidad_id',
+        'url',
     ];
 
     // Esta propiedad actúa como un escudo de privacidad. Todo lo que pongamos aquí (como la contraseña o el token) 

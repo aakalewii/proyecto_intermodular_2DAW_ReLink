@@ -37,6 +37,7 @@ class AccessController extends Controller
             'telefono'  => $request->telefono,
             'localidad_id' => $request->localidad_id,
             'rol'       => UserRole::CLIENTE,
+            'url'       => 'perfiles/default.jpg'
         ]);
 
         event(new Registered($user));

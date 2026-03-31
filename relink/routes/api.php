@@ -70,6 +70,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/perfil',  [ProfileController::class, 'mostrarPerfil']);
     Route::put('/perfil', [ProfileController::class, 'editarPerfil']);
 
+    Route::patch('/perfil/foto', [ProfileController::class, 'actualizarFoto']);
+
     Route::get('/conversaciones', [ConversacionController::class, 'index']);
     Route::post('/conversaciones', [ConversacionController::class, 'store']);
     Route::get('/conversaciones/{id}', [ConversacionController::class, 'verConversacion']);

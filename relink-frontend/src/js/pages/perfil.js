@@ -1,5 +1,5 @@
 import { renderNavbar } from '../components/navBar.js';
-import { getMiPerfil, updatePerfil } from '../services/perfil.js';
+import { getMiPerfil, updatePerfil, updateFotoPerfil } from '../services/perfil.js';
 import { getLocalidades } from '../services/ubicaciones.js'; 
 import { deleteAnuncio, marcarComoVendido } from '../services/anuncios.js';
 import { forzarCierreSesion, verificarAccesoUsuario } from '../services/auth.js';
@@ -35,8 +35,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tabPublicados = document.getElementById('tab-publicados');
     const tabVendidos = document.getElementById('tab-vendidos');
     const tabHistorial = document.getElementById('tab-historial');
+    const divFoto = document.getElementById('bloque-foto');
 
     const puedePasar = await verificarAccesoUsuario();
+
+    const btnCambiarFoto = document.getElementById('btn-cambiar-foto');
+    const contenedorFotos = document.getElementById('fotos-default');
+    const btnCancelarFoto = document.getElementById('btn-cancelar-foto');
+
+
+
+    const avataresDisponibles = [
+        'perfiles/default.jpg',
+        'perfiles/elephant.jpg',
+        'perfiles/lion.jpg',
+        'perfiles/panda.jpg',
+        'perfiles/rabbit.jpg',
+        'perfiles/robot.jpg',
+        'perfiles/zebra.jpg'
+    ];
 
     // --- CARGA INICIAL DE LA PÁGINA ---
     if (puedePasar) {
@@ -71,6 +88,59 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // --- LÓGICA DE LOS BOTONES DE INTERFAZ ---
+
+    // LÓGICA PARA CAMBIAR LA FOTO 
+    btnCambiarFoto.addEventListener('click', function() {
+            contenedorFotos.style.display = 'flex';
+            
+            btnCambiarFoto.style.display = 'none';
+            btnCancelarFoto.style.display = 'block';
+
+
+            // Si el contenedor está vacío, inyectamos las imágenes
+            if (contenedorFotos.innerHTML === '') {
+                const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
+                
+                avataresDisponibles.forEach(ruta => {
+                    const img = document.createElement('img');
+                    // Le sumamos la URL base para que se vean en pantalla
+                    img.src = URL_BACKEND_STORAGE + ruta; 
+                    img.style.width = '60px';
+                    img.style.height = '60px';
+                    img.style.cursor = 'pointer';
+                    img.style.borderRadius = '50%';
+                    img.style.border = '2px solid #ccc';
+                    img.style.objectFit = 'cover';
+                    
+                    // Al hacer clic en una, la guardamos
+                    img.addEventListener('click', function() {
+                        guardarFoto(ruta);
+                    });
+                    
+                    contenedorFotos.appendChild(img);
+                });
+            }
+    });
+
+    btnCancelarFoto.addEventListener('click', function() {
+        contenedorFotos.style.display = 'none';
+        btnCambiarFoto.style.display = 'block';
+        btnCancelarFoto.style.display = 'none';
+    });
+
+    // Función para actualizar foto
+    async function guardarFoto(rutaFoto) {
+        try {
+            // Llamamos a la función de services
+            await updateFotoPerfil(rutaFoto);
+            
+            location.reload(); // Recargamos para ver los cambios aplicados
+            
+        } catch (error) {
+            console.error('Error al actualizar la foto:', error);
+            alert('Error al actualizar la foto. Inténtalo de nuevo.');
+        }
+    }
 
     // Evento: Al darle al botón "Editar Perfil"
     document.getElementById('btn-editar').addEventListener('click', async () => {
@@ -193,7 +263,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function pintarDatosLectura(user) {
         document.getElementById('perf-nombre').textContent = user.nombre_completo;
         document.getElementById('perf-email').textContent = user.email;
-        
+
         if (user.telefono !== null) {
             document.getElementById('perf-telefono').textContent = user.telefono;
         } else {
@@ -204,6 +274,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('perf-localidad').textContent = user.localidad_nombre;
         } else {
             document.getElementById('perf-localidad').textContent = "No definida";
+        }
+
+        if (divFoto) {
+            const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
+            
+
+            let rutaFoto = `${URL_BACKEND_STORAGE}${user.url}`;
+
+            // Inyectamos la imagen con estilos para que quede redonda y centrada
+            divFoto.innerHTML = `
+                <div style="text-align: left; margin-bottom: 20px;">
+                    <img src="${rutaFoto}" alt="Foto de perfil de ${user.nombre}" 
+                         style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #eee; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                </div>
+            `;
         }
     }
 
