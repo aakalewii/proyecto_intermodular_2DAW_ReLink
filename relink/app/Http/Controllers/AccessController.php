@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Enums\UserRole;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Http;
-
+use Illuminate\Validation\Rules\Password;
 
 class AccessController extends Controller
 {
@@ -22,20 +22,21 @@ class AccessController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8'],
-            'password_confirmation' => ['required', 'string', 'same:password'],
-            'apellidos' => ['nullable', 'string', 'max:255'],
-            'telefono' => ['nullable', 'string', 'max:255'],
-            'localidad_id' => ['nullable', 'exists:localidades,id'],
+            'password' => [
+            'required', 
+            'string', 
+            'confirmed',
+            Password::min(8)
+                ->mixedCase()   // Mayúsculas y minúsculas
+                ->numbers()     // Al menos un número
+                ->symbols()     // Un símbolo (!@#$%...)
+        ],
         ]);
 
         $user = User::create([
             'name'      => $request->name,
             'email'     => $request->email,
             'password'  => Hash::make($request->password),
-            'apellidos' => $request->apellidos,
-            'telefono'  => $request->telefono,
-            'localidad_id' => $request->localidad_id,
             'rol'       => UserRole::CLIENTE,
             'url'       => 'perfiles/default.jpg'
         ]);

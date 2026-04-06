@@ -15,6 +15,7 @@ use App\Http\Controllers\ProvinciaController;
 use App\Http\Controllers\MunicipioController;
 use App\Http\Controllers\LocalidadController;
 use App\Http\Controllers\FiltersController;
+use App\Http\Middleware\TelephoneMiddleware;
 
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -85,11 +86,11 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/favoritos', [FavoritoController::class, 'index']);
     Route::get('/favoritos/check/{anuncio_id}', [FavoritoController::class, 'checkFavorito']);
 
-    Route::post('/anuncios', [AnuncioController::class, 'store']);
+    Route::post('/anuncios', [AnuncioController::class, 'store'])->middleware(TelephoneMiddleware::class);
     Route::post('/anuncios/{id}', [AnuncioController::class, 'update']);
     Route::delete('/anuncios/{id}', [AnuncioController::class, 'destroy']);
     Route::patch('/anuncios/{idAnuncio}/vendido', [AnuncioController::class, 'vendido']);
-    Route::patch('/anuncios/{id}/recuperar', [AnuncioController::class, 'recuperar']);
+    Route::patch('/anuncios/{id}/recuperar', [AnuncioController::class, 'recuperar'])->middleware(TelephoneMiddleware::class);
 });
 
 Route::middleware(['auth:sanctum', 'admin', 'verified'])->group(function () {

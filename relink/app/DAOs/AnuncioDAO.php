@@ -68,7 +68,7 @@ class AnuncioDAO
 
         if (!$anuncio) return null;
 
-        $anuncio->user = DB::selectOne('SELECT id, name FROM users WHERE id = ?', [$anuncio->user_id]);
+        $anuncio->user = DB::selectOne('SELECT id, name, telefono FROM users WHERE id = ?', [$anuncio->user_id]);
         $anuncio->localidad = DB::selectOne('SELECT id, nombre FROM localidades WHERE id = ?', [$anuncio->localidad_id]);
         $anuncio->imagenes = DB::select('SELECT id, url FROM imagenes_anuncio WHERE anuncio_id = ?', [$id]);
 

@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (respuesta.status === 403) {
-                // Lo mandamos a la pantalla amistosa SIN borrarle el token de su navegador
+                // Lo mandamos a la pantalla de revisar email SIN borrarle el token de su navegador
                 window.location.href = '/email-revisar-bandeja.html';
                 return;
             }
@@ -81,9 +81,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             filtrarYPintarPestana('publicados');
 
         } catch (error) {
-            console.error("Error al cargar perfil:", error);
-            
+            console.error("Error al cargar perfil:", error);  
             forzarCierreSesion(); 
+            return;
         }
     }
 
@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Esta función genera las "tarjetas" (cards) de los anuncios del usuario
-    function pintarMisAnuncios(anuncios) {
+    function pintarMisAnuncios(anuncios, filtro) {
         const listaAnuncios = document.getElementById('mis-anuncios-lista');
         listaAnuncios.innerHTML = ''; 
 

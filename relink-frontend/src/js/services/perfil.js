@@ -28,7 +28,10 @@ export async function updatePerfil(datos) {
         body: JSON.stringify(datos)
     });
     
-    if (!response.ok) throw new Error('Error al actualizar');
+    if (!response.ok){ 
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al actualizar')
+    };
     
     return await response.json();
 }

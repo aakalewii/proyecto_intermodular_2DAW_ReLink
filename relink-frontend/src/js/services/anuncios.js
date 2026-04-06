@@ -50,7 +50,11 @@ export async function createAnuncio(formData) {
         body: formData
     });
 
-        if (!response.ok) throw new Error('Error al crear el anuncio');
+        if (!response.ok){
+            const errorData = await response.json();
+
+            throw new Error( errorData.message || 'Error al crear el anuncio');
+        }
         return await response.json();
 
     } catch (error) {

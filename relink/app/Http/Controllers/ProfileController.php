@@ -46,12 +46,28 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        if (empty($request->telefono)) {
+        
+        // comprobamos si tiene anuncios en estado 'publicado'
+        $tieneAnunciosActivos = $user->anuncios()->where('estado', 'publicado')->exists();
+
+        // Si tiene anuncios activos, le cortamos el paso y le avisamos
+        if ($tieneAnunciosActivos) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No puedes eliminar tu número de teléfono mientras tengas anuncios publicados, ya que los compradores lo necesitan para contactarte.'
+            ], 422);
+        }
+    }
+
         $validated = $request->validate([
         'name' => ['required', 'string', 'max:255'],
         'apellidos' => ['nullable', 'string', 'max:255'],
-        'telefono' => ['nullable', 'string', 'max:255'],
+        'telefono' => ['nullable', 'regex:/^[6][0-9]{8}$/'],
         'localidad_id' => ['nullable', 'exists:localidades,id'],
-    ]);
+        ], [
+            'telefono.regex' => 'El teléfono debe ser un móvil válido de 9 dígitos.'
+        ]);
 
         $user->update($validated);
         return response()->json([

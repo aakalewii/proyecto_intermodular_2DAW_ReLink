@@ -184,8 +184,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                         btnFavorito.disabled = false;
                     }
                 });
+
+                
+                btnContactar.addEventListener('click', () => {
+
+                    const telefonoVendedor = anuncio.user.telefono; 
+
+                    if (!telefonoVendedor) {
+                        alert("Este vendedor no tiene un número de teléfono guardado.");
+                        return;
+                    }
+
+                    let telefonoLimpio = String(telefonoVendedor).replace(/\D/g, '');
+
+                    window.open(`https://wa.me/${telefonoLimpio}`, '_blank');
+                });
             }
-        } // <-- AQUI SE CIERRA EL ELSE DE esMiAnuncio
+        }
 
     } catch (error) { // <-- AQUI EMPIEZA EL CATCH DEL TRY PRINCIPAL (Línea 26)
         console.error("Error al cargar el anuncio:", error);
