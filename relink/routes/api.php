@@ -15,6 +15,7 @@ use App\Http\Controllers\ProvinciaController;
 use App\Http\Controllers\MunicipioController;
 use App\Http\Controllers\LocalidadController;
 use App\Http\Controllers\FiltersController;
+use App\Http\Controllers\AdminController;
 use App\Http\Middleware\TelephoneMiddleware;
 
 use App\Models\User;
@@ -106,4 +107,13 @@ Route::middleware(['auth:sanctum', 'admin', 'verified'])->group(function () {
     Route::apiResource('provincias', ProvinciaController::class)->except(['index']);
     Route::apiResource('municipios', MunicipioController::class)->except(['index']);
     Route::apiResource('localidades', LocalidadController::class)->except(['index']);
+
+    Route::get('/admin/users', [AdminController::class, 'userList']);
+    Route::put('/admin/users/{id}', [AdminController::class, 'updateUser']);
+    Route::get('/admin/stats', [AdminController::class, 'getUserStats']);
+
+    Route::get('/admin/anuncios', [AdminController::class, 'listAnuncios']);
+    Route::get('/admin/anuncios/stats', [AdminController::class, 'getAnuncioStats']);
+    Route::put('/admin/anuncios/{id}/suspender', [AdminController::class, 'suspenderAnuncio']);
+    Route::put('/admin/anuncios/{id}/activar', [AdminController::class, 'activarAnuncio']);
 });

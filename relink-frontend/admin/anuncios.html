@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/src/css/admin/crud.css">
+    <link rel="stylesheet" href="/src/css/components/navBar.css">
+    <title>Admin - Gestión de Anuncios</title>
+</head>
+<body>
+
+    <header id="navbar-container"></header>
+
+    <main>
+        <h1>Gestión de Anuncios</h1>
+
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <h3>Total Anuncios</h3>
+                <p id="stat-total-anuncios">...</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Publicados</h3>
+                <p id="stat-publicados">...</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Suspendidos</h3>
+                <p id="stat-suspendidos">...</p>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Título del Anuncio</th>
+                    <th>Usuario (Dueño)</th>
+                    <th>Email Contacto</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaAnuncios">
+                <tr><td colspan="5" style="text-align: center;">Cargando anuncios...</td></tr>
+            </tbody>
+        </table>
+    </main>
+
+    <script type="module" src="../src/js/components/Navbar.js"></script>
+    <script type="module" src="../src/js/pages/admin/anuncios.js"></script>
+</body>
+</html>

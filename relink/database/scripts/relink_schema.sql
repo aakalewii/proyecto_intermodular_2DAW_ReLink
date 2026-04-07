@@ -88,7 +88,7 @@ ALTER TABLE users
   ADD apellidos VARCHAR(100) NULL,
   ADD telefono VARCHAR(30) NULL,
   ADD rol VARCHAR(20) NOT NULL DEFAULT 'cliente',
-  ADD activo TINYINT(1) NOT NULL DEFAULT 1,
+  ADD estado VARCHAR(20) NOT NULL DEFAULT 'activo',
   ADD url VARCHAR(255) NULL;
 
 -- Añadir timestamps ya que no los añadimos en el primer script

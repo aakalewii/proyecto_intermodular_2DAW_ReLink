@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Enums\UserRole;
+use App\Enums\EstadoCliente;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\Rules\Password;
@@ -88,6 +89,12 @@ class AccessController extends Controller
                 'message' => 'Credenciales inválidas'
             ], 401);
         }
+
+        if ($user->estado === EstadoCliente::BLOQUEADO) {
+        return response()->json([
+            'message' => 'Tu cuenta ha sido suspendida. Por favor, contacta con soporte para más información.'
+        ], 403); // 403 (Forbidden) es el código ideal para accesos denegados
+    }
 
         // Si existe el campo 'activo' y el usuario está inactivo, denegar
         if (isset($user->activo) && $user->activo === 0) {

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Enums\UserRole;
+use App\Enums\EstadoCliente;
 use Laravel\Sanctum\HasApiTokens;
 
 // Esta clase representa a los usuarios de nuestra aplicación
@@ -25,7 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'apellidos',
         'telefono',
         'rol',
-        'activo',
+        'estado',
         'online',
         'localidad_id',
         'url',
@@ -45,6 +46,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return [
             'rol' => UserRole::class,
+            'estado' => EstadoCliente::class,
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/src/css/admin/crud.css">
+    <link rel="stylesheet" href="/src/css/components/navBar.css">
+    <title>Admin - Gestión de Usuarios</title>
+</head>
+<body>
+
+    <header id="navbar-container"></header>
+
+    <main>
+        <h1>Gestión de Usuarios</h1>
+
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <h3>Total Usuarios</h3>
+                <p id="stat-total-usuarios">...</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Clientes</h3>
+                <p id="stat-clientes">...</p> 
+            </div>
+
+            <div class="stat-card">
+                <h3>Administradores</h3>
+                <p id="stat-admins">...</p> 
+            </div>
+
+            <div class="stat-card">
+                <h3>Online</h3>
+                <p id="stat-online">...</p> 
+            </div>
+
+            <div class="stat-card">
+                <h3>Activos</h3>
+                <p id="stat-activos">...</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Bloqueados</h3>
+                <p id="stat-bloqueados">...</p>
+            </div>
+        </div>
+
+        <div id="seccion-editar-usuario" style="display: none;">
+            <h3>Editar Usuario</h3>
+            <form id="form-editar-usuario">
+                <input type="hidden" id="edit-id">
+
+                <div class="form-group">
+                    <input type="text" id="edit-name" placeholder="Nombre" required>
+                    <input type="text" id="edit-apellidos" placeholder="Apellidos">
+                </div>
+
+                <div class="form-group">
+                    <input type="email" id="edit-email" placeholder="Email" required>
+                    <input type="text" id="edit-telefono" placeholder="Teléfono (Ej: 600123456)">
+                </div>
+
+                <div class="form-group">
+                    <select id="edit-rol" required>
+                        <option value="" disabled>Selecciona un rol</option>
+                        <option value="cliente">Cliente</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+
+                    <select id="edit-estado" required>
+                        <option value="" disabled>Selecciona un estado</option>
+                        <option value="activo">Activo</option>
+                        <option value="bloqueado">Bloqueado</option>
+                    </select>
+                </div>
+
+                <button type="submit" id="btn-guardar-usuario">Guardar Cambios</button>
+                <button type="button" id="btnCancelar">Cancelar</button>
+            </form>
+            <div id="edit-error-message" style="display: none;"></div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaUsuarios">
+                <tr><td colspan="5">Cargando usuarios...</td></tr>
+            </tbody>
+        </table>
+    </main>
+
+    <script type="module" src="../src/js/components/Navbar.js"></script>
+    <script type="module" src="../src/js/pages/admin/usuarios.js"></script>
+</body>
+</html>

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\EstadoCliente;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
@@ -22,7 +23,7 @@ class UserSeeder extends Seeder
             'email'    => 'admin@gmail.com',
             'password' => Hash::make('12345678'), 
             'rol'      => UserRole::ADMIN->value, 
-            'activo'   => 1,
+            'estado'   => EstadoCliente::ACTIVO->value,
             'online'   => 0,
             'email_verified_at' => now()
         ]);
@@ -33,7 +34,7 @@ class UserSeeder extends Seeder
             'email'    => 'lenny@gmail.com',
             'password' => Hash::make('12345678'),
             'rol'      => UserRole::CLIENTE->value,
-            'activo'   => 1,
+            'estado'   => EstadoCliente::ACTIVO->value,
             'online'   => 0,
             'email_verified_at' => now()
         ]);
@@ -44,7 +45,7 @@ class UserSeeder extends Seeder
             'email'    => 'alvaro@gmail.com',
             'password' => Hash::make('12345678'),
             'rol'      => UserRole::CLIENTE->value,
-            'activo'   => 1,
+            'estado'   => EstadoCliente::ACTIVO->value,
             'online'   => 0,
             'email_verified_at' => now()
         ]);
