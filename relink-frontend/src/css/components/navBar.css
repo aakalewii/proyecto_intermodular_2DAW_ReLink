@@ -193,3 +193,28 @@
 .navbar-search button:hover {
     color: var(--primary);
 }
+
+.nav-logo-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-logo {
+    display: block;
+    transition: transform 0.2s;
+}
+
+.nav-logo:hover {
+    transform: scale(1.05); /* Un pequeño efecto al pasar el ratón */
+}
+
+.admin-badge {
+    background-color: #ffeb3b;
+    color: #000;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}

@@ -196,3 +196,15 @@ body::before {
 .auth-links a:hover {
     opacity: 0.65;
 }
+
+.auth-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+#main-logo {
+    max-width: 200px; /* Para que no se vea gigante si la imagen original es grande */
+    height: auto;     /* Mantiene la proporción */
+}

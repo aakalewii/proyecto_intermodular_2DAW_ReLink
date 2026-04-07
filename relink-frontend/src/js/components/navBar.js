@@ -23,8 +23,16 @@ export async function renderNavbar() {
             // Comprobamos el rol del usuario para decidir qué botones enseñarle.
             const esAdmin = user.rol === 'admin';
             
-            // Pequeño detalle visual: Si es admin, añadimos la etiqueta (Admin) al lado del logo.
-            let logoHtml = esAdmin ? '<h2>ReLink <span>(Admin)</span></h2>' : '<h2>ReLink</h2>';
+            const logoUrl = '/src/assets/LogoReLink.png';
+
+            const logo = `
+                <div class="nav-logo-container">
+                    <a href="/index.html">
+                        <img src="${logoUrl}" alt="ReLink Logo" class="nav-logo" style="width: 140px; height: auto;">
+                    </a>
+                    ${esAdmin ? '<span class="admin-badge">(Admin)</span>' : ''}
+                </div>
+            `;
             
             let enlacesHtml = '';
 
@@ -51,7 +59,7 @@ export async function renderNavbar() {
             // Inyectamos todo el HTML generado (el logo dinámico y los enlaces correctos) dentro del contenedor.
             navbarContainer.innerHTML = `
                 <nav class="navbar-relink">
-                    ${logoHtml}
+                    ${logo}
                     <div class="nav-menu">
                         ${enlacesHtml}
                         <button id="btnLogout" class="btn-logout">Cerrar Sesión</button>
@@ -93,7 +101,11 @@ export async function renderNavbar() {
         // Solo mostramos opciones públicas: Iniciar Sesión y Registrarse.
         navbarContainer.innerHTML = `
             <nav class="navbar-relink">
-                <h2>ReLink</h2>
+                <div class="nav-logo-container">
+                    <a href="/index.html">
+                        <img src="./src/assets/LogoReLink.png" alt="ReLink Logo" class="nav-logo" style="width: 140px; height: auto;">
+                    </a>
+                </div>
                 <div class="nav-menu">
                     <a href="/login.html" class="nav-link">Iniciar Sesión</a>
                     <a href="/register.html" class="btn-primary-outline">Registrarse</a>
