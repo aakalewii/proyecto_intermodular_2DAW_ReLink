@@ -90,7 +90,7 @@ export async function renderNavbar() {
             });
 
         } catch (error) {
-            // 3. ¡SÚPER IMPORTANTE! Si el token era falso o caducó, misDatos() falla.
+            // Si el token era falso o caducó, misDatos() falla.
             // Borramos esa basura del storage y pintamos la barra de visitante.
             localStorage.removeItem('relink_token');
             window.location.href = '/index.html';

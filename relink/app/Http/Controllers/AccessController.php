@@ -24,8 +24,8 @@ class AccessController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => [
-            'required', 
-            'string', 
+            'required',
+            'string',
             'confirmed',
             Password::min(8)
                 ->mixedCase()   // Mayúsculas y minúsculas
@@ -67,7 +67,7 @@ class AccessController extends Controller
         // Preguntamos a los servidores de Google si el token es real
         // Alvaro: Http::withoutVerifying()->asForm()->post
         // Lenny:  Http::asForm()->post
-        $googleResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+        $googleResponse = Http::withoutVerifying()->asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
         'secret' => env('RECAPTCHA_SECRET_KEY'),
         'response' => $request->recaptcha_token,
         'remoteip' => $request->ip() // Opcional, pero ayuda a Google a detectar fraudes

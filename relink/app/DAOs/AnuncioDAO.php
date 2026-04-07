@@ -35,15 +35,24 @@ class AnuncioDAO
 
     // Este método extrae el listado general de anuncios visibles. Trae absolutamente todos los anuncios públicos.
     // Además, incorpora una subconsulta para inyectar la URL de la primera imagen de cada anuncio.
-    public function obtenerPublicados()
+    public function obtenerPublicados($busqueda = null)
     {
-        return DB::select('SELECT anuncios.*,
-            (SELECT url FROM imagenes_anuncio WHERE anuncio_id = anuncios.id LIMIT 1) as foto_principal
-            FROM anuncios
-            WHERE estado = ?
-        ', [
-        AnuncioEstado::PUBLICADO->value
-        ]);
+        $sql = 'SELECT anuncios.*,
+                    (SELECT url FROM imagenes_anuncio WHERE anuncio_id = anuncios.id LIMIT 1) as foto_principal
+                FROM anuncios
+                WHERE estado = ?';
+
+        $parametros = [
+            \App\Enums\AnuncioEstado::PUBLICADO->value
+        ];
+
+        // Si nos llega una palabra, le añadimos el filtro a la consulta
+        if ($busqueda) {
+            $sql .= ' AND titulo LIKE ?';
+            $parametros[] = '%' . $busqueda . '%';
+        }
+
+        return DB::select($sql, $parametros);
 
     }
 

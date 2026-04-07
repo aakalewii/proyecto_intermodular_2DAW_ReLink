@@ -21,9 +21,12 @@ class AnuncioController extends Controller
     }
 
     // Este método devuelve la lista de anuncios que se van a mostrar en la página principal.
-    public function index()
+    public function index(Request $request)
     {
-        $anuncios = $this->anuncioDAO->obtenerPublicados();
+        // Cogemos lo que el usuario ha escrito en la barra (si no ha escrito nada, será null)
+        $terminoBusqueda = $request->query('buscar');
+
+        $anuncios = $this->anuncioDAO->obtenerPublicados($terminoBusqueda);
         return response()->json($anuncios);
     }
 

@@ -36,14 +36,15 @@ export async function updatePerfil(datos) {
     return await response.json();
 }
 
-// FUNCION NO IMPLEMENTADA TODAVÍA
 // ZONA PÚBLICA (No requiere Token)
 // Esta función se usa cuando un visitante hace clic en un anuncio y quiere ver
 // quién es el vendedor (sus datos públicos y otros anuncios que tenga).
 export async function getPerfilUsuario(userId) {
     const response = await fetch(`${API_URL}/verperfil/${userId}`);
     
-    if (!response.ok) throw new Error('No se pudo cargar el perfil del vendedor');
+    if (!response.ok) {
+        throw new Error('No se pudo cargar el perfil del vendedor');
+    }
     
     return await response.json();
 }

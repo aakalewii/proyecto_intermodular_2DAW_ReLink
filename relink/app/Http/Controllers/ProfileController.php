@@ -47,7 +47,7 @@ class ProfileController extends Controller
         $user = $request->user();
 
         if (empty($request->telefono)) {
-        
+
         // comprobamos si tiene anuncios en estado 'publicado'
         $tieneAnunciosActivos = $user->anuncios()->where('estado', 'publicado')->exists();
 
@@ -82,7 +82,7 @@ class ProfileController extends Controller
     public function verPerfil(int $id)
     {
         $user = User::with(['localidad', 'anuncios' => function ($query) {
-            $query->where('estado', AnuncioEstado::PUBLICADO->value);
+            $query->where('estado', AnuncioEstado::PUBLICADO->value)->with('imagenes');
         }])->find($id);
 
         if (!$user) {

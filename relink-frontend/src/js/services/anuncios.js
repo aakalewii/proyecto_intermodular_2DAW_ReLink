@@ -12,14 +12,19 @@ import { API_URL, getAuthHeaders} from './auth.js';
 // Comprueba si el usuario está logueado leyendo el token. Si lo está, envía el token al backend para que Laravel 
 // pueda filtrar y no mostrarle al usuario sus propios anuncios en la pantalla principal. 
 // Si no hay token, simplemente trae todos los anuncios públicos.
-export async function getAnuncios() {
+export async function getAnuncios(busqueda = '') {
     try {
-
         const headersConfig = { 
             'Accept': 'application/json' 
         };
 
-        const response = await fetch(`${API_URL}/anuncios`, {
+        // Construimos la URL. Si hay búsqueda, le pegamos el ?buscar=...
+        let url = `${API_URL}/anuncios`;
+        if (busqueda && busqueda.trim() !== '') {
+            url += `?buscar=${encodeURIComponent(busqueda)}`;
+        }
+
+        const response = await fetch(url, {
             method: 'GET',
             headers: headersConfig
         });

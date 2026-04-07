@@ -45,7 +45,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('ad-descripcion').textContent = anuncio.descripcion;
         document.getElementById('ad-localidad').textContent = anuncio.localidad ? anuncio.localidad.nombre : 'Ubicación desconocida';
         document.getElementById('ad-fecha').textContent = new Date(anuncio.fecha_publi).toLocaleDateString('es-ES');
-        document.getElementById('link-vendedor').textContent = anuncio.user ? anuncio.user.name : "Usuario Anónimo";
+        // Configuramos el nombre y el enlace al perfil del vendedor
+        const linkVendedor = document.getElementById('link-vendedor');
+        if (anuncio.user) {
+            linkVendedor.textContent = anuncio.user.name;
+            // Le añadimos la ruta hacia su perfil con su ID
+            linkVendedor.href = `/ver-vendedor.html?id=${anuncio.user.id}`;
+        } else {
+            linkVendedor.textContent = "Usuario Anónimo";
+        }
         
         const spanCategoria = document.getElementById('ad-categoria');
         const spanSubcategoria = document.getElementById('ad-subcategoria');
@@ -124,6 +132,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const usuarioActual = await misDatos();
                 if (anuncio.user && usuarioActual.id === anuncio.user.id) {
                     esMiAnuncio = true;
+
+                    // Si es mi anuncio, cambiamos el enlace para que vaya a mi panel privado
+                    document.getElementById('link-vendedor').href = '/perfil.html';
                 }
 
                 if (usuarioActual.rol && String(usuarioActual.rol).toUpperCase() === 'ADMIN') {
