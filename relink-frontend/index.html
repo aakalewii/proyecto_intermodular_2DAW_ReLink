@@ -12,11 +12,75 @@
 
     <header id="navbar-container"></header>
 
-    <main style="padding: 2rem;">
-        <h1>Últimos Anuncios</h1>
-        <div id="lista-anuncios" style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">
-        </div>
-    </main>
+    <div class="layout-container">
+        <aside class="filters-sidebar">
+            <h2><i class="fa-solid fa-sliders"></i> ReLink Swipe</h2>
+            
+            <form id="form-filtros-swipe">
+                <div class="filter-group">
+                    <label>Categoría</label>
+                    <select id="select-categoria">
+                        <option value="">Todas las categorías</option>
+                        </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Subcategoría</label>
+                    <select id="select-subcategoria" disabled>
+                        <option value="">Selecciona categoría primero</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Ubicación (Localidad)</label>
+                    <select id="select-municipio">
+                        <option value="">Toda España</option>
+                        </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Rango de Precio (€)</label>
+                    <div class="price-inputs">
+                        <input type="number" id="precio-min" placeholder="Min">
+                        <input type="number" id="precio-max" placeholder="Max">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-buscar-swipe">
+                    SWIPE <i class="fa-solid fa-bolt"></i>
+                </button>
+            </form>
+        </aside>
+
+        <main class="main-content">
+            <h1 id="titulo-seccion">Últimos Anuncios</h1>
+            <div id="lista-anuncios"></div>
+
+            <div id="contenedor-swipe" style="display: none;">
+                <div class="swipe-card">
+                    <div class="swipe-header">
+                        <img id="swipe-img-principal" src="" class="swipe-img-main">
+                    </div>
+                    
+                    <div class="swipe-right">
+                        <div class="swipe-body">
+                            <h2 id="swipe-titulo"></h2>
+                            <h3 id="swipe-precio"></h3>
+                            <p id="swipe-localidad"></p>
+                            <p id="swipe-descripcion"></p>
+                        </div>
+
+                        <div class="swipe-footer">
+                            <button id="btn-swipe-dislike" class="btn-swipe action-dislike"><i class="fa-solid fa-xmark"></i></button>
+                            <button id="btn-swipe-wa" class="btn-swipe action-wa"><i class="fa-brands fa-whatsapp"></i></button>
+                            <button id="btn-swipe-like" class="btn-swipe action-like"><i class="fa-solid fa-heart"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
 
     <script type="module" src="./src/js/pages/main.js"></script>
 </body>

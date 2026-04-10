@@ -16,6 +16,7 @@ use App\Http\Controllers\MunicipioController;
 use App\Http\Controllers\LocalidadController;
 use App\Http\Controllers\FiltersController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\SwipeController;
 use App\Http\Middleware\TelephoneMiddleware;
 
 use App\Models\User;
@@ -62,6 +63,8 @@ Route::get('/municipios', [MunicipioController::class, 'index']);
 Route::get('/localidades', [LocalidadController::class, 'index']);
 
 Route::get('/anuncios/buscar/{titulo}', [FiltersController::class, 'tituloAnuncio']);
+
+Route::post('/swipe/anuncios', [SwipeController::class, 'verAnunciosSwipe']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [UtilitysController::class, 'misDatos']);

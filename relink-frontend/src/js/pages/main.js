@@ -1,5 +1,10 @@
 import { renderNavbar } from '../components/navBar.js';
 import { getAnuncios } from '../services/anuncios.js';
+import { getAnunciosSwipe } from '../services/swipe.js';
+import { toggleFavorito } from '../services/favoritos.js';
+import { misDatos } from '../services/auth.js';
+import { getCategorias, getSubcategoriasPorCategoria } from '../services/categorias.js'; 
+import { getLocalidades } from '../services/ubicaciones.js';
 
 /*
    PANTALLA: TABLÓN PRINCIPAL (HOME)
@@ -9,16 +14,37 @@ import { getAnuncios } from '../services/anuncios.js';
    mostrarlos en forma de cuadrícula dinámica de tarjetas.
 */
 
-document.addEventListener('DOMContentLoaded', () => {
+// --- VARIABLES GLOBALES ---
+let anunciosPila = [];
+let indiceActual = 0;
+let usuarioLogueado = null;
+const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
+
+document.addEventListener('DOMContentLoaded', async () => {
     // Pintamos el menú superior
-    renderNavbar();
-    
+    renderNavbar();   
     // Inyectamos el buscador básico en la página
     crearBarraBusqueda();
+    // Cargamos los datos de los filtros
+    inicializarFiltros();
+
+    // Identificar al usuario silenciosamente para no mostrarle sus propios anuncios en Swipe
+    const token = localStorage.getItem('relink_token');
+    if (token) {
+        try { 
+            usuarioLogueado = await misDatos(); 
+        }
+         catch (e) { 
+            console.warn("Usuario anónimo."); 
+        }
+    }
 
     // Disparamos la petición a la base de datos para cargar el catálogo
     cargarAnuncios();
     
+    // Escuchador del formulario Swipe
+    const formFiltros = document.getElementById('form-filtros-swipe');
+    if (formFiltros) formFiltros.addEventListener('submit', manejarBusquedaSwipe);
 });
 
 // Función para inyectar la barra de búsqueda
@@ -31,8 +57,8 @@ function crearBarraBusqueda() {
     // Añadidas clases genéricas, bordes redondeados y transiciones a los botones/inputs
     divBuscador.innerHTML = `
         <input type="text" id="input-buscador" placeholder="Buscar anuncios..." style="padding: 10px 15px; width: 60%; max-width: 400px; border: 2px solid #ccc; border-radius: 20px; outline: none; transition: border-color 0.3s;">
-        <button id="btn-buscar" style="padding: 10px 20px; cursor: pointer; border-radius: 20px; border: none; background-color: #000102ff; color: white; transition: background-color 0.3s; font-weight: bold; margin-left: 5px;">Buscar</button>
-        <button id="btn-limpiar" style="padding: 10px 20px; cursor: pointer; display: none; border-radius: 20px; border: 1px solid #ccc; background-color: #f8f9fa; transition: background-color 0.3s; margin-left: 5px;">Limpiar</button>
+        <button id="btn-buscar" style="padding: 10px 20px; cursor: pointer; border-radius: 20px; border: none; background-color: #000102ff; color: white; transition: background-color 0.3s; font-weight: bold; margin-left: 5px;"><i class="fa-solid fa-magnifying-glass"></i></button>
+        <button id="btn-limpiar" style="padding: 10px 20px; cursor: pointer; display: none; border-radius: 20px; border: 1px solid #ccc; background-color: #f8f9fa; transition: background-color 0.3s; margin-left: 5px;"><i class="fa-solid fa-broom"></i></button>
     `;
     
     // Lo insertamos justo antes de la lista de anuncios
@@ -78,7 +104,9 @@ function crearBarraBusqueda() {
 
 async function cargarAnuncios(busqueda = '') {
 
-// Buscamos el contenedor vacío que dejamos preparado en el HTML
+    // Ocultamos la zona Swipe y mostrar el catálogo normal
+    document.getElementById('contenedor-swipe').style.display = 'none';
+    // Buscamos el contenedor vacío que dejamos preparado en el HTML
     const contenedor = document.getElementById('lista-anuncios');
 
     contenedor.innerHTML = '<p>Cargando anuncios...</p>';
@@ -100,8 +128,6 @@ async function cargarAnuncios(busqueda = '') {
             }
             return;
         }
-
-        const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
 
         // RENDERIZADO DEL CATÁLOGO
         // Recorremos el array de anuncios que nos devolvió Laravel
@@ -152,5 +178,170 @@ async function cargarAnuncios(busqueda = '') {
 
     } catch (error) {
         contenedor.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+    }
+}
+
+async function manejarBusquedaSwipe(e) {
+    e.preventDefault();
+
+    const filtros = {
+        categoria_id: document.getElementById('select-categoria').value,
+        subcategoria_id: document.getElementById('select-subcategoria').value,
+        municipio_id: document.getElementById('select-municipio').value,
+        precio_min: document.getElementById('precio-min').value,
+        precio_max: document.getElementById('precio-max').value,
+    };
+
+    try {
+        const datos = await getAnunciosSwipe(filtros);
+        anunciosPila = datos;
+        indiceActual = 0;
+            
+        document.getElementById('lista-anuncios').style.display = 'none';
+        document.getElementById('contenedor-swipe').style.display = 'block';
+        document.getElementById('titulo-seccion').textContent = "Modo Swipe: Encuentra tu match";
+
+        document.getElementById('btn-buscar').style.display = 'none';
+        document.getElementById('input-buscador').style.display = 'none';
+            
+        renderizarCartaSwipe();
+
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+function renderizarCartaSwipe() {
+    const contenedorSwipe = document.getElementById('contenedor-swipe');
+    const divCarta = contenedorSwipe.querySelector('.swipe-card'); 
+    
+    // CASO A: Se acabaron las cartas
+    if (anunciosPila.length === 0 || indiceActual >= anunciosPila.length) {
+        divCarta.style.display = 'none'; 
+        let msgFin = document.getElementById('msg-fin-swipe');
+        if (!msgFin) {
+            msgFin = document.createElement('h3');
+            msgFin.id = 'msg-fin-swipe';
+            msgFin.style = "text-align: center; color: #666; margin-top: 30px;";
+            contenedorSwipe.appendChild(msgFin);
+        }
+        msgFin.textContent = "No hay más anuncios con estos filtros. ¡Prueba otra búsqueda!";
+        msgFin.style.display = 'block';
+        return;
+    }
+
+    // CASO B: Hay cartas
+    divCarta.style.display = 'flex';
+    const msgFin = document.getElementById('msg-fin-swipe');
+    if (msgFin) msgFin.style.display = 'none';
+
+    const anuncio = anunciosPila[indiceActual];
+
+    if (usuarioLogueado && anuncio.user && usuarioLogueado.id === anuncio.user.id) {
+        indiceActual++;
+        return renderizarCartaSwipe();
+    }
+
+    // 1. TEXTOS (Blindados)
+    document.getElementById('swipe-titulo').textContent = anuncio.titulo || 'Sin título';
+    document.getElementById('swipe-precio').textContent = (anuncio.precio || 0) + ' €';
+    document.getElementById('swipe-localidad').textContent = anuncio.ubicacion ? anuncio.ubicacion.nombre : 'España';
+    document.getElementById('swipe-descripcion').textContent = anuncio.descripcion || '';
+
+    // 2. LA IMAGEN PRINCIPAL (Con parche de seguridad)
+    const imgMain = document.getElementById('swipe-img-principal');
+    const imagenes = anuncio.imagenes && anuncio.imagenes.length > 0 ? anuncio.imagenes : [{ url: 'anuncios/default1.jpg' }];
+    
+    // Intentamos cargar la imagen de tu backend
+    imgMain.src = `${URL_BACKEND_STORAGE}${imagenes[0].url}`;
+
+    // 4. BOTONES
+    document.getElementById('btn-swipe-dislike').onclick = () => {
+        indiceActual++;
+        renderizarCartaSwipe(); 
+    };
+
+    document.getElementById('btn-swipe-wa').onclick = () => {
+        const telefonoVendedor = anuncio.user.telefono; 
+            if (!telefonoVendedor) {
+                alert("Este vendedor no tiene un número de teléfono guardado.");
+                return;
+            }
+
+            let telefonoLimpio = String(telefonoVendedor).replace(/\D/g, '');
+
+            window.open(`https://wa.me/${telefonoLimpio}`, '_blank');
+    };
+    
+
+    document.getElementById('btn-swipe-like').onclick = async () => {
+        if (!usuarioLogueado){
+            return alert("¡Inicia sesión para guardar favoritos!");
+        }
+        try {
+            await toggleFavorito(anuncio.id); 
+        } catch (error) {
+            console.error("Fallo al guardar:", error);
+        } finally {
+            indiceActual++;
+            renderizarCartaSwipe(); 
+        }
+    };
+}
+
+async function inicializarFiltros() {
+    const selectCategoria = document.getElementById('select-categoria');
+    const selectSubcategoria = document.getElementById('select-subcategoria');
+    const selectMunicipio = document.getElementById('select-municipio');
+
+    try {
+        // Cargar todas las Categorías
+        const categorias = await getCategorias();
+        categorias.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.id;
+            option.textContent = cat.nombre;
+            selectCategoria.appendChild(option);
+        });
+
+        // Cargar todas las Localidades
+        const localidades = await getLocalidades();
+        localidades.forEach(loc => {
+            const option = document.createElement('option');
+            option.value = loc.id;
+            option.textContent = loc.nombre;
+            selectMunicipio.appendChild(option);
+        });
+
+        // Cargar Subcategorías al cambiar la Categoría
+        selectCategoria.addEventListener('change', async (e) => {
+            const categoriaId = e.target.value;
+            
+            // Limpiamos y bloqueamos por defecto
+            selectSubcategoria.innerHTML = '<option value="">Todas las subcategorías</option>';
+            selectSubcategoria.disabled = true;
+
+            // Si vuelve a la opción vacía, paramos aquí
+            if (!categoriaId) return;
+
+            try {
+                // Buscamos las subcategorías filtradas usando tu servicio
+                const subcategorias = await getSubcategoriasPorCategoria(categoriaId);
+                
+                // Desbloqueamos el select y lo rellenamos
+                selectSubcategoria.disabled = false;
+                subcategorias.forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub.id;
+                    option.textContent = sub.nombre;
+                    selectSubcategoria.appendChild(option);
+                });
+            } catch (errorSub) {
+                console.error("No se pudieron cargar las subcategorías:", errorSub);
+            }
+        });
+
+    } catch (error) {
+        console.error("Error inicializando los selectores:", error);
     }
 }

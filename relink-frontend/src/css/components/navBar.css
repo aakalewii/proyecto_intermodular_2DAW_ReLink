@@ -218,3 +218,16 @@
     font-weight: bold;
     text-transform: uppercase;
 }
+
+/* Aplicamos el sticky al contenedor que el JS rellena */
+#navbar-container {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+}
+
+/* Y nos aseguramos de que la navbar dentro ocupe todo el ancho */
+.navbar-relink {
+    width: 100%;
+}

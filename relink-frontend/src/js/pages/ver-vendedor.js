@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Llamamos a la ruta pública de Laravel (sin token)
         const respuesta = await getPerfilUsuario(vendedorId);
         const vendedor = respuesta.data;
+
+        console.log(vendedor);
         
         // ---  PINTAMOS LOS DATOS PERSONALES DEL VENDEDOR ---
         

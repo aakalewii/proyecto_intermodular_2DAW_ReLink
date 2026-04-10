@@ -96,6 +96,7 @@ class ProfileController extends Controller
                 'telefono' => $user->telefono,
                 'localidad' => $user->localidad ? $user->localidad->nombre : 'No definida',
                 'anuncios' => $user->anuncios,
+                'url' => $user->url,
             ]
         ], 200);
     }

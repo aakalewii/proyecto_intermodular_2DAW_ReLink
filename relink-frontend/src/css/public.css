@@ -509,3 +509,179 @@ a {
     background-color: #28a745; /* Tu color verde */
     color: white;
 }
+
+/* Contenedor principal con Flexbox */
+.layout-container {
+    display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+    gap: 2rem;
+    padding: 2rem;
+    align-items: flex-start;
+}
+
+/* --- Sidebar de Filtros --- */
+.filters-sidebar {
+    width: 300px;
+    background: var(--surface); /* Blanco */
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    position: sticky; /* Se queda fijo al hacer scroll */
+    top: 100px; /* Ajusta esto según el alto de tu Navbar */
+}
+
+.filters-sidebar h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Grupos de filtros */
+.filter-group {
+    margin-bottom: 1.2rem;
+}
+
+.filter-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.filter-group select, 
+.filter-group input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.filter-group select:focus, 
+.filter-group input:focus {
+    border-color: var(--accent);
+}
+
+/* Inputs de precio en línea */
+.price-inputs {
+    display: flex;
+    gap: 10px;
+}
+
+/* Botón de acción */
+.btn-buscar-swipe {
+    width: 100%;
+    background: var(--accent); /* Tu verde */
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+    margin-top: 10px;
+}
+
+.btn-buscar-swipe:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+/* --- Contenido Principal --- */
+.main-content {
+    flex-grow: 1; /* Ocupa el resto del espacio */
+}
+
+#lista-anuncios {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+/* --- Responsive (Para móviles) --- */
+@media (max-width: 900px) {
+    .layout-container {
+        flex-direction: column;
+    }
+    .filters-sidebar {
+        width: 100%;
+        position: relative;
+        top: 0;
+    }
+}
+
+.swipe-card {
+    display: flex;
+    flex-direction: row;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    overflow: hidden;
+    max-width: 900px;
+    min-height: 500px;
+}
+
+/* La imagen ocupa la mitad izquierda */
+.swipe-header {
+    flex: 0 0 50%;
+    background: #f0f0f0;
+}
+
+.swipe-img-main {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.swipe-right {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+.swipe-body {
+    padding: 30px 40px 10px 40px;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.swipe-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding: 20px 40px 30px 40px;
+    background: #fff;
+    border-top: 1px solid #f2f2f2;
+    width: 100%;
+}
+
+.btn-swipe {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    background: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.btn-swipe:hover { transform: scale(1.1); }
+.action-dislike { color: #ff4b4b; }
+.action-wa { color: #25D366; }
+.action-like { color: #2d9b6f; }
