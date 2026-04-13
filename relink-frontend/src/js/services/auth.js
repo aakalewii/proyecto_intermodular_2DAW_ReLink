@@ -1,5 +1,7 @@
 // Esta constante define la ruta base de nuestra API en Laravel.
-export const API_URL = 'http://localhost:5500/api';
+export const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:5500/api' 
+    : 'http://13.217.196.225/api';
 
 // Esta función auxiliar construye las cabeceras (headers) HTTP necesarias para las peticiones seguras.
 export function getAuthHeaders() {
