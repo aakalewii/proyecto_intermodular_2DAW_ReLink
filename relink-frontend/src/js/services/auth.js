@@ -3,6 +3,10 @@ export const API_URL = window.location.hostname === 'localhost' || window.locati
     ? 'http://localhost:5500/api' 
     : 'http://13.217.196.225/api';
 
+export const STORAGE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8000/storage/'      // Tu storage en local (ajusta el puerto si es 5500)
+    : 'http://13.217.196.225/storage/';
+
 // Esta función auxiliar construye las cabeceras (headers) HTTP necesarias para las peticiones seguras.
 export function getAuthHeaders() {
     const token = localStorage.getItem('relink_token');

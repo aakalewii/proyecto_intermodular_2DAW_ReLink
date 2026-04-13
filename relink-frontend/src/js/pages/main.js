@@ -5,6 +5,7 @@ import { toggleFavorito } from '../services/favoritos.js';
 import { misDatos } from '../services/auth.js';
 import { getCategorias, getSubcategoriasPorCategoria } from '../services/categorias.js'; 
 import { getLocalidades } from '../services/ubicaciones.js';
+import { STORAGE_URL } from '../services/auth.js';
 
 /*
    PANTALLA: TABLÓN PRINCIPAL (HOME)
@@ -18,7 +19,7 @@ import { getLocalidades } from '../services/ubicaciones.js';
 let anunciosPila = [];
 let indiceActual = 0;
 let usuarioLogueado = null;
-const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
+const URL_BACKEND_STORAGE = STORAGE_URL;
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Pintamos el menú superior
