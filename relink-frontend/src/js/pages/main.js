@@ -19,7 +19,8 @@ import { STORAGE_URL } from '../services/auth.js';
 let anunciosPila = [];
 let indiceActual = 0;
 let usuarioLogueado = null;
-const URL_BACKEND_STORAGE = STORAGE_URL;
+//const URL_BACKEND_STORAGE = STORAGE_URL;
+const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Pintamos el menú superior
