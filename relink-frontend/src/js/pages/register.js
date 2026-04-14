@@ -8,6 +8,8 @@ import { registerUser } from '../services/auth.js';
 */
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    localStorage.removeItem('relink_token');
     
     // CAPTURAMOS ELEMENTOS DEL DOM
     const registerForm = document.getElementById('registerForm');

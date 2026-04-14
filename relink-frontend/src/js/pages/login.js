@@ -9,6 +9,8 @@ import { loginUser } from '../services/auth.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     
+    localStorage.removeItem('relink_token');
+
     // CAPTURAMOS ELEMENTOS DEL DOM
     const loginForm = document.getElementById('loginForm');
     const errorMessageDiv = document.getElementById('errorMessage');
