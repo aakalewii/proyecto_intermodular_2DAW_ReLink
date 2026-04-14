@@ -2,7 +2,7 @@ import { renderNavbar } from '../components/navBar.js';
 import { getMiPerfil, updatePerfil, updateFotoPerfil } from '../services/perfil.js';
 import { getLocalidades } from '../services/ubicaciones.js'; 
 import { deleteAnuncio, marcarComoVendido, recuperarAnuncio, getMisDescartes, quitarNoMeInteresa } from '../services/anuncios.js';
-import { forzarCierreSesion, verificarAccesoUsuario } from '../services/auth.js';
+import { forzarCierreSesion, verificarAccesoUsuario, STORAGE_URL } from '../services/auth.js';
 
 
 /*
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Si el contenedor está vacío, inyectamos las imágenes
             if (contenedorFotos.innerHTML === '') {
-                const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
+                const URL_BACKEND_STORAGE = STORAGE_URL;
                 
                 avataresDisponibles.forEach(ruta => {
                     const img = document.createElement('img');
@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (divFoto) {
-            const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
+            const URL_BACKEND_STORAGE = STORAGE_URL;
             
 
             let rutaFoto = `${URL_BACKEND_STORAGE}${user.url}`;
@@ -304,7 +304,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Recuperamos la ruta base de las imágenes igual que en el index
-        const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
+        const URL_BACKEND_STORAGE = STORAGE_URL;
 
         anuncios.forEach(anuncio => {
             const card = document.createElement('div');
@@ -526,7 +526,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             // Recuperamos la ruta base de las imágenes igual que en el index
-            const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
+            const URL_BACKEND_STORAGE = STORAGE_URL;
 
             descartes.forEach(anuncio => {
                 const card = document.createElement('div');
