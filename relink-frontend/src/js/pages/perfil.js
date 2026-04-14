@@ -1,8 +1,8 @@
 import { renderNavbar } from '../components/navBar.js';
 import { getMiPerfil, updatePerfil, updateFotoPerfil } from '../services/perfil.js';
 import { getLocalidades } from '../services/ubicaciones.js'; 
-import { deleteAnuncio, marcarComoVendido, recuperarAnuncio, getMisDescartes, quitarNoMeInteresa } from '../services/anuncios.js';
-import { forzarCierreSesion, verificarAccesoUsuario, STORAGE_URL } from '../services/auth.js';
+import { deleteAnuncio, marcarComoVendido, recuperarAnuncio } from '../services/anuncios.js';
+import { forzarCierreSesion, verificarAccesoUsuario } from '../services/auth.js';
 
 
 /*
@@ -35,7 +35,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tabPublicados = document.getElementById('tab-publicados');
     const tabVendidos = document.getElementById('tab-vendidos');
     const tabHistorial = document.getElementById('tab-historial');
-    const tabOcultos = document.getElementById('tab-ocultos')
     const divFoto = document.getElementById('bloque-foto');
 
     const puedePasar = await verificarAccesoUsuario();
@@ -100,7 +99,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Si el contenedor está vacío, inyectamos las imágenes
             if (contenedorFotos.innerHTML === '') {
-                const URL_BACKEND_STORAGE = STORAGE_URL;
+                const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
                 
                 avataresDisponibles.forEach(ruta => {
                     const img = document.createElement('img');
@@ -278,7 +277,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (divFoto) {
-            const URL_BACKEND_STORAGE = STORAGE_URL;
+            const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
             
 
             let rutaFoto = `${URL_BACKEND_STORAGE}${user.url}`;
@@ -304,7 +303,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Recuperamos la ruta base de las imágenes igual que en el index
-        const URL_BACKEND_STORAGE = STORAGE_URL;
+        const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
 
         anuncios.forEach(anuncio => {
             const card = document.createElement('div');
@@ -510,123 +509,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // --- FUNCIÓN PARA PINTAR LOS DESCARTES ---
-    async function cargarYPintarDescartes() {
-        const listaAnuncios = document.getElementById('mis-anuncios-lista');
-        listaAnuncios.innerHTML = '<p>Cargando anuncios ocultos...</p>';
-
-        try {
-            // Pedimos los datos a la base de datos
-            const descartes = await getMisDescartes();
-            listaAnuncios.innerHTML = ''; 
-
-            if (descartes.length === 0) {
-                listaAnuncios.innerHTML = '<p>No tienes ningún anuncio oculto.</p>';
-                return; 
-            }
-
-            // Recuperamos la ruta base de las imágenes igual que en el index
-            const URL_BACKEND_STORAGE = STORAGE_URL;
-
-            descartes.forEach(anuncio => {
-                const card = document.createElement('div');
-                
-                // Usamos la misma clase en línea
-                card.className = 'anuncio-card';
-
-                // Le damos un fondo para diferenciarlo de los demas anuncios
-                card.style = `border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; flex-direction: column; justify-content: space-between; background-color: #fffafaa6;`;
-
-                // Lógica de fallback de la imagen
-                let rutaImagen;
-                if (anuncio.imagenes && anuncio.imagenes.length > 0) {
-                    rutaImagen = `${URL_BACKEND_STORAGE}${anuncio.imagenes[0].url}`;
-                } else {
-                    rutaImagen = `${URL_BACKEND_STORAGE}anuncios/default1.jpg`;
-                }
-
-                // Fallback fecha
-                const fecha = anuncio.fecha_publi ? anuncio.fecha_publi : anuncio.created_at;
-
-                // Preparamos los botones (Botón de restaurar a la izquierda, etiqueta roja a la derecha)
-                let htmlBotones = `
-                    <button class="btn-restaurar" style="color: #0056b3; cursor: pointer; background: none; border: none; padding: 0; font-size: 15px; font-weight: bold;">
-                        <i class="fa-solid fa-eye"></i> Restaurar anuncio
-                    </button>
-
-                    <span style="display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; background: #ffe6e6; color: #cc0000; border: 1px solid #ffb3b3; border-radius: 8px; font-size: 12px; font-weight: 500; margin-left: auto;">
-                        <i class="fa-solid fa-eye-slash"></i> Oculto
-                    </span>
-                `;
-
-                // Inyectamos el diseño
-                card.innerHTML = `
-                    <div style="cursor: pointer;" onclick="window.location.href='/ver-anuncio.html?id=${anuncio.id}'">
-                        <div>
-                            <img src="${rutaImagen}" alt="${anuncio.titulo}" style="max-width: 100%; border-radius: 4px; opacity: 0.8;"/>
-                        </div>
-                        <h3 style="margin: 10px 0 5px 0;">${anuncio.titulo}</h3>
-                        <p style="margin: 0 0 5px 0;"><strong>${anuncio.precio} €</strong></p>
-                        <small>Publicado el: ${new Date(fecha).toLocaleDateString()}</small>
-                    </div>
-                    
-                    <div class="contenedor-acciones" style="display: flex; gap: 15px; align-items: center; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
-                        ${htmlBotones}
-                    </div>
-                `;
-                
-                // --- LÓGICA DEL BOTÓN DE RESTAURAR ANUNCIO ---
-                const btnRestaurar = card.querySelector('.btn-restaurar'); 
-                
-                if (btnRestaurar) {
-                    btnRestaurar.addEventListener('click', async (e) => {
-                        e.stopPropagation();
-
-                        if (confirm(`¿Quieres volver a mostrar el anuncio "${anuncio.titulo}" en tu tablón principal?`)) {
-                            try {
-                                btnRestaurar.innerHTML = "Restaurando...";
-                                btnRestaurar.disabled = true;
-
-                                // Llamada al backend
-                                await quitarNoMeInteresa(anuncio.id);
-                                
-                                // Lo quitamos del DOM
-                                card.remove();
-
-                                // Si era el último, mostramos el mensaje de vacío
-                                if (listaAnuncios.children.length === 0) {
-                                    listaAnuncios.innerHTML = '<p>No tienes ningún anuncio oculto.</p>';
-                                }
-
-                            } catch (error) {
-                                if (error.message.includes('401')) {
-                                    forzarCierreSesion();
-                                    return;
-                                }
-
-                                alert("No se pudo restaurar el anuncio: " + error.message);
-                                btnRestaurar.innerHTML = `<i class="fa-solid fa-eye"></i> Restaurar anuncio`;
-                                btnRestaurar.disabled = false;
-                            }
-                        }
-                    });
-                }
-
-                listaAnuncios.appendChild(card);
-            });
-
-        } catch (error) {
-            listaAnuncios.innerHTML = '<p style="color: red;">Error al cargar los anuncios ocultos: ' + error.message + '</p>';
-        }
-    }
-
     // Función que filtra el array de anuncios y lo manda a la funcionde pintar
     function filtrarYPintarPestana(filtro) {
         // Le quitamos el color verde a todos los botones
         tabPublicados.classList.remove('activo');
         tabVendidos.classList.remove('activo');
         tabHistorial.classList.remove('activo');
-        if (tabOcultos) tabOcultos.classList.remove('activo');
 
         let anunciosFiltrados = [];
 
@@ -645,10 +533,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             tabHistorial.classList.add('activo');
             // Nos quedamos con los eliminados
             anunciosFiltrados = datosUsuarioActual.anuncios.filter(a => a.estado === 'eliminado');
-        } else if (filtro === 'ocultos') {
-            if (tabOcultos) tabOcultos.classList.add('activo');
-            cargarYPintarDescartes();
-            return; 
         }
 
         // Llamamos a tu función de siempre, pero pasándole un parámetro extra ("filtro")
@@ -659,5 +543,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     tabPublicados.addEventListener('click', () => filtrarYPintarPestana('publicados'));
     tabVendidos.addEventListener('click', () => filtrarYPintarPestana('vendidos'));
     tabHistorial.addEventListener('click', () => filtrarYPintarPestana('historial'));
-    if (tabOcultos) tabOcultos.addEventListener('click', () => filtrarYPintarPestana('ocultos'));
 });
