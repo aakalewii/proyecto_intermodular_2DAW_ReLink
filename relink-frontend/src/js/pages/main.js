@@ -1,5 +1,5 @@
 import { renderNavbar } from '../components/navBar.js';
-import { getAnuncios } from '../services/anuncios.js';
+import { getAnuncios, marcarNoMeInteresa } from '../services/anuncios.js';
 import { getAnunciosSwipe } from '../services/swipe.js';
 import { toggleFavorito } from '../services/favoritos.js';
 import { misDatos } from '../services/auth.js';
@@ -244,20 +244,93 @@ function renderizarCartaSwipe() {
         return renderizarCartaSwipe();
     }
 
-    // 1. TEXTOS (Blindados)
+    // TEXTOS (Blindados)
     document.getElementById('swipe-titulo').textContent = anuncio.titulo || 'Sin título';
     document.getElementById('swipe-precio').textContent = (anuncio.precio || 0) + ' €';
     document.getElementById('swipe-localidad').textContent = anuncio.ubicacion ? anuncio.ubicacion.nombre : 'España';
     document.getElementById('swipe-descripcion').textContent = anuncio.descripcion || '';
 
-    // 2. LA IMAGEN PRINCIPAL (Con parche de seguridad)
+    // LA IMAGEN PRINCIPAL Y GALERÍA
     const imgMain = document.getElementById('swipe-img-principal');
+    const cajaImagenSwipe = imgMain.parentElement;
+
+    cajaImagenSwipe.style.display = 'flex';
+    cajaImagenSwipe.style.flexDirection = 'column';
+    cajaImagenSwipe.style.alignItems = 'center';
+
     const imagenes = anuncio.imagenes && anuncio.imagenes.length > 0 ? anuncio.imagenes : [{ url: 'anuncios/default1.jpg' }];
     
-    // Intentamos cargar la imagen de tu backend
+    // Cargamos la imagen principal del anuncio actual
     imgMain.src = `${URL_BACKEND_STORAGE}${imagenes[0].url}`;
 
-    // 4. BOTONES
+    // Buscamos o creamos un contenedor para las miniaturas
+    let galeriaSwipe = document.getElementById('swipe-galeria-miniaturas');
+    if (!galeriaSwipe) {
+        galeriaSwipe = document.createElement('div');
+        galeriaSwipe.id = 'swipe-galeria-miniaturas';
+        
+        // Forzamos orden horizontal para las miniaturas y ancho completo
+        galeriaSwipe.style.cssText = 'display: flex; flex-direction: row; justify-content: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; width: 100%;';
+        
+        // Lo metemos dentro de la caja padre, justo debajo de la imagen
+        cajaImagenSwipe.appendChild(galeriaSwipe); 
+    }
+
+    // Vaciamos las miniaturas del anuncio anterior
+    galeriaSwipe.innerHTML = '';
+
+    // Si el anuncio tiene más de 1 foto, creamos las miniaturas
+    if (imagenes.length > 1) {
+        galeriaSwipe.style.display = 'flex';
+
+        imagenes.forEach((imagen, index) => {
+            const imgMini = document.createElement('img');
+            imgMini.src = `${URL_BACKEND_STORAGE}${imagen.url}`;
+            
+            imgMini.style.width = '50px';
+            imgMini.style.height = '50px';
+            imgMini.style.objectFit = 'cover';
+            imgMini.style.borderRadius = '8px';
+            imgMini.style.cursor = 'pointer';
+            imgMini.style.transition = 'all 0.2s ease';
+            imgMini.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+            
+            // Marcamos la primera como activa visualmente
+            if (index === 0) {
+                imgMini.style.border = '2px solid #007bff';
+                imgMini.style.transform = 'scale(1.05)';
+                imgMini.classList.add('activa');
+            } else {
+                imgMini.style.border = '2px solid transparent';
+                imgMini.style.transform = 'scale(1)';
+            }
+
+            // Evento para cambiar la foto al hacer clic
+            imgMini.addEventListener('click', (e) => {
+                e.stopPropagation();
+                
+                imgMain.src = `${URL_BACKEND_STORAGE}${imagen.url}`;
+                
+                // Reseteamos todas las miniaturas
+                galeriaSwipe.querySelectorAll('img').forEach(m => {
+                    m.style.border = '2px solid transparent';
+                    m.style.transform = 'scale(1)';
+                    m.classList.remove('activa');
+                });
+                
+                // Resaltamos la clickeada
+                imgMini.style.border = '2px solid #007bff';
+                imgMini.style.transform = 'scale(1.05)';
+                imgMini.classList.add('activa');
+            });
+
+            galeriaSwipe.appendChild(imgMini);
+        });
+    } else {
+        galeriaSwipe.style.display = 'none';
+    }
+
+    // BOTONES
     document.getElementById('btn-swipe-dislike').onclick = () => {
         indiceActual++;
         renderizarCartaSwipe(); 
@@ -287,6 +360,54 @@ function renderizarCartaSwipe() {
         } finally {
             indiceActual++;
             renderizarCartaSwipe(); 
+        }
+    };
+    // Buscamos la caja donde están los otros botones
+    const contenedorBotones = document.getElementById('btn-swipe-like').parentElement;
+
+    let btnOjoSwipe = document.getElementById('btn-ojo-swipe');
+    if (!btnOjoSwipe) {
+        btnOjoSwipe = document.createElement('button');
+        btnOjoSwipe.id = 'btn-ojo-swipe';
+        btnOjoSwipe.title = 'Ocultar anuncio';
+        btnOjoSwipe.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+        
+        // Estilos
+        btnOjoSwipe.style.cssText = 'background-color: #fff0f0; color: #cc0000; border: 1px solid #ffcccc; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.3s; font-size: 1.2rem; margin: 0 5px;';
+        
+        // Hover
+        btnOjoSwipe.addEventListener('mouseenter', () => btnOjoSwipe.style.background = '#ffcccc'); 
+        btnOjoSwipe.addEventListener('mouseleave', () => btnOjoSwipe.style.background = '#fff0f0');
+
+        // Lo añadimos al lado de los otros botones
+        contenedorBotones.appendChild(btnOjoSwipe);
+    }
+
+    // Le damos vida al botón
+    btnOjoSwipe.onclick = async (e) => {
+        e.stopPropagation();
+        
+        if (!usuarioLogueado) {
+            alert("Debes iniciar sesión para ocultar anuncios.");
+            return;
+        }
+
+        if (confirm("¿Ocultar este anuncio? Se guardará en tus descartes y no lo volverás a ver.")) {
+            try {
+                btnOjoSwipe.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+                btnOjoSwipe.disabled = true;
+
+                await marcarNoMeInteresa(anuncio.id);
+
+                indiceActual++;
+                renderizarCartaSwipe();
+
+            } catch (error) {
+                alert("Error al ocultar: " + error.message);
+            } finally {
+                btnOjoSwipe.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+                btnOjoSwipe.disabled = false;
+            }
         }
     };
 }

@@ -35,7 +35,7 @@ class AnuncioDAO
 
     // Este método extrae el listado general de anuncios visibles. Trae absolutamente todos los anuncios públicos.
     // Además, incorpora una subconsulta para inyectar la URL de la primera imagen de cada anuncio.
-    public function obtenerPublicados($busqueda = null)
+    public function obtenerPublicados($busqueda = null, $userId = null)
     {
         $sql = 'SELECT anuncios.*,
                     (SELECT url FROM imagenes_anuncio WHERE anuncio_id = anuncios.id LIMIT 1) as foto_principal
@@ -50,6 +50,12 @@ class AnuncioDAO
         if ($busqueda) {
             $sql .= ' AND titulo LIKE ?';
             $parametros[] = '%' . $busqueda . '%';
+        }
+
+        // Si estás logueado, excluir los anuncios que marcaste como "No me interesa"
+        if ($userId) {
+            $sql .= ' AND anuncios.id NOT IN (SELECT anuncio_id FROM dislikes WHERE user_id = ?)';
+            $parametros[] = $userId;
         }
 
         return DB::select($sql, $parametros);

@@ -26,7 +26,10 @@ class AnuncioController extends Controller
         // Cogemos lo que el usuario ha escrito en la barra (si no ha escrito nada, será null)
         $terminoBusqueda = $request->query('buscar');
 
-        $anuncios = $this->anuncioDAO->obtenerPublicados($terminoBusqueda);
+        $user = auth('sanctum')->user();
+        $userId = $user ? $user->id : null;
+
+        $anuncios = $this->anuncioDAO->obtenerPublicados($terminoBusqueda,$userId);
         return response()->json($anuncios);
     }
 
@@ -220,5 +223,45 @@ class AnuncioController extends Controller
         return response()->json([
             'message' => 'Anuncio recuperado con éxito'
         ], 200);
+    }
+
+    // Método para ocultar un anuncio
+    public function dislike(Request $request, int $id)
+    {
+        $user = $request->user();
+
+        // Comprobamos si el anuncio ya estaba en sus dislikes
+        $existe = DB::table('dislikes')
+            ->where('user_id', $user->id)
+            ->where('anuncio_id', $id)
+            ->first();
+
+        if (!$existe) {
+            DB::table('dislikes')->insert([
+                'user_id' => $user->id,
+                'anuncio_id' => $id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        return response()->json(['message' => 'Anuncio ocultado con éxito'], 200);
+    }
+
+    // Obtener los anuncios que he ocultado
+    public function misDescartes(Request $request) {
+        $user = $request->user();
+
+        $anuncios = Anuncio::whereIn('id', function($query) use ($user) {
+            $query->select('anuncio_id')->from('dislikes')->where('user_id', $user->id);
+        })->with('imagenes', 'user', 'ubicacion')->get();
+
+        return response()->json($anuncios);
+    }
+
+    // Quitar un anuncio de la lista de ocultos
+    public function quitarDislike(Request $request, int $id) {
+        DB::table('dislikes')->where('user_id', $request->user()->id)->where('anuncio_id', $id)->delete();
+        return response()->json(['message' => 'Anuncio restaurado']);
     }
 }

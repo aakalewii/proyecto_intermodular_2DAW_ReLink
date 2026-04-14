@@ -1,5 +1,5 @@
 import { renderNavbar } from '../components/navBar.js';
-import { getAnuncioById } from '../services/anuncios.js';
+import { getAnuncioById, marcarNoMeInteresa } from '../services/anuncios.js';
 import { toggleFavorito, checkIfFavorito } from '../services/favoritos.js'; 
 import { misDatos } from '../services/auth.js';
 
@@ -121,6 +121,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // --- LÓGICA DE BOTONES ---
         const btnContactar = document.getElementById('btn-contactar');
         const btnFavorito = document.getElementById('btn-favorito');
+        const btnOcultar = document.getElementById('btn-no-interesa');
         const token = localStorage.getItem('relink_token');
         
         let esMiAnuncio = false;
@@ -147,10 +148,39 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (esMiAnuncio || esAdmin) {
             // Si es mi anuncio, ocultar los botones
-            btnContactar.style.display = 'none';
-            btnFavorito.style.display = 'none';
+            if (btnContactar) btnContactar.style.display = 'none';
+            if (btnFavorito) btnFavorito.style.display = 'none';
+            if (btnOcultar) btnOcultar.style.display = 'none';
 
         } else {
+            
+            // --- LÓGICA DEL BOTÓN OCULTAR ---
+            if (btnOcultar) {
+                btnOcultar.addEventListener('click', async () => {
+                    if (!token) {
+                        alert("Debes iniciar sesión para ocultar anuncios.");
+                        return;
+                    }
+
+                    if (confirm("¿Seguro que quieres ocultar este anuncio? No te volverá a aparecer en el modo Swipe ni en tu tablón principal.")) {
+                        try {
+                            btnOcultar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Ocultando...';
+                            btnOcultar.disabled = true;
+
+                            await marcarNoMeInteresa(anuncioId); 
+                            
+                            alert("Anuncio ocultado correctamente.");
+                            window.location.href = '/index.html'; 
+
+                        } catch (error) {
+                            alert("No se pudo ocultar: " + error.message);
+                            btnOcultar.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Ocultar este anuncio';
+                            btnOcultar.disabled = false;
+                        }
+                    }
+                });
+            }
+
             // Si el usuario es anónimo, el botón funciona como un acceso directo al Login
             if (!token) {
                 btnFavorito.innerHTML = '<i class="fa-regular fa-heart"></i> Inicia sesión para guardar';
@@ -159,7 +189,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
             } 
             else {
-                // SI ESTÁ LOGUEADO:
+                // Siesta logueado
                 try {
                     const respuesta = await checkIfFavorito(anuncioId);
 
@@ -213,7 +243,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-    } catch (error) { // <-- AQUI EMPIEZA EL CATCH DEL TRY PRINCIPAL (Línea 26)
+    } catch (error) {
         console.error("Error al cargar el anuncio:", error);
         document.getElementById('mensaje-estado').innerHTML = '<span style="color: red;">El anuncio no existe o ha sido borrado.</span>';
     }
