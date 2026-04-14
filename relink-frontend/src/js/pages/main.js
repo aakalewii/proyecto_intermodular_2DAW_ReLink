@@ -1,5 +1,5 @@
 import { renderNavbar } from '../components/navBar.js';
-import { getAnuncios } from '../services/anuncios.js';
+import { getAnuncios, marcarNoMeInteresa } from '../services/anuncios.js';
 import { getAnunciosSwipe } from '../services/swipe.js';
 import { toggleFavorito } from '../services/favoritos.js';
 import { misDatos } from '../services/auth.js';
@@ -254,7 +254,7 @@ function renderizarCartaSwipe() {
     const imgMain = document.getElementById('swipe-img-principal');
     const imagenes = anuncio.imagenes && anuncio.imagenes.length > 0 ? anuncio.imagenes : [{ url: 'anuncios/default1.jpg' }];
     
-    // Intentamos cargar la imagen de tu backend
+    // Intentamos cargar la imagen del backend
     imgMain.src = `${URL_BACKEND_STORAGE}${imagenes[0].url}`;
 
     // 4. BOTONES
@@ -287,6 +287,54 @@ function renderizarCartaSwipe() {
         } finally {
             indiceActual++;
             renderizarCartaSwipe(); 
+        }
+    };
+    // Buscamos la caja donde están los otros botones
+    const contenedorBotones = document.getElementById('btn-swipe-like').parentElement;
+
+    let btnOjoSwipe = document.getElementById('btn-ojo-swipe');
+    if (!btnOjoSwipe) {
+        btnOjoSwipe = document.createElement('button');
+        btnOjoSwipe.id = 'btn-ojo-swipe';
+        btnOjoSwipe.title = 'Ocultar anuncio';
+        btnOjoSwipe.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+        
+        // Estilos
+        btnOjoSwipe.style.cssText = 'background-color: #fff0f0; color: #cc0000; border: 1px solid #ffcccc; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.3s; font-size: 1.2rem; margin: 0 5px;';
+        
+        // Hover
+        btnOjoSwipe.addEventListener('mouseenter', () => btnOjoSwipe.style.background = '#ffcccc'); 
+        btnOjoSwipe.addEventListener('mouseleave', () => btnOjoSwipe.style.background = '#fff0f0');
+
+        // Lo añadimos al lado de los otros botones
+        contenedorBotones.appendChild(btnOjoSwipe);
+    }
+
+    // Le damos vida al botón
+    btnOjoSwipe.onclick = async (e) => {
+        e.stopPropagation();
+        
+        if (!usuarioLogueado) {
+            alert("Debes iniciar sesión para ocultar anuncios.");
+            return;
+        }
+
+        if (confirm("¿Ocultar este anuncio? Se guardará en tus descartes y no lo volverás a ver.")) {
+            try {
+                btnOjoSwipe.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+                btnOjoSwipe.disabled = true;
+
+                await marcarNoMeInteresa(anuncio.id);
+
+                indiceActual++;
+                renderizarCartaSwipe();
+
+            } catch (error) {
+                alert("Error al ocultar: " + error.message);
+            } finally {
+                btnOjoSwipe.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+                btnOjoSwipe.disabled = false;
+            }
         }
     };
 }

@@ -95,6 +95,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::delete('/anuncios/{id}', [AnuncioController::class, 'destroy']);
     Route::patch('/anuncios/{idAnuncio}/vendido', [AnuncioController::class, 'vendido']);
     Route::patch('/anuncios/{id}/recuperar', [AnuncioController::class, 'recuperar'])->middleware(TelephoneMiddleware::class);
+    Route::post('/anuncios/{id}/dislike', [AnuncioController::class, 'dislike']);
+    Route::get('/mis-descartes', [AnuncioController::class, 'misDescartes']);
+    Route::delete('/anuncios/{id}/dislike', [AnuncioController::class, 'quitarDislike']);
 });
 
 Route::middleware(['auth:sanctum', 'admin', 'verified'])->group(function () {
