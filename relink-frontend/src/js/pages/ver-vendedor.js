@@ -1,5 +1,7 @@
 import { renderNavbar } from '../components/navBar.js';
-import { getPerfilUsuario } from '../services/perfil.js'; // El servicio que acabamos de crear
+import { getPerfilUsuario } from '../services/perfil.js';
+import { STORAGE_URL } from '../services/auth.js';
+
 
 // PANTALLA: VER PERFIL DEL VENDEDOR (Público)
 
@@ -81,7 +83,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             return; 
         }
 
-        const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
+        //const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
+        const URL_BACKEND_STORAGE = STORAGE_URL;
 
         anuncios.forEach(anuncio => {
             const card = document.createElement('div');

@@ -1,7 +1,7 @@
 import { renderNavbar } from '../components/navBar.js';
 import { getAnuncioById, marcarNoMeInteresa } from '../services/anuncios.js';
 import { toggleFavorito, checkIfFavorito } from '../services/favoritos.js'; 
-import { misDatos } from '../services/auth.js';
+import { misDatos, STORAGE_URL } from '../services/auth.js';
 
 /* 
    PANTALLA: VER DETALLE DEL ANUNCIO
@@ -78,7 +78,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const imagenes = anuncio.imagenes;
 
         // url de donde se guardan las fotos en Laravel
-        const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
+        //const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
+        const URL_BACKEND_STORAGE = STORAGE_URL;
 
         if (imagenes && imagenes.length > 0) {
             
