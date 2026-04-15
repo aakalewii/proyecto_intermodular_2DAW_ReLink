@@ -1,11 +1,11 @@
 // Esta constante define la ruta base de nuestra API en Laravel.
 export const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:5500/api' 
-    : 'http://relink-equipo.ddns.net/api';
+    : 'http://relink-equipo.ddns.net/backend/api';
 
 export const STORAGE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:5500/storage/'      // storage en local
-    : 'http://relink-equipo.ddns.net/storage/';
+    : 'http://relink-equipo.ddns.net/backend/storage/';
 
 // Esta función auxiliar construye las cabeceras (headers) HTTP necesarias para las peticiones seguras.
 export function getAuthHeaders() {
