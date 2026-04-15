@@ -231,3 +231,40 @@
 .navbar-relink {
     width: 100%;
 }
+
+@media (max-width: 768px) {
+    /* 1. Cambiamos la barra para que el logo quede arriba y los botones abajo */
+    .navbar-relink {
+        flex-direction: column; 
+        padding: 12px 15px;
+        gap: 15px;
+    }
+
+    /* 2. Dejamos que los botones se repartan y salten de línea si no caben */
+    .nav-menu {
+        flex-wrap: wrap; 
+        justify-content: center;
+        width: 100%;
+        gap: 8px;
+    }
+
+    /* 3. Achicamos un pelín el logo para ahorrar espacio */
+    .nav-logo {
+        width: 110px !important; 
+    }
+
+    /* 4. Hacemos los botones y textos un poco más compactos */
+    .btn-nuevo-anuncio, 
+    .btn-logout, 
+    .btn-primary-outline,
+    .nav-link {
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+    
+    /* Si el admin tiene la etiqueta amarilla, la centramos también */
+    .nav-logo-container {
+        justify-content: center;
+        width: 100%;
+    }
+}

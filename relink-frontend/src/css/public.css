@@ -685,3 +685,50 @@ a {
 .action-dislike { color: #ff4b4b; }
 .action-wa { color: #25D366; }
 .action-like { color: #2d9b6f; }
+
+/* ==========================================
+   ADAPTACIÓN PARA MÓVILES (Vista Swipe)
+   ========================================== */
+@media (max-width: 768px) {
+    
+    /* 1. La tarjeta pasa de horizontal a vertical */
+    .swipe-card {
+        flex-direction: column; /* Apila los elementos uno encima de otro */
+        height: 85vh; /* Ocupa el 85% de la pantalla para que no se corte */
+        min-height: auto;
+        border-radius: 15px; 
+    }
+
+    /* 2. La imagen ya no ocupa la mitad izquierda, sino el 40% de arriba */
+    .swipe-header {
+        flex: 0 0 40%; 
+        width: 100%;
+    }
+
+    /* 3. Reducimos el espacio interior de los textos para aprovechar la pantalla */
+    .swipe-body {
+        padding: 20px 20px 10px 20px;
+    }
+
+    /* 4. Achicamos un poco los títulos para que no ocupen tanto */
+    .swipe-body h2 {
+        font-size: 1.6rem;
+    }
+    
+    .swipe-body h3 {
+        font-size: 1.3rem;
+    }
+
+    /* 5. Juntamos más los botones y les reducimos el padding a la caja */
+    .swipe-footer {
+        padding: 15px 20px 20px 20px;
+        gap: 15px; 
+    }
+
+    /* 6. Hacemos los botones un pelín más pequeños para que quepan holgados */
+    .btn-swipe {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+}
