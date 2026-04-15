@@ -2,7 +2,7 @@ import { renderNavbar } from '../components/navBar.js';
 import { getLocalidades } from '../services/ubicaciones.js';
 import { getCategorias, getSubcategoriasPorCategoria } from '../services/categorias.js';
 import { getAnuncioById, updateAnuncioCompleto } from '../services/anuncios.js';
-import { forzarCierreSesion, verificarAccesoUsuario, misDatos } from '../services/auth.js';
+import { forzarCierreSesion, verificarAccesoUsuario, misDatos, STORAGE_URL } from '../services/auth.js';
 
 /*
    PANTALLA: EDITAR ANUNCIO
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // Creamos la etiqueta de la imagen para que se vea
                 const imgElement = document.createElement('img');
-                imgElement.src = `http://localhost:5500/storage/${img.url}`; 
+                imgElement.src = `${STORAGE_URL}${img.url}`; 
                 imgElement.width = 120; 
                 
                 // Creamos un botón "Eliminar" debajo de la foto

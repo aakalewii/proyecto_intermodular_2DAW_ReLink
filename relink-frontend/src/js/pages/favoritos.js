@@ -1,6 +1,6 @@
 import { renderNavbar } from '../components/navBar.js';
 import { getMisFavoritos } from '../services/favoritos.js';
-import { forzarCierreSesion, verificarAccesoUsuario } from '../services/auth.js';
+import { forzarCierreSesion, STORAGE_URL, verificarAccesoUsuario } from '../services/auth.js';
 
 /*
    PANTALLA: MIS FAVORITOS
@@ -54,7 +54,8 @@ async function cargarFavoritos() {
             }
 
             // Ruta base donde Laravel guarda los archivos públicos
-            const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
+            //const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
+            const URL_BACKEND_STORAGE = STORAGE_URL;
 
             // RENDERIZADO DE LAS TARJETAS
             // Recorremos el array y creamos el HTML dinámico para cada anuncio, 
