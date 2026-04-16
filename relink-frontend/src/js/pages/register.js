@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Si Laravel nos devuelve un 201 (Creado), le mostramos una alerta de éxito
             // y lo mandamos directamente a la pantalla de Login para que entre.
-            window.location.href = '/login.html';
+            window.location.href = '/email-revisar-bandeja.html';
 
         } catch (error) {
             // Si Laravel se queja (por ejemplo, si el email ya existe en la base de datos,
