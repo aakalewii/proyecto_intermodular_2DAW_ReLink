@@ -1,8 +1,9 @@
 import { renderNavbar } from '../components/navBar.js';
 import { getMiPerfil, updatePerfil, updateFotoPerfil } from '../services/perfil.js';
 import { getLocalidades } from '../services/ubicaciones.js'; 
-import { deleteAnuncio, marcarComoVendido, recuperarAnuncio, getMisDescartes, quitarNoMeInteresa } from '../services/anuncios.js';
+import { deleteAnuncio, marcarComoVendido, recuperarAnuncio } from '../services/anuncios.js';
 import { forzarCierreSesion, verificarAccesoUsuario, STORAGE_URL } from '../services/auth.js';
+import { getMisDescartes, quitarNoMeInteresa } from '../services/dislikes.js';
 
 
 /*
@@ -519,7 +520,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         try {
             // Pedimos los datos a la base de datos
-            const descartes = await getMisDescartes();
+            const respuesta = await getMisDescartes();
+            const descartes = respuesta.datos;
             listaAnuncios.innerHTML = ''; 
 
             if (descartes.length === 0) {
@@ -528,7 +530,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             // Recuperamos la ruta base de las imágenes igual que en el index
-            const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
+            //const URL_BACKEND_STORAGE = 'http://localhost:5500/storage/';
+            const URL_BACKEND_STORAGE = STORAGE_URL;
+
 
             descartes.forEach(anuncio => {
                 const card = document.createElement('div');
@@ -563,7 +567,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // Inyectamos el diseño
                 card.innerHTML = `
-                    <div style="cursor: pointer;" onclick="window.location.href='/ver-anuncio.html?id=${anuncio.id}'">
+                    <div style="cursor: pointer;">
                         <div>
                             <img src="${rutaImagen}" alt="${anuncio.titulo}" style="max-width: 100%; border-radius: 4px; opacity: 0.8;"/>
                         </div>
@@ -628,6 +632,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         tabPublicados.classList.remove('activo');
         tabVendidos.classList.remove('activo');
         tabHistorial.classList.remove('activo');
+        tabOcultos.classList.remove('activo');
+
+
 
         let anunciosFiltrados = [];
 

@@ -71,13 +71,11 @@ export async function verificarAccesoAdmin() {
 }
 
 export function forzarCierreSesion() {
-
-    console.log('polla gorda')
     // Destruimos el token falso o caducado
     localStorage.removeItem('relink_token');
     
     // Redirigimos a la vista
-    window.location.replace('./acceso-denegado.html');
+    window.location.replace('/acceso-denegado.html');
 }
 
 // Método para recibir los datos del usuario desde el token y no tener que subir el user al LocalStorage

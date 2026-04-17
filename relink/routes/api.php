@@ -18,6 +18,7 @@ use App\Http\Controllers\FiltersController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\SwipeController;
 use App\Http\Middleware\TelephoneMiddleware;
+use App\Http\Controllers\DislikeController;
 
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -95,9 +96,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::delete('/anuncios/{id}', [AnuncioController::class, 'destroy']);
     Route::patch('/anuncios/{idAnuncio}/vendido', [AnuncioController::class, 'vendido']);
     Route::patch('/anuncios/{id}/recuperar', [AnuncioController::class, 'recuperar'])->middleware(TelephoneMiddleware::class);
-    Route::post('/anuncios/{id}/dislike', [AnuncioController::class, 'dislike']);
-    Route::get('/mis-descartes', [AnuncioController::class, 'misDescartes']);
-    Route::delete('/anuncios/{id}/dislike', [AnuncioController::class, 'quitarDislike']);
+
+    Route::post('/anuncios/{id}/dislike', [DislikeController::class, 'ocultar']);
+    Route::get('/mis-descartes', [DislikeController::class, 'index']);
+    Route::delete('/anuncios/{id}/dislike', [DislikeController::class, 'restaurar']);
 });
 
 Route::middleware(['auth:sanctum', 'admin', 'verified'])->group(function () {

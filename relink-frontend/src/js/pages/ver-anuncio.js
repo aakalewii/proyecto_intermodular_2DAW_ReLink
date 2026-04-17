@@ -1,5 +1,6 @@
 import { renderNavbar } from '../components/navBar.js';
-import { getAnuncioById, marcarNoMeInteresa } from '../services/anuncios.js';
+import { getAnuncioById } from '../services/anuncios.js';
+import { marcarNoMeInteresa } from '../services/dislikes.js';
 import { toggleFavorito, checkIfFavorito } from '../services/favoritos.js'; 
 import { misDatos, STORAGE_URL } from '../services/auth.js';
 

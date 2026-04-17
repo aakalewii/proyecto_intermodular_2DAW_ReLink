@@ -12,12 +12,14 @@ use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
+    // Método de admin para ver todos los usuarios de la aplicación
     public function userList()
     {
         $users = User::all();
         return response()->json($users);
     }
 
+    // Método de admin para cambiar datos, rol, estado de un usuario determinado
     public function updateUser(Request $request, $id)
     {
 
@@ -40,6 +42,7 @@ class AdminController extends Controller
         ]);
     }
 
+    // Método para el panel de admin para ver las estadísticas globales de la app en relación a usuarios
     public function getUserStats()
     {
         $totalUsuarios = User::count();
@@ -64,6 +67,7 @@ class AdminController extends Controller
         ]);
     }
 
+    // Método que lista todos los anuncios de la app independientemente de su estado
     public function listAnuncios()
     {
         $anuncios = Anuncio::with('user')->get();
@@ -71,6 +75,7 @@ class AdminController extends Controller
         return response()->json($anuncios);
     }
 
+    // Método que suspende anuncio para ocultarlo de la web
     public function suspenderAnuncio($idAnuncio){
 
         $anuncio = Anuncio::findOrFail($idAnuncio);
@@ -80,6 +85,7 @@ class AdminController extends Controller
         return response()->json(['message' => 'Anuncio suspendido correctamente']);
     }
 
+    // Método para la activación de un anuncio
     public function activarAnuncio($idAnuncio){
 
         $anuncio = Anuncio::findOrFail($idAnuncio);
@@ -89,6 +95,7 @@ class AdminController extends Controller
         return response()->json(['message' => 'Anuncio activado correctamente']);
     }
 
+    // Método de estadísticas globales de la app en realción a los anuncios
     public function getAnuncioStats()
     {
         $totalAnuncios = Anuncio::count();

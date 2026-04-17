@@ -29,7 +29,12 @@ class FavoritoController extends Controller
                 return response()->json(['message' => 'Eliminado de favoritos'], 200);
         }else{
 
-                DB::table('favoritos')->insert([
+            DB::table('dislikes')
+                ->where('user_id', $user->id)
+                ->where('anuncio_id', $anuncio_id)
+                ->delete();
+
+            DB::table('favoritos')->insert([
                 'user_id' => $user->id,
                 'anuncio_id' => $anuncio_id,
                 'created_at' => now(),

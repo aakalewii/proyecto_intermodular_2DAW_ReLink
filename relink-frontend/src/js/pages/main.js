@@ -1,5 +1,6 @@
 import { renderNavbar } from '../components/navBar.js';
-import { getAnuncios, marcarNoMeInteresa } from '../services/anuncios.js';
+import { getAnuncios } from '../services/anuncios.js';
+import { marcarNoMeInteresa } from '../services/dislikes.js';
 import { getAnunciosSwipe } from '../services/swipe.js';
 import { toggleFavorito } from '../services/favoritos.js';
 import { misDatos } from '../services/auth.js';
@@ -244,7 +245,7 @@ function renderizarCartaSwipe() {
         return renderizarCartaSwipe();
     }
 
-    // TEXTOS (Blindados)
+    // TEXTOS
     document.getElementById('swipe-titulo').textContent = anuncio.titulo || 'Sin título';
     document.getElementById('swipe-precio').textContent = (anuncio.precio || 0) + ' €';
     document.getElementById('swipe-localidad').textContent = anuncio.ubicacion ? anuncio.ubicacion.nombre : 'España';
