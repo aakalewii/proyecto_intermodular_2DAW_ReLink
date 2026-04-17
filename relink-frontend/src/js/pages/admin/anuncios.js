@@ -1,4 +1,4 @@
-import { renderNavbar } from '../../components/navbar.js';
+import { renderNavbar } from '../../components/navBar.js';
 import { getAnuncios, getAnuncioStats, suspenderAnuncio, activarAnuncio } from '../../services/anunciosAdmin.js';
 import { verificarAccesoAdmin } from '../../services/auth.js';
 

@@ -1,4 +1,4 @@
-import { renderNavbar } from '../../components/navbar.js';
+import { renderNavbar } from '../../components/navBar.js';
 // Importamos las funciones que hablan con el backend
 import { getUsuarios, updateUsuarioComoAdmin, getDashboardStats } from '../../services/usuarios.js';
 import { verificarAccesoAdmin } from '../../services/auth.js';
