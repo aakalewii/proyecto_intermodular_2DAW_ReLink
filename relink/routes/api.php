@@ -30,11 +30,13 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request) {
     // 2. Verificamos que el hash del email coincida (Seguridad)
     if (! hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
         return redirect('http://localhost:5173/email-enlace-invalido');
+        //return redirect('http://relink-equipo.ddns.net/email-enlace-invalido');
     }
 
     // 3. Si ya estaba verificado, avisamos
     if ($user->hasVerifiedEmail()) {
         return redirect('http://localhost:5173/email-ya-verificado');
+        //return redirect('http://relink-equipo.ddns.net/email-ya-verificado');
     }
 
     // 4. Marcamos como verificado
@@ -44,6 +46,7 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request) {
     event(new \Illuminate\Auth\Events\Verified($user));
 
     return redirect('http://localhost:5173/email-verificado');
+    //return redirect('http://relink-equipo.ddns.net/email-verificado');
 })->middleware(['signed'])->name('verification.verify');
 
 // Rutas públicas para el acceso
